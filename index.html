@@ -24,11 +24,10 @@
   .scrollbar-hide::-webkit-scrollbar{display:none;}
   .scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none;}
   .slide-in{animation:slideIn 0.3s ease-out;}
-  @keyframes slideIn{from{transform:translateX(100%);}to{transform:translateX(0);}}
+  @keyframes slideIn{from{transform:translateX(-100%);}to{transform:translateX(0);}}
   .fade-in{animation:fadeIn 0.4s ease-out;}
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 
-  /* Notificaciones elegantes tipo snackbar con acción */
   .snackbar {
     position: fixed;
     bottom: 24px;
@@ -36,19 +35,19 @@
     transform: translateX(-50%) translateY(100px);
     background: rgba(26, 26, 26, 0.98);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 107, 53, 0.4);
+    border: 1px solid rgba(255, 107, 53, 0.5);
     color: #fff;
     padding: 16px 20px;
     border-radius: 16px;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     z-index: 100;
     opacity: 0;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.7);
     max-width: 92vw;
     width: auto;
-    min-width: 280px;
+    min-width: 310px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -59,41 +58,39 @@
     opacity: 1;
   }
   .snackbar.error {
-    border-color: rgba(255, 107, 53, 0.5);
+    border-color: rgba(239, 68, 68, 0.6);
+    background: rgba(30, 10, 10, 0.98);
   }
   .snackbar.success {
-    border-color: rgba(34, 197, 94, 0.5);
-    background: rgba(20, 40, 20, 0.98);
+    border-color: rgba(34, 197, 94, 0.6);
+    background: rgba(10, 30, 15, 0.98);
   }
   .snackbar-text {
     flex: 1;
     line-height: 1.4;
   }
   .snackbar-btn {
-    background: rgba(255, 107, 53, 0.15);
-    border: 1px solid rgba(255, 107, 53, 0.4);
-    color: #ff6b35;
-    padding: 8px 16px;
+    background: #ff6b35;
+    color: #fff;
+    padding: 8px 14px;
     border-radius: 10px;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.2s;
     flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
   .snackbar-btn:hover {
-    background: rgba(255, 107, 53, 0.25);
-    border-color: rgba(255, 107, 53, 0.6);
+    background: #f7931e;
   }
   .snackbar.success .snackbar-btn {
-    background: rgba(34, 197, 94, 0.15);
-    border-color: rgba(34, 197, 94, 0.4);
-    color: #22c55e;
+    background: #22c55e;
   }
   .snackbar.success .snackbar-btn:hover {
-    background: rgba(34, 197, 94, 0.25);
-    border-color: rgba(34, 197, 94, 0.6);
+    background: #16a34a;
   }
 </style>
 </head>
@@ -102,6 +99,9 @@
 <header class="fixed top-0 left-0 right-0 z-50 glass">
   <div class="max-w-7xl mx-auto px-3 py-3 flex items-center justify-between">
     <div class="flex items-center gap-3">
+      <button id="menuBtn" class="p-2 rounded-xl bg-gray-800 border border-gray-700 hover:bg-orange-500/20 text-orange-400 hover:text-orange-500 transition">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
       <div>
         <h1 class="font-black text-xl tracking-tight text-white">FastBurger</h1>
         <p class="text-xs text-gray-400" id="storeStatus">Cargando...</p>
@@ -115,11 +115,8 @@
         <option value="BN">BN</option>
       </select>
       <button id="cartBtn" class="relative p-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 transition border border-gray-700">
-        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
         <span id="cartCount" class="cart-badge absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold hidden">0</span>
-      </button>
-      <button id="menuBtn" class="p-2 rounded-xl bg-gray-800 border border-gray-700 hover:bg-orange-500/20 text-orange-400 hover:text-orange-500 transition mr-1">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
     </div>
   </div>
@@ -174,16 +171,17 @@
 </div>
 
 <div id="checkoutModal" class="fixed inset-0 z-[80] bg-black/80 flex items-center justify-center p-4 hidden">
-  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto slide-in">
+  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
     <div class="p-6 space-y-4">
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between border-b border-white/5 pb-3">
         <h2 class="text-2xl font-black text-white">Finalizar Pedido</h2>
-        <button id="closeCheckout" class="p-2 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        <button id="closeCheckout" class="flex items-center gap-1 px-3 py-2 hover:bg-white/10 rounded-lg transition text-sm font-semibold text-gray-300">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          Regresar
         </button>
       </div>
 
-      <div>
+      <div id="serviceSection">
         <label class="block text-sm font-semibold mb-2 text-gray-300">Tipo de servicio *</label>
         <div class="grid grid-cols-3 gap-2">
           <button class="service-btn px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm font-semibold text-gray-300 transition hover:border-orange-500" data-service="sitio">🍽️ En Sitio</button>
@@ -234,10 +232,9 @@
         </div>
       </div>
 
-      <div>
+      <div id="paymentSection">
         <label class="block text-sm font-semibold mb-2 text-gray-300">Datos de Pago *</label>
-        <div id="paymentOptions" class="space-y-2">
-          </div>
+        <div id="paymentOptions" class="space-y-2"></div>
         <input type="hidden" id="selectedPaymentMethod" value="">
       </div>
 
@@ -262,30 +259,29 @@
 </div>
 
 <div id="paymentInfoModal" class="fixed inset-0 z-[85] bg-black/80 flex items-center justify-center p-4 hidden">
-  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-md max-h-[85vh] overflow-y-auto slide-in">
+  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-md max-h-[85vh] overflow-y-auto">
     <div class="p-6">
-      <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center justify-between mb-6 border-b border-white/5 pb-3">
         <h2 class="text-2xl font-black text-white">Información de Pago</h2>
-        <button id="closePaymentInfo" class="p-2 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        <button id="closePaymentInfo" class="flex items-center gap-1 px-3 py-2 hover:bg-white/10 rounded-lg transition text-sm font-semibold text-gray-300">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          Regresar
         </button>
       </div>
-      <div id="paymentInfoContent" class="space-y-4">
-        </div>
+      <div id="paymentInfoContent" class="space-y-4"></div>
     </div>
   </div>
 </div>
 
 <div id="confirmationModal" class="fixed inset-0 z-[90] bg-black/90 flex items-center justify-center p-4 hidden">
-  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-md text-center p-8 fade-in">
+  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-md text-center p-8 face-in">
     <div class="text-6xl mb-4">🎉</div>
     <h2 class="text-2xl font-black mb-2 text-white">¡Pedido Enviado!</h2>
     <p class="text-gray-400 mb-4">Tu número de pedido es:</p>
     <div class="bg-gray-800 rounded-xl p-4 mb-6">
       <p id="orderNumber" class="text-3xl font-black text-orange-400">PED00001</p>
     </div>
-    <div id="paymentInfo" class="bg-gray-800/50 rounded-xl p-4 mb-6 text-left space-y-2 text-sm text-gray-300">
-    </div>
+    <div id="paymentInfo" class="bg-gray-800/50 rounded-xl p-4 mb-6 text-left space-y-2 text-sm text-gray-300"></div>
     <a id="whatsappBtn" href="#" target="_blank" class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl font-bold transition mb-3">
       <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       Enviar por WhatsApp
@@ -296,16 +292,17 @@
   </div>
 </div>
 
-<div id="sideMenu" class="fixed inset-y-0 right-0 w-72 bg-[#111] z-[70] transform translate-x-full transition-transform duration-300 shadow-2xl border-l border-orange-500/30">
+<div id="sideMenu" class="fixed inset-y-0 left-0 w-72 bg-[#111] z-[70] transform -translate-x-full transition-transform duration-300 shadow-2xl border-r border-orange-500/30">
   <div class="p-6">
     <div class="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
       <span class="font-black text-xl tracking-wide bg-gradient-to-r from-orange-500 to-amber-400 bg-clip-text text-transparent">FastBurger</span>
-      <button id="closeMenu" class="p-2 hover:bg-orange-500/10 rounded-xl text-orange-400 hover:text-orange-500 transition">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      <button id="closeMenu" class="flex items-center gap-1 px-3 py-2 hover:bg-orange-500/10 rounded-xl text-orange-400 hover:text-orange-500 transition text-sm font-semibold">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        Regresar
       </button>
     </div>
     <nav class="space-y-3">
-      <a href="index.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-ff6b35/20 to-f7931e/10 bg-orange-500/20 text-orange-400 font-bold border border-orange-500/30">
+      <a href="index.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-orange-500/20 text-orange-400 font-bold border border-orange-500/30">
         <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
         Menú Catálogo
       </a>
@@ -338,9 +335,6 @@
 // ============================================
 const API_URL = "https://script.google.com/macros/s/AKfycbxADTPJUAhvkuB0xZPBTXQVfuiDS1Sr3Wn4grfFAabGZaZ82C1xrQWxRWO2fEsBtWJt/exec";
 
-// ============================================
-// ESTADO GLOBAL (Cambio de Moneda por defecto a USD)
-// ============================================
 let products = [];
 let categories = [];
 let zones = [];
@@ -352,9 +346,6 @@ let config = {};
 let selectedService = "";
 let selectedZone = null;
 
-// ============================================
-// INICIALIZACION
-// ============================================
 document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
@@ -380,9 +371,6 @@ function showLoading() {
     </div>`;
 }
 
-// ============================================
-// CONTROLADORES DE API (CORS OPTIMIZADO)
-// ============================================
 async function apiGet(action, params) {
   let url = API_URL + "?action=" + action;
   if (params) {
@@ -392,7 +380,6 @@ async function apiGet(action, params) {
   return res.json();
 }
 
-// Se usa text/plain para evadir el pre-flight de CORS en Google Apps Script
 async function apiPost(data) {
   const res = await fetch(API_URL, {
     method: "POST",
@@ -430,9 +417,6 @@ async function loadPaymentMethods() {
   if (res.success) paymentMethods = res.data;
 }
 
-// ============================================
-// RENDERIZADO DE INTERFAZ
-// ============================================
 function updateStoreStatus() {
   const statusEl = document.getElementById("storeStatus");
   if (config.EstadoTienda === "Cerrado") {
@@ -530,9 +514,6 @@ function formatearPrecio(valor, moneda) {
   return v.toFixed(2);
 }
 
-// ============================================
-// CONTROL DE GESTIÓN DEL CARRITO
-// ============================================
 function addToCart(code) {
   const product = products.find(p => p.CodProducto === code);
   if (!product) return;
@@ -648,22 +629,21 @@ function openCart() {
   document.getElementById("overlay").classList.remove("hidden");
 }
 
-// Cierre correcto de ventanas
 function closeCart() {
   document.getElementById("cartSidebar").classList.add("translate-x-full");
-  if (document.getElementById("sideMenu").classList.contains("translate-x-full") &&
+  if (document.getElementById("sideMenu").classList.contains("-translate-x-full") &&
       document.getElementById("checkoutModal").classList.contains("hidden") &&
       document.getElementById("paymentInfoModal").classList.contains("hidden")) {
     document.getElementById("overlay").classList.add("hidden");
   }
 }
 
-// ============================================
-// PROCESAMIENTO DE CHECKOUT
-// ============================================
 function openCheckout() {
   if (cart.length === 0) {
-    showSnackbar("Agrega productos antes de continuar", "error");
+    showSnackbar("Agrega productos antes de continuar", "error", "Ir al menú", function() {
+      closeCart();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
     return;
   }
   if (config.EstadoTienda === "Cerrado") {
@@ -713,7 +693,7 @@ function openCheckout() {
 
 function closeCheckout() {
   document.getElementById("checkoutModal").classList.add("hidden");
-  if (document.getElementById("sideMenu").classList.contains("translate-x-full") &&
+  if (document.getElementById("sideMenu").classList.contains("-translate-x-full") &&
       document.getElementById("cartSidebar").classList.contains("translate-x-full") &&
       document.getElementById("paymentInfoModal").classList.contains("hidden")) {
     document.getElementById("overlay").classList.add("hidden");
@@ -731,7 +711,7 @@ function updateCheckoutSummary() {
 }
 
 // ============================================
-// CONFIRMAR PEDIDO
+// CONFIRMAR PEDIDO (Con redirección al campo faltante)
 // ============================================
 async function confirmOrder() {
   const name = document.getElementById("clientName").value.trim();
@@ -746,6 +726,51 @@ async function confirmOrder() {
   const observations = document.getElementById("observations").value.trim();
   const selectedPaymentMethod = document.getElementById("selectedPaymentMethod").value;
 
+  if (!selectedService) { 
+    showSnackbar("Por favor, selecciona el tipo de servicio", "error", "Ir allí", function() {
+      document.getElementById("serviceSection").scrollIntoView({ behavior: "smooth" });
+    }); 
+    return; 
+  }
+  if (selectedService === "delivery" && !selectedZone) { 
+    showSnackbar("Falta seleccionar la zona de delivery", "error", "Corregir", function() {
+      const zSel = document.getElementById("zoneSelect");
+      zSel.focus();
+      zSel.scrollIntoView({ behavior: "smooth" });
+    }); 
+    return; 
+  }
+  if (!name) { 
+    showSnackbar("El nombre completo es requerido", "error", "Escribir", function() {
+      const input = document.getElementById("clientName");
+      input.focus();
+      input.scrollIntoView({ behavior: "smooth" });
+    }); 
+    return; 
+  }
+  if (phone.length !== 7 || !/^\d{7}$/.test(phone)) { 
+    showSnackbar("El WhatsApp debe tener 7 dígitos exactos", "error", "Completar", function() {
+      const input = document.getElementById("clientPhone");
+      input.focus();
+      input.scrollIntoView({ behavior: "smooth" });
+    }); 
+    return; 
+  }
+  if (selectedService === "delivery" && !address) { 
+    showSnackbar("La dirección de entrega es obligatoria", "error", "Escribir", function() {
+      const input = document.getElementById("clientAddress");
+      input.focus();
+      input.scrollIntoView({ behavior: "smooth" });
+    }); 
+    return; 
+  }
+  if (!selectedPaymentMethod) { 
+    showSnackbar("Debes seleccionar un método de pago", "error", "Seleccionar", function() {
+      document.getElementById("paymentSection").scrollIntoView({ behavior: "smooth" });
+    }); 
+    return; 
+  }
+
   let paymentLabel = "";
   let paymentValue = "";
   if (selectedPaymentMethod === "zelle") { paymentLabel = "Zelle"; paymentValue = config.CuentaZelle || ""; }
@@ -753,26 +778,13 @@ async function confirmOrder() {
   else if (selectedPaymentMethod === "pagomovil") { paymentLabel = "Pago Móvil"; paymentValue = config.DatosPagoMovil || ""; }
   else if (selectedPaymentMethod === "transferencia") { paymentLabel = "Transferencia"; paymentValue = config.DatosTransferencia || ""; }
 
-  if (!selectedService) { showSnackbar("Selecciona el tipo de servicio", "error"); return; }
-  if (selectedService === "delivery" && !selectedZone) { showSnackbar("Selecciona la zona de delivery", "error"); return; }
-  if (!name) { showSnackbar("Ingresa tu nombre completo", "error"); return; }
-  if (phone.length !== 7 || !/^\d{7}$/.test(phone)) { showSnackbar("El teléfono de WhatsApp debe tener exactamente 7 dígitos", "error"); return; }
-  if (selectedService === "delivery" && !address) { showSnackbar("Ingresa la dirección exacta para tu delivery", "error"); return; }
-  if (!selectedPaymentMethod) { showSnackbar("Selecciona un método para registrar tu pago", "error"); return; }
-
   const subtotal = cart.reduce((sum, item) => sum + item.subtotalItem, 0);
   const delivery = selectedService === "delivery" && selectedZone ? convertirPrecioDelivery(selectedZone.TarifaZona) : 0;
   const total = subtotal + delivery;
 
   const orderData = {
     action: "pedido",
-    cliente: {
-      nombre: name,
-      telefono: fullPhone,
-      direccion: selectedService === "delivery" ? address : ("Retiro asignado: " + selectedService),
-      cedula: fullCedula,
-      email: email
-    },
+    cliente: { nombre: name, telefono: fullPhone, direccion: selectedService === "delivery" ? address : ("Retiro asignado: " + selectedService), cedula: fullCedula, email: email },
     tipoServicio: selectedService,
     codZone: selectedZone ? selectedZone.CodZona : "",
     zona: selectedZone ? selectedZone.NombreZona : "N/A",
@@ -791,10 +803,10 @@ async function confirmOrder() {
   const confirmBtn = document.getElementById("confirmOrderBtn");
   const originalText = confirmBtn.innerHTML;
   
-  confirmBtn.innerHTML = "Procesando transferencia...";
+  confirmBtn.innerHTML = "Procesando...";
   confirmBtn.disabled = true;
 
-  Swal.fire({ title: "Enviando Pedido...", text: "Por favor, espere un momento.", allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+  Swal.fire({ title: "Enviando Pedido...", text: "Por favor, espere.", allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
   try {
     const res = await apiPost(orderData);
@@ -808,14 +820,14 @@ async function confirmOrder() {
       updateCartUI();
       closeCheckout();
     } else {
-      showSnackbar(res.error || "No se pudo procesar el registro del pedido", "error");
+      showSnackbar(res.error || "No se pudo registrar el pedido", "error");
     }
   } catch (err) {
-    console.error("Error de red en fetch:", err);
+    console.error(err);
     Swal.close();
     confirmBtn.innerHTML = originalText;
     confirmBtn.disabled = false;
-    showSnackbar("Error de red o comunicación. Verifique conexión a internet.", "error");
+    showSnackbar("Error de comunicación de red.", "error");
   }
 }
 
@@ -849,9 +861,6 @@ function closeConfirmation() {
   document.getElementById("confirmationModal").classList.add("hidden");
 }
 
-// ============================================
-// MANEJADORES DE EVENTOS
-// ============================================
 function setupEventListeners() {
   document.getElementById("cartBtn").addEventListener("click", openCart);
   document.getElementById("closeCart").addEventListener("click", closeCart);
@@ -884,19 +893,19 @@ function setupEventListeners() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
-  // Evento Menú Derecho
+  // Evento Menú Izquierdo
   document.getElementById("menuBtn").addEventListener("click", () => {
-    document.getElementById("sideMenu").classList.remove("translate-x-full");
+    document.getElementById("sideMenu").classList.remove("-translate-x-full");
     document.getElementById("overlay").classList.remove("hidden");
   });
   
   document.getElementById("closeMenu").addEventListener("click", () => {
-    document.getElementById("sideMenu").classList.add("translate-x-full");
+    document.getElementById("sideMenu").classList.add("-translate-x-full");
     document.getElementById("overlay").classList.add("hidden");
   });
 
   document.getElementById("paymentInfoBtn").addEventListener("click", () => {
-    document.getElementById("sideMenu").classList.add("translate-x-full");
+    document.getElementById("sideMenu").classList.add("-translate-x-full");
     openPaymentInfo();
   });
   
@@ -906,7 +915,7 @@ function setupEventListeners() {
     closeCart();
     closeCheckout();
     closePaymentInfo();
-    document.getElementById("sideMenu").classList.add("translate-x-full");
+    document.getElementById("sideMenu").classList.add("-translate-x-full");
     document.getElementById("overlay").classList.add("hidden");
   });
 
@@ -946,11 +955,7 @@ function setupEventListeners() {
   document.getElementById("zoneSelect").addEventListener("change", (e) => {
     const opt = e.target.selectedOptions[0];
     if (opt && opt.value) {
-      selectedZone = {
-        CodZona: opt.value,
-        NombreZona: opt.dataset.name,
-        TarifaZona: parseFloat(opt.dataset.tarifa) || 0
-      };
+      selectedZone = { CodZona: opt.value, NombreZona: opt.dataset.name, TarifaZona: parseFloat(opt.dataset.tarifa) || 0 };
     } else {
       selectedZone = null;
     }
@@ -1069,7 +1074,7 @@ function openPaymentInfo() {
 
 function closePaymentInfo() {
   document.getElementById("paymentInfoModal").classList.add("hidden");
-  if (document.getElementById("sideMenu").classList.contains("translate-x-full") &&
+  if (document.getElementById("sideMenu").classList.contains("-translate-x-full") &&
       document.getElementById("cartSidebar").classList.contains("translate-x-full") &&
       document.getElementById("checkoutModal").classList.contains("hidden")) {
     document.getElementById("overlay").classList.add("hidden");
