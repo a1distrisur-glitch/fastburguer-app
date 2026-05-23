@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FastBurguer</title>
+<title>FastBurger</title>
 <link rel="manifest" href="manifest.json">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -103,22 +103,22 @@
   <div class="max-w-7xl mx-auto px-3 py-3 flex items-center justify-between">
     <div class="flex items-center gap-3">
       <div>
-        <h1 class="font-black text-xl tracking-tight">FastBurguer</h1>
+        <h1 class="font-black text-xl tracking-tight text-white">FastBurger</h1>
         <p class="text-xs text-gray-400" id="storeStatus">Cargando...</p>
       </div>
     </div>
     <div class="flex items-center gap-3">
-      <select id="currencySelector" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500">
+      <select id="currencySelector" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500">
+        <option value="USD" selected>$ USD</option>
         <option value="BS">Bs</option>
-        <option value="USD">$ USD</option>
         <option value="EUR">€ EUR</option>
         <option value="BN">BN</option>
       </select>
-      <button id="cartBtn" class="relative p-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 transition border border-gray-700 mr-2">
+      <button id="cartBtn" class="relative p-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 transition border border-gray-700">
         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
         <span id="cartCount" class="cart-badge absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold hidden">0</span>
       </button>
-      <button id="menuBtn" class="p-2 rounded-lg hover:bg-white/10 transition mr-1">
+      <button id="menuBtn" class="p-2 rounded-xl bg-gray-800 border border-gray-700 hover:bg-orange-500/20 text-orange-400 hover:text-orange-500 transition mr-1">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
     </div>
@@ -128,9 +128,9 @@
 <div id="closedOverlay" class="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center hidden">
   <div class="text-center p-8">
     <div class="text-6xl mb-4">🔒</div>
-    <h2 class="text-3xl font-black mb-2">Cerrado Temporalmente</h2>
+    <h2 class="text-3xl font-black mb-2 text-white">Cerrado Temporalmente</h2>
     <p class="text-gray-400 mb-6">Vuelve durante nuestro horario de atención</p>
-    <p class="text-orange-400 font-bold" id="hoursText">10:00 - 22:00</p>
+    <p class="text-orange-400 font-bold text-xl" id="hoursText">10:00 - 22:00</p>
   </div>
 </div>
 
@@ -152,7 +152,7 @@
 
 <div id="cartSidebar" class="fixed inset-y-0 right-0 w-full sm:w-[420px] bg-[#111] z-[70] transform translate-x-full transition-transform duration-300 shadow-2xl border-l border-white/10 flex flex-col">
   <div class="p-4 border-b border-white/10 flex items-center justify-between">
-    <h2 class="text-xl font-black">Tu Pedido</h2>
+    <h2 class="text-xl font-black text-white">Tu Pedido</h2>
     <button id="closeCart" class="flex items-center gap-1 px-3 py-2 hover:bg-white/10 rounded-lg transition text-sm font-semibold text-gray-300">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
       Regresar
@@ -162,12 +162,12 @@
     <p class="text-center text-gray-500 py-10">Tu carrito está vacío</p>
   </div>
   <div class="p-4 border-t border-white/10 space-y-3">
-    <div class="flex justify-between text-sm"><span>Subtotal</span><span id="cartSubtotal" class="font-bold">Bs 0.00</span></div>
-    <div class="flex justify-between text-sm"><span>Delivery</span><span id="cartDelivery" class="font-bold text-gray-400">Bs 0.00</span></div>
-    <div class="flex justify-between text-lg font-black border-t border-white/10 pt-2">
-      <span>Total</span><span id="cartTotal">Bs 0.00</span>
+    <div class="flex justify-between text-sm text-gray-300"><span>Subtotal</span><span id="cartSubtotal" class="font-bold text-white">Bs 0.00</span></div>
+    <div class="flex justify-between text-sm text-gray-300"><span>Delivery</span><span id="cartDelivery" class="font-bold text-gray-400">Bs 0.00</span></div>
+    <div class="flex justify-between text-lg font-black border-t border-white/10 pt-2 text-white">
+      <span>Total</span><span id="cartTotal" class="text-orange-400">Bs 0.00</span>
     </div>
-    <button id="checkoutBtn" class="w-full btn-primary py-3 rounded-xl font-bold text-lg transition disabled:opacity-50 disabled:cursor-not-allowed">
+    <button id="checkoutBtn" class="w-full btn-primary py-3 rounded-xl font-bold text-lg text-white transition disabled:opacity-50 disabled:cursor-not-allowed">
       Confirmar Pedido
     </button>
   </div>
@@ -177,8 +177,8 @@
   <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto slide-in">
     <div class="p-6 space-y-4">
       <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-black">Finalizar Pedido</h2>
-        <button id="closeCheckout" class="p-2 hover:bg-white/10 rounded-lg">
+        <h2 class="text-2xl font-black text-white">Finalizar Pedido</h2>
+        <button id="closeCheckout" class="p-2 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
@@ -186,15 +186,15 @@
       <div>
         <label class="block text-sm font-semibold mb-2 text-gray-300">Tipo de servicio *</label>
         <div class="grid grid-cols-3 gap-2">
-          <button class="service-btn px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm font-semibold transition hover:border-orange-500" data-service="sitio">🍽️ En Sitio</button>
-          <button class="service-btn px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm font-semibold transition hover:border-orange-500" data-service="pickup">🛍️ Pick Up</button>
-          <button class="service-btn px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm font-semibold transition hover:border-orange-500" data-service="delivery">🛵 Delivery</button>
+          <button class="service-btn px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm font-semibold text-gray-300 transition hover:border-orange-500" data-service="sitio">🍽️ En Sitio</button>
+          <button class="service-btn px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm font-semibold text-gray-300 transition hover:border-orange-500" data-service="pickup">🛍️ Pick Up</button>
+          <button class="service-btn px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm font-semibold text-gray-300 transition hover:border-orange-500" data-service="delivery">🛵 Delivery</button>
         </div>
       </div>
 
       <div id="zoneSection" class="hidden">
         <label class="block text-sm font-semibold mb-2 text-gray-300">Zona de delivery *</label>
-        <select id="zoneSelect" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500">
+        <select id="zoneSelect" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500">
           <option value="">Selecciona una zona</option>
         </select>
       </div>
@@ -202,35 +202,35 @@
       <div class="space-y-3">
         <div>
           <label class="block text-sm font-semibold mb-1 text-gray-300">Nombre completo *</label>
-          <input type="text" id="clientName" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500" placeholder="Tu nombre">
+          <input type="text" id="clientName" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500" placeholder="Tu nombre">
         </div>
         <div>
           <label class="block text-sm font-semibold mb-1 text-gray-300">Cédula/RIF</label>
           <div class="flex gap-2">
-            <select id="docPrefix" class="bg-gray-800 border border-gray-700 rounded-lg px-2 py-2 w-16">
+            <select id="docPrefix" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-2 py-2 w-16">
               <option value="V">V</option><option value="E">E</option><option value="J">J</option>
               <option value="G">G</option><option value="P">P</option><option value="C">C</option>
             </select>
-            <input type="text" id="clientCedula" class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500" placeholder="12345678" maxlength="9">
+            <input type="text" id="clientCedula" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500" placeholder="12345678" maxlength="9">
           </div>
         </div>
         <div>
           <label class="block text-sm font-semibold mb-1 text-gray-300">WhatsApp *</label>
           <div class="flex gap-2">
-            <select id="phonePrefix" class="bg-gray-800 border border-gray-700 rounded-lg px-2 py-2 w-20">
+            <select id="phonePrefix" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-2 py-2 w-20">
               <option value="0412">0412</option><option value="0414">0414</option><option value="0416">0416</option>
               <option value="0422">0422</option><option value="0424">0424</option><option value="0426">0426</option>
             </select>
-            <input type="text" id="clientPhone" class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500" placeholder="4843211" maxlength="7">
+            <input type="text" id="clientPhone" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500" placeholder="4843211" maxlength="7">
           </div>
         </div>
-        <div id="addressSection">
+        <div id="addressSection" class="hidden">
           <label class="block text-sm font-semibold mb-1 text-gray-300">Dirección *</label>
-          <textarea id="clientAddress" rows="2" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500 resize-none" placeholder="Tu dirección de entrega"></textarea>
+          <textarea id="clientAddress" rows="2" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500 resize-none" placeholder="Tu dirección de entrega"></textarea>
         </div>
         <div>
           <label class="block text-sm font-semibold mb-1 text-gray-300">Email</label>
-          <input type="email" id="clientEmail" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500" placeholder="opcional@email.com">
+          <input type="email" id="clientEmail" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500" placeholder="opcional@email.com">
         </div>
       </div>
 
@@ -243,18 +243,18 @@
 
       <div>
         <label class="block text-sm font-semibold mb-1 text-gray-300">Observaciones</label>
-        <textarea id="observations" rows="2" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500 resize-none" placeholder="Ej: sin cebolla, llevar caliente..."></textarea>
+        <textarea id="observations" rows="2" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500 resize-none" placeholder="Ej: sin cebolla..."></textarea>
       </div>
 
       <div class="bg-gray-800/50 rounded-xl p-4 space-y-2">
-        <div class="flex justify-between text-sm"><span>Subtotal</span><span id="checkoutSubtotal">Bs 0.00</span></div>
-        <div class="flex justify-between text-sm"><span>Delivery</span><span id="checkoutDelivery" class="text-gray-400">Bs 0.00</span></div>
-        <div class="flex justify-between text-lg font-black border-t border-white/10 pt-2">
-          <span>Total a pagar</span><span id="checkoutTotal">Bs 0.00</span>
+        <div class="flex justify-between text-sm text-gray-400"><span>Subtotal</span><span id="checkoutSubtotal" class="text-white font-semibold">Bs 0.00</span></div>
+        <div class="flex justify-between text-sm text-gray-400"><span>Delivery</span><span id="checkoutDelivery" class="text-gray-300">Bs 0.00</span></div>
+        <div class="flex justify-between text-lg font-black border-t border-white/10 pt-2 text-white">
+          <span>Total a pagar</span><span id="checkoutTotal" class="text-orange-400">Bs 0.00</span>
         </div>
       </div>
 
-      <button id="confirmOrderBtn" class="w-full btn-primary py-3 rounded-xl font-bold text-lg transition">
+      <button id="confirmOrderBtn" class="w-full btn-primary py-3 rounded-xl font-bold text-lg text-white transition">
         Confirmar y Enviar Pedido
       </button>
     </div>
@@ -265,8 +265,8 @@
   <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-md max-h-[85vh] overflow-y-auto slide-in">
     <div class="p-6">
       <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-black">Información de Pago</h2>
-        <button id="closePaymentInfo" class="p-2 hover:bg-white/10 rounded-lg">
+        <h2 class="text-2xl font-black text-white">Información de Pago</h2>
+        <button id="closePaymentInfo" class="p-2 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
@@ -279,47 +279,47 @@
 <div id="confirmationModal" class="fixed inset-0 z-[90] bg-black/90 flex items-center justify-center p-4 hidden">
   <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-md text-center p-8 fade-in">
     <div class="text-6xl mb-4">🎉</div>
-    <h2 class="text-2xl font-black mb-2">¡Pedido Enviado!</h2>
+    <h2 class="text-2xl font-black mb-2 text-white">¡Pedido Enviado!</h2>
     <p class="text-gray-400 mb-4">Tu número de pedido es:</p>
     <div class="bg-gray-800 rounded-xl p-4 mb-6">
       <p id="orderNumber" class="text-3xl font-black text-orange-400">PED00001</p>
     </div>
-    <div id="paymentInfo" class="bg-gray-800/50 rounded-xl p-4 mb-6 text-left space-y-2 text-sm">
+    <div id="paymentInfo" class="bg-gray-800/50 rounded-xl p-4 mb-6 text-left space-y-2 text-sm text-gray-300">
     </div>
     <a id="whatsappBtn" href="#" target="_blank" class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl font-bold transition mb-3">
       <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       Enviar por WhatsApp
     </a>
-    <button id="newOrderBtn" class="block w-full py-3 rounded-xl font-bold border border-gray-600 hover:bg-gray-800 transition">
+    <button id="newOrderBtn" class="block w-full py-3 rounded-xl font-bold text-gray-300 border border-gray-600 hover:bg-gray-800 transition">
       Hacer otro pedido
     </button>
   </div>
 </div>
 
-<div id="sideMenu" class="fixed inset-y-0 left-0 w-72 bg-[#111] z-[70] transform -translate-x-full transition-transform duration-300 shadow-2xl border-r border-white/10">
+<div id="sideMenu" class="fixed inset-y-0 right-0 w-72 bg-[#111] z-[70] transform translate-x-full transition-transform duration-300 shadow-2xl border-l border-orange-500/30">
   <div class="p-6">
-    <div class="flex items-center justify-between mb-8">
-      <span class="font-black text-lg">FastBurguer</span>
-      <button id="closeMenu" class="p-2 hover:bg-white/10 rounded-lg">
+    <div class="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
+      <span class="font-black text-xl tracking-wide bg-gradient-to-r from-orange-500 to-amber-400 bg-clip-text text-transparent">FastBurger</span>
+      <button id="closeMenu" class="p-2 hover:bg-orange-500/10 rounded-xl text-orange-400 hover:text-orange-500 transition">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
-    <nav class="space-y-2">
-      <a href="index.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-orange-500/20 text-orange-400 font-semibold">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-        Menú
+    <nav class="space-y-3">
+      <a href="index.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-ff6b35/20 to-f7931e/10 bg-orange-500/20 text-orange-400 font-bold border border-orange-500/30">
+        <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        Menú Catálogo
       </a>
-      <button id="paymentInfoBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 font-semibold transition text-left">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+      <button id="paymentInfoBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-orange-500/10 text-gray-300 hover:text-orange-400 font-semibold transition text-left border border-transparent hover:border-orange-500/20">
+        <svg class="w-5 h-5 text-orange-500/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
         Información de Pago
       </button>
-      <a href="admin.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 font-semibold transition">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      <a href="admin.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-orange-500/10 text-gray-300 hover:text-orange-400 font-semibold transition border border-transparent hover:border-orange-500/20">
+        <svg class="w-5 h-5 text-orange-500/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
         Panel Admin
       </a>
     </nav>
     <div class="mt-8 pt-8 border-t border-white/10">
-      <p class="text-xs text-gray-500">FastBurguer v1.0</p>
+      <p class="text-xs text-gray-500">FastBurger v1.0</p>
       <p class="text-xs text-gray-600">Ciudad Ojeda, Venezuela</p>
     </div>
   </div>
@@ -334,19 +334,19 @@
 
 <script>
 // ============================================
-// CONFIGURACION
+// CONFIGURACION GENERAL
 // ============================================
 const API_URL = "https://script.google.com/macros/s/AKfycbxADTPJUAhvkuB0xZPBTXQVfuiDS1Sr3Wn4grfFAabGZaZ82C1xrQWxRWO2fEsBtWJt/exec";
 
 // ============================================
-// ESTADO GLOBAL
+// ESTADO GLOBAL (Cambio de Moneda por defecto a USD)
 // ============================================
 let products = [];
 let categories = [];
 let zones = [];
 let paymentMethods = [];
 let cart = [];
-let currentCurrency = "BS";
+let currentCurrency = "USD"; 
 let tasas = {};
 let config = {};
 let selectedService = "";
@@ -381,7 +381,7 @@ function showLoading() {
 }
 
 // ============================================
-// API CALLS
+// CONTROLADORES DE API (CORS OPTIMIZADO)
 // ============================================
 async function apiGet(action, params) {
   let url = API_URL + "?action=" + action;
@@ -392,10 +392,11 @@ async function apiGet(action, params) {
   return res.json();
 }
 
+// Se usa text/plain para evadir el pre-flight de CORS en Google Apps Script
 async function apiPost(data) {
   const res = await fetch(API_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "text/plain" },
     body: JSON.stringify(data)
   });
   return res.json();
@@ -430,7 +431,7 @@ async function loadPaymentMethods() {
 }
 
 // ============================================
-// RENDER
+// RENDERIZADO DE INTERFAZ
 // ============================================
 function updateStoreStatus() {
   const statusEl = document.getElementById("storeStatus");
@@ -456,12 +457,12 @@ function renderCategories() {
   container.querySelectorAll(".category-btn").forEach(btn => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
-      container.querySelectorAll(".category-btn").forEach(b => { b.classList.remove("active"); b.classList.remove("bg-orange-500"); b.classList.remove("text-white"); b.classList.add("bg-gray-800"); b.classList.add("text-gray-300"); });
-      btn.classList.add("active");
-      btn.classList.remove("bg-gray-800");
-      btn.classList.remove("text-gray-300");
-      btn.classList.add("bg-orange-500");
-      btn.classList.add("text-white");
+      container.querySelectorAll(".category-btn").forEach(b => { 
+        b.classList.remove("active", "bg-orange-500", "text-white"); 
+        b.classList.add("bg-gray-800", "text-gray-300"); 
+      });
+      btn.classList.add("active", "bg-orange-500", "text-white");
+      btn.classList.remove("bg-gray-800", "text-gray-300");
       filterProducts(btn.dataset.cat);
     });
   });
@@ -498,11 +499,11 @@ function renderProductGrid(list) {
       </div>
       <div class="p-4">
         <p class="text-xs text-orange-400 font-semibold mb-1">${p.DesCategoria}</p>
-        <h3 class="font-bold text-lg mb-1 line-clamp-1">${p.DesProducto}</h3>
+        <h3 class="font-bold text-lg mb-1 line-clamp-1 text-white">${p.DesProducto}</h3>
         <p class="text-sm text-gray-400 mb-3 line-clamp-2">${p.DetalleProducto || ""}</p>
         <div class="flex items-center justify-between">
           <span class="text-xl font-black text-orange-400">${price}</span>
-          <button class="add-btn btn-primary px-4 py-2 rounded-xl font-bold text-sm transition ${isNoStock || isInactive ? 'hidden' : ''}" data-code="${p.CodProducto}">
+          <button class="add-btn btn-primary px-4 py-2 rounded-xl font-bold text-sm text-white transition ${isNoStock || isInactive ? 'hidden' : ''}" data-code="${p.CodProducto}">
             Agregar
           </button>
         </div>
@@ -530,7 +531,7 @@ function formatearPrecio(valor, moneda) {
 }
 
 // ============================================
-// CARRITO
+// CONTROL DE GESTIÓN DEL CARRITO
 // ============================================
 function addToCart(code) {
   const product = products.find(p => p.CodProducto === code);
@@ -559,7 +560,6 @@ function addToCart(code) {
   showSnackbar("Agregado al carrito", "success");
 }
 
-// Resto de la lógica idéntica...
 function removeFromCart(code) {
   cart = cart.filter(item => item.CodProducto !== code);
   updateCartUI();
@@ -604,14 +604,14 @@ function updateCartUI() {
       html += `
       <div class="flex gap-3 bg-gray-800/50 rounded-xl p-3">
         <div class="flex-1">
-          <h4 class="font-bold text-sm">${item.DesProducto}</h4>
+          <h4 class="font-bold text-sm text-white">${item.DesProducto}</h4>
           <p class="text-xs text-gray-400">${item.DesCategoria}</p>
           <p class="text-sm font-semibold text-orange-400 mt-1">${formatearPrecio(item.subtotalItem, currentCurrency)}</p>
         </div>
         <div class="flex flex-col items-center gap-1">
-          <button class="qty-btn w-7 h-7 rounded-lg bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-sm font-bold" data-code="${item.CodProducto}" data-delta="1">+</button>
-          <span class="text-sm font-bold">${item.cantidad}</span>
-          <button class="qty-btn w-7 h-7 rounded-lg bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-sm font-bold" data-code="${item.CodProducto}" data-delta="-1">-</button>
+          <button class="qty-btn w-7 h-7 rounded-lg bg-gray-700 text-white hover:bg-gray-600 flex items-center justify-center text-sm font-bold" data-code="${item.CodProducto}" data-delta="1">+</button>
+          <span class="text-sm font-bold text-white">${item.cantidad}</span>
+          <button class="qty-btn w-7 h-7 rounded-lg bg-gray-700 text-white hover:bg-gray-600 flex items-center justify-center text-sm font-bold" data-code="${item.CodProducto}" data-delta="-1">-</button>
         </div>
         <button class="remove-btn self-start p-1 text-red-400 hover:text-red-300" data-code="${item.CodProducto}">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -648,27 +648,26 @@ function openCart() {
   document.getElementById("overlay").classList.remove("hidden");
 }
 
+// Cierre correcto de ventanas
 function closeCart() {
   document.getElementById("cartSidebar").classList.add("translate-x-full");
-  document.getElementById("overlay").classList.add("hidden");
+  if (document.getElementById("sideMenu").classList.contains("translate-x-full") &&
+      document.getElementById("checkoutModal").classList.contains("hidden") &&
+      document.getElementById("paymentInfoModal").classList.contains("hidden")) {
+    document.getElementById("overlay").classList.add("hidden");
+  }
 }
 
 // ============================================
-// CHECKOUT
+// PROCESAMIENTO DE CHECKOUT
 // ============================================
 function openCheckout() {
   if (cart.length === 0) {
-    showSnackbar("Agrega productos antes de continuar", "error", "Ir al menú", function() {
-      closeCheckout();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
+    showSnackbar("Agrega productos antes de continuar", "error");
     return;
   }
   if (config.EstadoTienda === "Cerrado") {
-    showSnackbar("Tienda cerrada. No se pueden realizar pedidos.", "error", "Regresar al menú", function() {
-      closeCheckout();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
+    showSnackbar("Tienda cerrada. No se pueden procesar pedidos.", "error");
     return;
   }
 
@@ -685,7 +684,7 @@ function openCheckout() {
 
   const payContainer = document.getElementById("paymentOptions");
   payContainer.innerHTML = "";
-  var paymentOpts = [];
+  let paymentOpts = [];
 
   if (config.CuentaZelle) paymentOpts.push({ id: "zelle", label: "Zelle", value: config.CuentaZelle, icon: "💳" });
   if (config.CuentaBinance) paymentOpts.push({ id: "binance", label: "Binance Pay", value: config.CuentaBinance, icon: "🅱️" });
@@ -695,10 +694,10 @@ function openCheckout() {
   paymentOpts.forEach(function(p) {
     payContainer.innerHTML += `
       <label class="flex items-start gap-3 p-3 rounded-xl bg-gray-800/50 border border-gray-700 cursor-pointer hover:border-orange-500/50 transition payment-option">
-        <input type="radio" name="paymentMethod" value="${p.id}" class="mt-1 w-4 h-4 accent-orange-500" onchange="selectPaymentMethod('${p.id}', '${p.label}')">
+        <input type="radio" name="paymentMethod" value="${p.id}" class="mt-1 w-4 h-4 accent-orange-500" onchange="selectPaymentMethod('${p.id}')">
         <div class="flex-1">
-          <div class="font-semibold text-sm">${p.icon} ${p.label}</div>
-          <div class="text-xs text-gray-400 mt-0.5 break-all">${p.value}</div>
+          <div class="font-semibold text-sm text-white">${p.icon} ${p.label}</div>
+          <div class="text-xs text-gray-400 mt-0.5 break-all font-mono">${p.value}</div>
         </div>
       </label>
     `;
@@ -709,14 +708,16 @@ function openCheckout() {
   }
 
   document.getElementById("selectedPaymentMethod").value = "";
-  document.querySelectorAll('.payment-option').forEach(function(el) { el.classList.remove('border-orange-500', 'bg-orange-500/10'); });
-
   updateCheckoutSummary();
 }
 
 function closeCheckout() {
   document.getElementById("checkoutModal").classList.add("hidden");
-  document.getElementById("overlay").classList.add("hidden");
+  if (document.getElementById("sideMenu").classList.contains("translate-x-full") &&
+      document.getElementById("cartSidebar").classList.contains("translate-x-full") &&
+      document.getElementById("paymentInfoModal").classList.contains("hidden")) {
+    document.getElementById("overlay").classList.add("hidden");
+  }
 }
 
 function updateCheckoutSummary() {
@@ -729,6 +730,9 @@ function updateCheckoutSummary() {
   document.getElementById("checkoutTotal").textContent = formatearPrecio(total, currentCurrency);
 }
 
+// ============================================
+// CONFIRMAR PEDIDO
+// ============================================
 async function confirmOrder() {
   const name = document.getElementById("clientName").value.trim();
   const phonePrefix = document.getElementById("phonePrefix").value;
@@ -741,57 +745,20 @@ async function confirmOrder() {
   const email = document.getElementById("clientEmail").value.trim();
   const observations = document.getElementById("observations").value.trim();
   const selectedPaymentMethod = document.getElementById("selectedPaymentMethod").value;
-  var paymentLabel = "";
-  var paymentValue = "";
 
+  let paymentLabel = "";
+  let paymentValue = "";
   if (selectedPaymentMethod === "zelle") { paymentLabel = "Zelle"; paymentValue = config.CuentaZelle || ""; }
   else if (selectedPaymentMethod === "binance") { paymentLabel = "Binance Pay"; paymentValue = config.CuentaBinance || ""; }
-  else if (selectedPaymentMethod === "pagomovil") { paymentLabel = "Pago Movil"; paymentValue = config.DatosPagoMovil || ""; }
+  else if (selectedPaymentMethod === "pagomovil") { paymentLabel = "Pago Móvil"; paymentValue = config.DatosPagoMovil || ""; }
   else if (selectedPaymentMethod === "transferencia") { paymentLabel = "Transferencia"; paymentValue = config.DatosTransferencia || ""; }
 
-  // Validaciones
-  if (!selectedService) { 
-    showSnackbar("Selecciona el tipo de servicio", "error", "Ir a servicios", function() {
-      document.querySelector('[data-service="sitio"]')?.scrollIntoView({ behavior: "smooth", block: "center" });
-    }); 
-    return; 
-  }
-  if (selectedService === "delivery" && !selectedZone) { 
-    showSnackbar("Selecciona la zona de delivery", "error", "Ir a zonas", function() {
-      document.getElementById("zoneSelect")?.scrollIntoView({ behavior: "smooth", block: "center" });
-      setTimeout(function() { document.getElementById("zoneSelect")?.focus(); }, 400);
-    }); 
-    return; 
-  }
-  if (!name) { 
-    showSnackbar("Ingresa tu nombre", "error", "Ir al campo", function() {
-      document.getElementById("clientName")?.scrollIntoView({ behavior: "smooth", block: "center" });
-      setTimeout(function() { document.getElementById("clientName")?.focus(); }, 400);
-    }); 
-    return; 
-  }
-  if (phone.length !== 7 || !/^\d{7}$/.test(phone)) { 
-    showSnackbar("El teléfono debe tener 7 dígitos", "error", "Ir al teléfono", function() {
-      document.getElementById("clientPhone")?.scrollIntoView({ behavior: "smooth", block: "center" });
-      setTimeout(function() { document.getElementById("clientPhone")?.focus(); }, 400);
-    }); 
-    return; 
-  }
-  
-  // SOLUCIÓN UX: Dirección obligatoria SOLO si es delivery
-  if (selectedService === "delivery" && !address) { 
-    showSnackbar("Ingresa tu dirección de entrega", "error", "Ir a dirección", function() {
-      document.getElementById("clientAddress")?.scrollIntoView({ behavior: "smooth", block: "center" });
-      setTimeout(function() { document.getElementById("clientAddress")?.focus(); }, 400);
-    }); 
-    return; 
-  }
-  if (!selectedPaymentMethod) { 
-    showSnackbar("Selecciona un método de pago", "error", "Ir a pagos", function() {
-      document.getElementById("paymentOptions")?.scrollIntoView({ behavior: "smooth", block: "center" });
-    }); 
-    return; 
-  }
+  if (!selectedService) { showSnackbar("Selecciona el tipo de servicio", "error"); return; }
+  if (selectedService === "delivery" && !selectedZone) { showSnackbar("Selecciona la zona de delivery", "error"); return; }
+  if (!name) { showSnackbar("Ingresa tu nombre completo", "error"); return; }
+  if (phone.length !== 7 || !/^\d{7}$/.test(phone)) { showSnackbar("El teléfono de WhatsApp debe tener exactamente 7 dígitos", "error"); return; }
+  if (selectedService === "delivery" && !address) { showSnackbar("Ingresa la dirección exacta para tu delivery", "error"); return; }
+  if (!selectedPaymentMethod) { showSnackbar("Selecciona un método para registrar tu pago", "error"); return; }
 
   const subtotal = cart.reduce((sum, item) => sum + item.subtotalItem, 0);
   const delivery = selectedService === "delivery" && selectedZone ? convertirPrecioDelivery(selectedZone.TarifaZona) : 0;
@@ -802,15 +769,15 @@ async function confirmOrder() {
     cliente: {
       nombre: name,
       telefono: fullPhone,
-      direccion: selectedService === "delivery" ? address : ("Retiro en tienda: " + selectedService),
+      direccion: selectedService === "delivery" ? address : ("Retiro asignado: " + selectedService),
       cedula: fullCedula,
       email: email
     },
     tipoServicio: selectedService,
-    codZona: selectedZone ? selectedZone.CodZona : "",
-    zona: selectedZone ? selectedZone.NombreZona : "",
+    codZone: selectedZone ? selectedZone.CodZona : "",
+    zona: selectedZone ? selectedZone.NombreZona : "N/A",
     moneda: currentCurrency,
-    codTasa: config.CodTasa || "", // SOLUCIÓN: Obtenido dinámicamente desde config
+    codTasa: config.CodTasa || "T001", 
     codFormaPago: selectedPaymentMethod,
     desPago: paymentLabel + ": " + paymentValue,
     items: cart,
@@ -818,32 +785,37 @@ async function confirmOrder() {
     delivery: delivery,
     propina: 0,
     total: total,
-    observaciones: observations
+    observations: observations
   };
 
-  Swal.fire({ title: "Procesando...", allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+  const confirmBtn = document.getElementById("confirmOrderBtn");
+  const originalText = confirmBtn.innerHTML;
+  
+  confirmBtn.innerHTML = "Procesando transferencia...";
+  confirmBtn.disabled = true;
+
+  Swal.fire({ title: "Enviando Pedido...", text: "Por favor, espere un momento.", allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
   try {
     const res = await apiPost(orderData);
     Swal.close();
+    confirmBtn.innerHTML = originalText;
+    confirmBtn.disabled = false;
 
     if (res.success) {
-      // CORRECCIÓN: Enviar variables locales correctas
       showConfirmation(res.nroPedido, selectedPaymentMethod, paymentLabel + ": " + paymentValue, total);
       cart = [];
       updateCartUI();
       closeCheckout();
     } else {
-      showSnackbar(res.error || "No se pudo registrar el pedido", "error", "Intentar de nuevo", function() {
-        document.getElementById("confirmOrderBtn")?.scrollIntoView({ behavior: "smooth" });
-      });
+      showSnackbar(res.error || "No se pudo procesar el registro del pedido", "error");
     }
   } catch (err) {
+    console.error("Error de red en fetch:", err);
     Swal.close();
-    showSnackbar("Verifica tu conexión e intenta de nuevo", "error", "Regresar al menú", function() {
-      closeCheckout();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
+    confirmBtn.innerHTML = originalText;
+    confirmBtn.disabled = false;
+    showSnackbar("Error de red o comunicación. Verifique conexión a internet.", "error");
   }
 }
 
@@ -852,23 +824,23 @@ function showConfirmation(nroPedido, codPago, desPago, total) {
   document.getElementById("orderNumber").textContent = nroPedido;
 
   let paymentHtml = "";
-  if (codPago === "zelle") paymentHtml = `<div class="bg-gray-800/50 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">Zelle</p><p class="font-mono text-sm">${config.CuentaZelle || ""}</p></div>`;
-  else if (codPago === "binance") paymentHtml = `<div class="bg-gray-800/50 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">Binance Pay ID</p><p class="font-mono text-sm">${config.CuentaBinance || ""}</p></div>`;
-  else if (codPago === "pagomovil") paymentHtml = `<div class="bg-gray-800/50 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">Pago Móvil</p><p class="text-sm">${config.DatosPagoMovil || ""}</p></div>`;
-  else if (codPago === "transferencia") paymentHtml = `<div class="bg-gray-800/50 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">Transferencia</p><p class="text-sm">${config.DatosTransferencia || ""}</p></div>`;
-  else paymentHtml = `<p><strong>${desPago}</strong></p>`;
+  if (codPago === "zelle") paymentHtml = `<div class="bg-gray-800/50 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">Zelle</p><p class="font-mono text-sm text-white">${config.CuentaZelle || ""}</p></div>`;
+  else if (codPago === "binance") paymentHtml = `<div class="bg-gray-800/50 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">Binance Pay ID</p><p class="font-mono text-sm text-white">${config.CuentaBinance || ""}</p></div>`;
+  else if (codPago === "pagomovil") paymentHtml = `<div class="bg-gray-800/50 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">Pago Móvil</p><p class="text-sm text-white">${config.DatosPagoMovil || ""}</p></div>`;
+  else if (codPago === "transferencia") paymentHtml = `<div class="bg-gray-800/50 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">Transferencia Bancaria</p><p class="text-sm text-white">${config.DatosTransferencia || ""}</p></div>`;
+  else paymentHtml = `<p class="text-white"><strong>${desPago}</strong></p>`;
 
-  paymentHtml += `<p class="mt-2 font-bold text-orange-400">Total: ${formatearPrecio(total, currentCurrency)}</p>`;
+  paymentHtml += `<p class="mt-2 font-bold text-orange-400 text-base">Monto Total: ${formatearPrecio(total, currentCurrency)}</p>`;
   document.getElementById("paymentInfo").innerHTML = paymentHtml;
 
-  var paymentDetail = "";
+  let paymentDetail = "";
   if (codPago === "zelle") paymentDetail = "Zelle: " + (config.CuentaZelle || "");
-  else if (codPago === "binance") paymentDetail = "Binance: " + (config.CuentaBinance || "");
-  else if (codPago === "pagomovil") paymentDetail = "Pago Movil: " + (config.DatosPagoMovil || "");
+  else if (codPago === "binance") paymentDetail = "Binance Pay: " + (config.CuentaBinance || "");
+  else if (codPago === "pagomovil") paymentDetail = "Pago Móvil: " + (config.DatosPagoMovil || "");
   else if (codPago === "transferencia") paymentDetail = "Transferencia: " + (config.DatosTransferencia || "");
   else paymentDetail = desPago;
 
-  const msg = `Hola FastBurguer! Quiero confirmar mi pedido *${nroPedido}*. Total: ${formatearPrecio(total, currentCurrency)}. Pago: ${paymentDetail}.`;
+  const msg = `¡Hola FastBurger! Confirmo mi pedido *${nroPedido}*. Total: ${formatearPrecio(total, currentCurrency)}. Método: ${paymentDetail}.`;
   const waNumber = "58" + (config.WhatsAppNegocio || "").replace(/^0/, "");
   document.getElementById("whatsappBtn").href = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
 }
@@ -878,17 +850,16 @@ function closeConfirmation() {
 }
 
 // ============================================
-// EVENT LISTENERS Y UTILIDADES
+// MANEJADORES DE EVENTOS
 // ============================================
 function setupEventListeners() {
   document.getElementById("cartBtn").addEventListener("click", openCart);
   document.getElementById("closeCart").addEventListener("click", closeCart);
   document.getElementById("checkoutBtn").addEventListener("click", openCheckout);
-
   document.getElementById("closeCheckout").addEventListener("click", closeCheckout);
+  
   document.getElementById("confirmOrderBtn").addEventListener("click", function(e) {
     e.preventDefault();
-    e.stopPropagation();
     confirmOrder();
   });
 
@@ -902,6 +873,7 @@ function setupEventListeners() {
       b.classList.add('border-gray-700');
     });
     document.getElementById('zoneSection').classList.add('hidden');
+    document.getElementById('addressSection').classList.add('hidden');
     document.getElementById('clientName').value = '';
     document.getElementById('clientCedula').value = '';
     document.getElementById('clientPhone').value = '';
@@ -912,26 +884,29 @@ function setupEventListeners() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
+  // Evento Menú Derecho
   document.getElementById("menuBtn").addEventListener("click", () => {
-    document.getElementById("sideMenu").classList.remove("-translate-x-full");
+    document.getElementById("sideMenu").classList.remove("translate-x-full");
     document.getElementById("overlay").classList.remove("hidden");
   });
+  
   document.getElementById("closeMenu").addEventListener("click", () => {
-    document.getElementById("sideMenu").classList.add("-translate-x-full");
+    document.getElementById("sideMenu").classList.add("translate-x-full");
     document.getElementById("overlay").classList.add("hidden");
   });
 
   document.getElementById("paymentInfoBtn").addEventListener("click", () => {
-    document.getElementById("sideMenu").classList.add("-translate-x-full");
+    document.getElementById("sideMenu").classList.add("translate-x-full");
     openPaymentInfo();
   });
+  
   document.getElementById("closePaymentInfo").addEventListener("click", closePaymentInfo);
 
   document.getElementById("overlay").addEventListener("click", () => {
     closeCart();
     closeCheckout();
     closePaymentInfo();
-    document.getElementById("sideMenu").classList.add("-translate-x-full");
+    document.getElementById("sideMenu").classList.add("translate-x-full");
     document.getElementById("overlay").classList.add("hidden");
   });
 
@@ -955,12 +930,13 @@ function setupEventListeners() {
 
       const zoneSection = document.getElementById("zoneSection");
       const addressSection = document.getElementById("addressSection");
+      
       if (selectedService === "delivery") {
         zoneSection.classList.remove("hidden");
         addressSection.classList.remove("hidden");
       } else {
         zoneSection.classList.add("hidden");
-        addressSection.classList.add("hidden"); // Oculta visualmente si no aplica delivery
+        addressSection.classList.add("hidden");
         selectedZone = null;
       }
       updateCheckoutSummary();
@@ -969,7 +945,7 @@ function setupEventListeners() {
 
   document.getElementById("zoneSelect").addEventListener("change", (e) => {
     const opt = e.target.selectedOptions[0];
-    if (opt.value) {
+    if (opt && opt.value) {
       selectedZone = {
         CodZona: opt.value,
         NombreZona: opt.dataset.name,
@@ -990,13 +966,18 @@ function setupEventListeners() {
   });
 }
 
-var snackbarTimeout = null;
+// ============================================
+// COMPONENTE NOTIFICACIONES (SNACKBAR)
+// ============================================
+let snackbarTimeout = null;
 
 function showSnackbar(message, type, btnText, btnAction) {
   type = type || "error";
-  var sb = document.getElementById("snackbar");
-  var sbText = document.getElementById("snackbarText");
-  var sbBtn = document.getElementById("snackbarBtn");
+  const sb = document.getElementById("snackbar");
+  const sbText = document.getElementById("snackbarText");
+  const sbBtn = document.getElementById("snackbarBtn");
+
+  if(!sb || !sbText || !sbBtn) return;
 
   sbText.textContent = message;
   sb.className = "snackbar " + type;
@@ -1016,14 +997,12 @@ function showSnackbar(message, type, btnText, btnAction) {
   sb.classList.add("show");
 
   if (snackbarTimeout) clearTimeout(snackbarTimeout);
-  var delay = (btnText && btnAction) ? 6000 : 3000;
-  snackbarTimeout = setTimeout(function() {
-    hideSnackbar();
-  }, delay);
+  const delay = (btnText && btnAction) ? 6000 : 3500;
+  snackbarTimeout = setTimeout(hideSnackbar, delay);
 }
 
 function hideSnackbar() {
-  var sb = document.getElementById("snackbar");
+  const sb = document.getElementById("snackbar");
   if(sb) sb.classList.remove("show");
   if (snackbarTimeout) {
     clearTimeout(snackbarTimeout);
@@ -1031,16 +1010,19 @@ function hideSnackbar() {
   }
 }
 
-function selectPaymentMethod(id, label) {
+function selectPaymentMethod(id) {
   document.getElementById("selectedPaymentMethod").value = id;
   document.querySelectorAll('.payment-option').forEach(function(el) {
     el.classList.remove('border-orange-500', 'bg-orange-500/10');
     el.classList.add('border-gray-700');
   });
-  var selected = document.querySelector('input[name="paymentMethod"][value="' + id + '"]').closest('.payment-option');
-  if (selected) {
-    selected.classList.remove('border-gray-700');
-    selected.classList.add('border-orange-500', 'bg-orange-500/10');
+  const radio = document.querySelector(`input[name="paymentMethod"][value="${id}"]`);
+  if (radio) {
+    const container = radio.closest('.payment-option');
+    if (container) {
+      container.classList.remove('border-gray-700');
+      container.classList.add('border-orange-500', 'bg-orange-500/10');
+    }
   }
 }
 
@@ -1048,10 +1030,10 @@ function openPaymentInfo() {
   document.getElementById("paymentInfoModal").classList.remove("hidden");
   document.getElementById("overlay").classList.remove("hidden");
 
-  var content = document.getElementById("paymentInfoContent");
+  const content = document.getElementById("paymentInfoContent");
   content.innerHTML = "";
 
-  var methods = [];
+  let methods = [];
   if (config.CuentaZelle) methods.push({ name: "Zelle", value: config.CuentaZelle, icon: "💳", color: "text-blue-400" });
   if (config.CuentaBinance) methods.push({ name: "Binance Pay", value: config.CuentaBinance, icon: "🅱️", color: "text-yellow-400" });
   if (config.DatosPagoMovil) methods.push({ name: "Pago Móvil", value: config.DatosPagoMovil, icon: "📱", color: "text-green-400" });
@@ -1070,9 +1052,9 @@ function openPaymentInfo() {
           <span class="font-bold ${m.color}">${m.name}</span>
         </div>
         <p class="text-sm text-gray-300 break-all font-mono bg-black/30 rounded-lg p-2">${m.value}</p>
-        <button onclick="copyToClipboard('${m.value.replace(/'/g, "\'")}')" class="mt-2 text-xs text-orange-400 hover:text-orange-300 font-semibold flex items-center gap-1">
+        <button onclick="copyToClipboard('${m.value.replace(/'/g, "\\'")}')" class="mt-2 text-xs text-orange-400 hover:text-orange-300 font-semibold flex items-center gap-1">
           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-          Copiar
+          Copiar datos
         </button>
       </div>
     `;
@@ -1080,25 +1062,25 @@ function openPaymentInfo() {
 
   content.innerHTML += `
     <div class="mt-4 p-3 bg-orange-500/10 rounded-xl border border-orange-500/20">
-      <p class="text-xs text-orange-300 text-center">💡 Al confirmar tu pedido, te enviaremos estos datos por WhatsApp para que realices el pago</p>
+      <p class="text-xs text-orange-300 text-center">💡 Recuerda reportar tu referencia para procesar el despacho de la cocina.</p>
     </div>
   `;
 }
 
 function closePaymentInfo() {
   document.getElementById("paymentInfoModal").classList.add("hidden");
-  if (!document.getElementById("cartSidebar").classList.contains("translate-x-full") ||
-      !document.getElementById("checkoutModal").classList.contains("hidden")) {
-  } else {
+  if (document.getElementById("sideMenu").classList.contains("translate-x-full") &&
+      document.getElementById("cartSidebar").classList.contains("translate-x-full") &&
+      document.getElementById("checkoutModal").classList.contains("hidden")) {
     document.getElementById("overlay").classList.add("hidden");
   }
 }
 
 function copyToClipboard(text) {
   navigator.clipboard.writeText(text).then(function() {
-    showSnackbar("Copiado al portapapeles", "success");
+    showSnackbar("Copiado al portapapeles con éxito", "success");
   }).catch(function() {
-    showSnackbar("No se pudo copiar", "error");
+    showSnackbar("No se pudo copiar de forma automática", "error");
   });
 }
 
