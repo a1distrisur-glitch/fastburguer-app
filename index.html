@@ -35,7 +35,7 @@
 </head>
 <body class="min-h-screen">
 
-<header class="fixed top-0 left-0 right-0 z-50 glass flex flex-col">
+<<header class="fixed top-0 left-0 right-0 z-50 glass flex flex-col">
   <div class="max-w-7xl w-full mx-auto px-4 py-3 flex items-center justify-between">
     <div class="flex items-center gap-3">
       <button id="menuBtn" class="p-2 rounded-xl bg-gray-800 border border-gray-700 hover:bg-orange-500/20 text-orange-400 hover:text-orange-500 transition" aria-label="Abrir Menú">
@@ -75,7 +75,7 @@
   </div>
 </div>
 
-<main class="pt-[130px] pb-32 px-4 max-w-7xl mx-auto">
+<<main class="pt-[130px] pb-32 px-4 max-w-7xl mx-auto">
   <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
     <div class="col-span-full flex items-center justify-center py-20">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
@@ -250,8 +250,18 @@
       </button>
     </div>
     <div class="p-6 flex-1">
+      <!-- Vista lista de pedidos -->
       <div id="ordersContent" class="space-y-4">
          <p class="text-center text-gray-500 py-4">Buscando pedidos...</p>
+      </div>
+      <!-- Vista ítems de un pedido (inicialmente oculta) -->
+      <div id="orderItemsView" class="hidden">
+        <button id="backToOrdersBtn" class="flex items-center gap-1 px-3 py-2 mb-4 hover:bg-white/10 rounded-lg transition text-sm font-semibold text-orange-400">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          Regresar a Pedidos
+        </button>
+        <h3 id="itemsOrderTitle" class="text-lg font-bold text-white mb-3"></h3>
+        <div id="orderItemsList" class="space-y-3"></div>
       </div>
     </div>
   </div>
@@ -287,11 +297,11 @@
     <nav class="space-y-2">
       <a href="index.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-orange-500/20 text-orange-400 font-bold border border-orange-500/30">
         <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-        Menú Catálogo
+        Menu Catalogo
       </a>
       <button id="myOrdersBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white font-semibold transition text-left border border-transparent">
         <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-        Pedido
+        Mis Pedidos
       </button>
       <button id="paymentInfoBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white font-semibold transition text-left border border-transparent">
         <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
@@ -318,7 +328,8 @@
 // ============================================
 // CONFIGURACION Y ESTADO GENERAL
 // ============================================
-const API_URL = "https://script.google.com/macros/s/AKfycbxADTPJUAhvkuB0xZPBTXQVfuiDS1Sr3Wn4grfFAabGZaZ82C1xrQWxRWO2fEsBtWJt/exec";
+// Reemplaza la URL anterior por esta nueva versión limpia:
+const API_URL = "https://script.google.com/macros/s/AKfycbwaHA4SZAitO-Ai8H9ea_z6SyPcOAUGZQuP9CXHsiYdOMgRZdYkGdi5T_IocTDbZ6Fidg/exec";
 const PLACEHOLDER_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect fill='%23333' width='400' height='400'/%3E%3Ctext fill='%23666' font-family='sans-serif' font-size='24' dy='10.5' font-weight='bold' x='50%25' y='50%25' text-anchor='middle'%3E🍔%3C/text%3E%3C/svg%3E";
 
 let products = [];
@@ -331,6 +342,7 @@ let tasas = {};
 let config = {};
 let selectedService = "";
 let selectedZone = null;
+let currentClientPhone = localStorage.getItem("fb_client_phone") || "";
 
 document.addEventListener("DOMContentLoaded", init);
 
@@ -349,7 +361,7 @@ function mostrarAlerta(tipo, titulo, mensaje, callback = null, btnText = "Acepta
   actionBtn.textContent = btnText;
 
   if (tipo === "error") {
-    iconContainer.className = "mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-red-500/20 text-red-500";
+    iconContainer.className = "mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-blue-500/20 text-blue-500";
     iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
   } else {
     iconContainer.className = "mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-green-500/20 text-green-500";
@@ -369,9 +381,29 @@ function mostrarAlerta(tipo, titulo, mensaje, callback = null, btnText = "Acepta
 async function init() {
   showLoading();
   try {
-    await Promise.all([
-      loadConfig(), loadCategories(), loadProducts(), loadZones(), loadPaymentMethods()
-    ]);
+    const r = await apiGet("init");
+    if (!r.success) throw new Error("Respuesta inválida del servidor");
+
+    // Desempaquetar respuesta única
+    config = r.data.config || {};
+    categories = r.data.categorias || [];
+    zones = r.data.zonas || [];
+    paymentMethods = r.data.formasPago || [];
+
+    // Mapear tasas de array nativo a objeto plano {USD: val, BS: 1, EUR: val, BN: val}
+    const tasasArray = r.data.tasas || [];
+    tasas = { BS: 1 };
+    tasasArray.forEach(t => {
+      const simbolo = t.SimboloTasa || t.CodTasa;
+      if (simbolo) tasas[simbolo] = parseFloat(t.ValorTasa) || 0;
+    });
+
+    // Procesar productos: calcular PrecioConvertido en cliente
+    products = (r.data.productos || []).map(p => ({
+      ...p,
+      PrecioConvertido: calcularPrecioConvertido(parseFloat(p.PrecioDolar) || 0, currentCurrency)
+    }));
+
     renderCategories();
     renderProducts();
     updateStoreStatus();
@@ -388,6 +420,15 @@ function showLoading() {
     </div>`;
 }
 
+function calcularPrecioConvertido(precioUSD, moneda) {
+  if (!tasas || !tasas.USD) return precioUSD;
+  const precioEnBS = precioUSD * tasas.USD;
+  if (moneda === "USD") return precioUSD;
+  if (moneda === "BS") return precioEnBS;
+  const destRate = tasas[moneda];
+  return (!destRate || destRate === 0) ? precioEnBS : precioEnBS / destRate;
+}
+
 async function apiGet(action, params) {
   let url = API_URL + "?action=" + action;
   if (params) for (let key in params) url += "&" + key + "=" + encodeURIComponent(params[key]);
@@ -402,12 +443,18 @@ async function apiPost(data) {
   return res.json();
 }
 
-// Funciones de obtención
-async function loadConfig() { try { const r = await apiGet("config"); if(r.success) config = r.data; } catch(e){} }
-async function loadCategories() { try { const r = await apiGet("categorias"); if(r.success) categories = r.data; } catch(e){} }
-async function loadProducts() { try { const r = await apiGet("productos", { moneda: currentCurrency }); if(r.success) { products = r.data; tasas = r.tasas; } } catch(e){} }
-async function loadZones() { try { const r = await apiGet("zonas"); if(r.success) zones = r.data; } catch(e){} }
-async function loadPaymentMethods() { try { const r = await apiGet("formaspago"); if(r.success) paymentMethods = r.data; } catch(e){} }
+// Funciones de obtención (ahora recálculo local tras carga inicial única)
+async function loadConfig() { /* Datos ya cargados en init() */ }
+async function loadCategories() { /* Datos ya cargados en init() */ }
+async function loadProducts() {
+  // Recalcular PrecioConvertido localmente cuando cambia la moneda
+  products = products.map(p => ({
+    ...p,
+    PrecioConvertido: calcularPrecioConvertido(parseFloat(p.PrecioDolar) || 0, currentCurrency)
+  }));
+}
+async function loadZones() { /* Datos ya cargados en init() */ }
+async function loadPaymentMethods() { /* Datos ya cargados en init() */ }
 
 function updateStoreStatus() {
   const statusEl = document.getElementById("storeStatus");
@@ -582,13 +629,22 @@ function openCheckout() {
   const zSel = document.getElementById("zoneSelect");
   zSel.innerHTML = '<option value="">Selecciona una zona</option>';
   zones.forEach(z => zSel.innerHTML += `<option value="${z.CodZona}" data-name="${z.NombreZona}" data-tarifa="${z.TarifaZona}">${z.NombreZona} - ${formatearPrecio(convertirPrecioDelivery(z.TarifaZona), currentCurrency)}</option>`);
-  
+
   const pSel = document.getElementById("paymentSelect");
   pSel.innerHTML = '<option value="">Seleccione cómo pagará</option>';
-  if (config.CuentaZelle) pSel.innerHTML += `<option value="zelle" data-label="Zelle" data-val="${config.CuentaZelle}">Zelle</option>`;
-  if (config.CuentaBinance) pSel.innerHTML += `<option value="binance" data-label="Binance Pay" data-val="${config.CuentaBinance}">Binance Pay</option>`;
-  if (config.DatosPagoMovil) pSel.innerHTML += `<option value="pagomovil" data-label="Pago Móvil" data-val="${config.DatosPagoMovil}">Pago Móvil</option>`;
-  if (config.DatosTransferencia) pSel.innerHTML += `<option value="transferencia" data-label="Transferencia" data-val="${config.DatosTransferencia}">Transferencia</option>`;
+  
+  // Buscar CodTasa de cada forma de pago desde paymentMethods
+  const getCodTasa = (codPago) => {
+    const pm = paymentMethods.find(p => p.CodPago === codPago);
+    return pm ? pm.CodTasa : "T001";
+  };
+  
+  if (config.CuentaZelle) pSel.innerHTML += `<option value="zelle" data-label="Zelle" data-val="${config.CuentaZelle}" data-codtasa="${getCodTasa('F006')}">Zelle</option>`;
+  if (config.CuentaBinance) pSel.innerHTML += `<option value="binance" data-label="Binance Pay" data-val="${config.CuentaBinance}" data-codtasa="${getCodTasa('F008')}">Binance Pay</option>`;
+  if (config.DatosPagoMovil) pSel.innerHTML += `<option value="pagomovil" data-label="Pago Móvil" data-val="${config.DatosPagoMovil}" data-codtasa="${getCodTasa('F002')}">Pago Móvil</option>`;
+  if (config.DatosTransferencia) pSel.innerHTML += `<option value="transferencia" data-label="Transferencia" data-val="${config.DatosTransferencia}" data-codtasa="${getCodTasa('F003')}">Transferencia</option>`;
+
+
 
   // Reset Payment Info
   document.getElementById("paymentSelectedInfo").innerHTML = "";
@@ -603,6 +659,11 @@ function nextCheckoutStep() {
 
   if (phone.length !== 7) return mostrarAlerta("error", "Dato inválido", "El número de WhatsApp debe tener 7 dígitos exactos.");
   if (!name) return mostrarAlerta("error", "Faltan datos", "Escribe tu nombre completo.");
+
+  // Guardar identidad del cliente para Mis Pedidos
+  const prefix = document.getElementById("phonePrefix").value;
+  currentClientPhone = prefix + phone;
+  localStorage.setItem("fb_client_phone", currentClientPhone);
 
   document.getElementById("checkoutStep1").classList.add("hidden");
   document.getElementById("checkoutStep2").classList.remove("hidden");
@@ -657,7 +718,7 @@ async function confirmOrder() {
     codZone: selectedZone ? selectedZone.CodZona : "",
     zona: selectedZone ? selectedZone.NombreZona : "N/A",
     moneda: currentCurrency,
-    codTasa: config.CodTasa || "T001",
+    codTasa: pOpt.dataset.codtasa || "T001",
     codFormaPago: paySelect.value,
     desPago: payLabel + ": " + payVal,
     items: cart, subtotal: subtotal, delivery: delivery, total: total, observations: obs
@@ -675,7 +736,7 @@ async function confirmOrder() {
       if(!misPedidos.includes(res.nroPedido)) misPedidos.push(res.nroPedido);
       localStorage.setItem("mis_pedidos_fb", JSON.stringify(misPedidos));
 
-      showConfirmation(res.nroPedido, payLabel, payVal, total);
+      showConfirmation(res.nroPedido, payLabel, payVal, total, cart, address, selectedService);
       cart = []; updateCartUI(); closeCheckout();
     } else {
       mostrarAlerta("error", "Error", res.error || "No se pudo registrar.");
@@ -686,12 +747,31 @@ async function confirmOrder() {
   }
 }
 
-function showConfirmation(nro, label, val, total) {
+function showConfirmation(nro, label, val, total, items, direccion, tipoServicio) {
   document.getElementById("confirmationModal").classList.remove("hidden");
   document.getElementById("orderNumber").textContent = nro;
   document.getElementById("paymentInfo").innerHTML = `<p class="text-xs text-gray-400 mb-1">${label}</p><p class="text-sm text-white font-mono mb-2">${val}</p><p class="font-bold text-orange-400">Total a transferir: ${formatearPrecio(total, currentCurrency)}</p>`;
   
-  const msg = `¡Hola! Acabo de realizar el pedido *${nro}*. Por un monto de ${formatearPrecio(total, currentCurrency)}. Pagaré vía ${label}.`;
+  // Construir lista de ítems para WhatsApp
+  let itemsText = "";
+
+  items.forEach((item, idx) => {
+    itemsText += `${idx + 1}. ${item.cantidad}x ${item.DesProducto} - ${formatearPrecio(item.subtotalItem, currentCurrency)}\n`;
+  });
+  
+  // Construir mensaje completo
+  let msg = `¡Hola! Acabo de realizar el pedido *${nro}*.\n\n`;
+  msg += `*Productos:*\n${itemsText}\n`;
+  msg += `*Total:* ${formatearPrecio(total, currentCurrency)}\n`;
+  msg += `*Pago:* ${label}\n`;
+  
+  // Agregar dirección solo si es delivery
+  if (tipoServicio === "delivery" && direccion && direccion.trim() !== "") {
+    msg += `*Dirección:* ${direccion}\n`;
+  }
+
+
+  
   const waNumber = "58" + (config.WhatsAppNegocio || "").replace(/^0/, "");
   document.getElementById("whatsappBtn").href = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
 }
@@ -705,21 +785,20 @@ async function openMyOrders() {
   document.getElementById("overlay").classList.remove("hidden");
   const container = document.getElementById("ordersContent");
   
-  let locales = JSON.parse(localStorage.getItem("mis_pedidos_fb") || "[]");
-  if (locales.length === 0) {
-    container.innerHTML = `<p class="text-center text-gray-500 py-10">No tienes pedidos pendientes registrados en este dispositivo.</p>`;
+  // Si no hay cliente identificado, mostrar vacío inmediatamente
+  if (!currentClientPhone) {
+    container.innerHTML = `<p class="text-center text-gray-500 py-10">Aún no hay Pedidos Pendientes</p>`;
     return;
   }
   
   container.innerHTML = `<div class="flex justify-center py-10"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div></div>`;
   
   try {
-    const res = await apiGet("pedidos");
+    const res = await apiGet("pedidos", { telefono: currentClientPhone });
     if (res.success) {
-      // Filtrar estricto: Pertenece a locales AND estado es Pendiente
-      const mios = res.data.filter(p => locales.includes(p.NroPedido) && String(p.Estado).trim() === "Pendiente");
+      const mios = res.data; // Backend ya filtra por teléfono y estado Pendiente
       if (mios.length === 0) {
-         container.innerHTML = `<p class="text-center text-gray-500 py-10">Actualmente no tienes pedidos pendientes.</p>`;
+         container.innerHTML = `<p class="text-center text-gray-500 py-10">Aún no hay Pedidos Pendientes</p>`;
          return;
       }
       let html = "";
@@ -730,11 +809,21 @@ async function openMyOrders() {
             <span class="font-bold text-orange-400">${p.NroPedido}</span>
             <span class="text-xs text-yellow-500 font-bold">${p.Estado}</span>
           </div>
-          <div class="flex justify-between text-sm text-gray-300 mb-1"><span>Fecha:</span> <span>${p.FechaPedido.substring(0,10)}</span></div>
-          <div class="flex justify-between text-sm text-gray-300"><span>Monto:</span> <span class="font-bold text-white">$${parseFloat(p.TotalPedido).toFixed(2)}</span></div>
-        </div>`;
+
+        <div class="flex justify-between text-sm text-gray-300 mb-1"><span>Fecha:</span> <span>${p.FechaPedido.substring(0,10)}</span></div>
+        <div class="flex justify-between text-sm text-gray-300 mb-2"><span>Monto:</span> <span class="font-bold text-white">${formatearPrecio(p.TotalPedido, p.Moneda)}</span></div>
+        <button class="view-items-btn w-full py-2 rounded-lg border border-orange-500/30 text-orange-400 text-sm font-semibold hover:bg-orange-500/10 transition" data-nro="${p.NroPedido}" data-moneda="${p.Moneda}">
+          Ver Ítems
+        </button>
+      </div>`;
+
       });
       container.innerHTML = html;
+
+      container.querySelectorAll(".view-items-btn").forEach(btn => {
+        btn.addEventListener("click", () => showOrderItems(btn.dataset.nro, btn.dataset.moneda));
+      });
+
     } else {
       container.innerHTML = `<p class="text-center text-red-500 py-10">No se pudo cargar la información.</p>`;
     }
@@ -760,7 +849,7 @@ function setupEventListeners() {
   
   document.getElementById("myOrdersBtn").addEventListener("click", openMyOrders);
   document.getElementById("closeOrdersModal").addEventListener("click", () => { document.getElementById("ordersModal").classList.add("hidden"); checkOverlay(); });
-
+  document.getElementById("backToOrdersBtn").addEventListener("click", backToOrders);
   document.getElementById("paymentInfoBtn").addEventListener("click", () => {
     document.getElementById("sideMenu").classList.add("-translate-x-full");
     document.getElementById("paymentInfoModal").classList.remove("hidden");
@@ -847,8 +936,126 @@ function setupEventListeners() {
   });
   
   document.getElementById("clientPhone").addEventListener("input", e => e.target.value = e.target.value.replace(/\D/g, "").slice(0, 7));
+
+////////
+
+document.getElementById("clientPhone").addEventListener("input", async (e) => {
+    // 1. Limpieza y validación de 7 dígitos
+    let val = e.target.value.replace(/\D/g, "").slice(0, 7);
+    e.target.value = val;
+    
+    // 2. Disparar búsqueda automática al completar el número
+    if (val.length === 7) {
+      const prefix = document.getElementById("phonePrefix").value;
+      const fullPhone = prefix + val;
+      
+      try {
+        const res = await apiGet("clientes", { telefono: fullPhone });
+        
+        if (res.success && res.data.length > 0) {
+          const cli = res.data[0];
+          
+          // Cargar Nombre
+          if (cli.DesCliente) {
+            document.getElementById("clientName").value = cli.DesCliente;
+          }
+          
+          // Cargar Cédula/RIF y desplegar contenedor
+          if (cli.CedulaRifCliente) {
+            const match = String(cli.CedulaRifCliente).match(/^([VEJGPC])[-]?(\d+)$/i);
+            if (match) {
+               document.getElementById("docPrefix").value = match[1].toUpperCase();
+               document.getElementById("clientCedula").value = match[2];
+            } else {
+               document.getElementById("clientCedula").value = cli.CedulaRifCliente;
+            }
+            document.getElementById("checkCedula").checked = true;
+            document.getElementById("containerCedula").classList.remove("hidden");
+          }
+          
+          // Cargar Dirección
+          if (cli.DirCliente) {
+            document.getElementById("clientAddress").value = cli.DirCliente;
+          }
+        }
+      } catch (err) {
+        console.error("Fallo al recuperar datos del cliente:", err);
+      }
+      
+      // Guardar identidad del cliente para Mis Pedidos
+      currentClientPhone = prefix + val;
+      localStorage.setItem("fb_client_phone", currentClientPhone);
+    }
+  });
+
+  // Listener para re-ejecutar búsqueda si el usuario cambia el prefijo (0414, 0424, etc)
+  document.getElementById("phonePrefix").addEventListener("change", () => {
+    const input = document.getElementById("clientPhone");
+    if (input.value.length === 7) {
+      input.dispatchEvent(new Event("input"));
+    }
+  });
+
+
+/////////
+
+
   document.getElementById("clientCedula").addEventListener("input", e => e.target.value = e.target.value.replace(/\D/g, "").slice(0, 9));
 }
+
+// ============================================
+// VER ÍTEMS DE UN PEDIDO
+// ============================================
+async function showOrderItems(nroPedido, moneda) {
+  const ordersContent = document.getElementById("ordersContent");
+  const orderItemsView = document.getElementById("orderItemsView");
+  const orderItemsList = document.getElementById("orderItemsList");
+  const itemsOrderTitle = document.getElementById("itemsOrderTitle");
+  
+  // Ocultar lista de pedidos, mostrar vista de ítems
+  ordersContent.classList.add("hidden");
+  orderItemsView.classList.remove("hidden");
+  
+  itemsOrderTitle.textContent = "Pedido " + nroPedido;
+  orderItemsList.innerHTML = `<div class="flex justify-center py-6"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div></div>`;
+  
+  try {
+    const res = await apiGet("pedidoItems", { nroPedido: nroPedido });
+    if (res.success && res.data.length > 0) {
+      let html = "";
+      res.data.forEach(item => {
+        html += `
+        <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-3">
+          <div class="flex justify-between items-start mb-1">
+            <span class="font-bold text-sm text-white">${item.DesProducto || "Producto"}</span>
+            <span class="text-xs text-orange-400 font-bold">x${item.Cantidad || 0}</span>
+          </div>
+          <p class="text-xs text-gray-400 mb-2">${item.DesCategoria || ""}</p>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-400">Precio unit:</span>
+            <span class="text-white font-mono">${formatearPrecio(item.PrecioUnitario || 0, moneda)}</span>
+          </div>
+          <div class="flex justify-between text-sm font-bold border-t border-gray-700 pt-1 mt-1">
+            <span class="text-gray-300">Subtotal:</span>
+            <span class="text-orange-400">${formatearPrecio(item.SubtotalItem || 0, moneda)}</span>
+          </div>
+        </div>`;
+      });
+      orderItemsList.innerHTML = html;
+    } else {
+      orderItemsList.innerHTML = `<p class="text-center text-gray-500 py-6">No se encontraron ítems para este pedido.</p>`;
+    }
+  } catch (e) {
+    orderItemsList.innerHTML = `<p class="text-center text-red-500 py-6">Error al cargar los ítems.</p>`;
+  }
+}
+
+function backToOrders() {
+  document.getElementById("ordersContent").classList.remove("hidden");
+  document.getElementById("orderItemsView").classList.add("hidden");
+  document.getElementById("orderItemsList").innerHTML = "";
+}
+
 
 function checkOverlay() {
   if (document.getElementById("sideMenu").classList.contains("-translate-x-full") &&
