@@ -31,11 +31,12 @@
   .fade-in{animation:fadeIn 0.4s ease-out;}
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
   .content-auto{content-visibility:auto;contain-intrinsic-size:auto 350px;}
+  .step-hidden{display:none !important;}
 </style>
 </head>
 <body class="min-h-screen">
 
-<<header class="fixed top-0 left-0 right-0 z-50 glass flex flex-col">
+<header class="fixed top-0 left-0 right-0 z-50 glass flex flex-col">
   <div class="max-w-7xl w-full mx-auto px-4 py-3 flex items-center justify-between">
     <div class="flex items-center gap-3">
       <button id="menuBtn" class="p-2 rounded-xl bg-gray-800 border border-gray-700 hover:bg-orange-500/20 text-orange-400 hover:text-orange-500 transition" aria-label="Abrir Menú">
@@ -75,7 +76,7 @@
   </div>
 </div>
 
-<<main class="pt-[130px] pb-32 px-4 max-w-7xl mx-auto">
+<main class="pt-[130px] pb-32 px-4 max-w-7xl mx-auto">
   <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
     <div class="col-span-full flex items-center justify-center py-20">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
@@ -108,7 +109,7 @@
 
 <div id="checkoutModal" class="fixed inset-0 z-[80] bg-black/80 flex items-center justify-center p-4 hidden">
   <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto relative border border-white/10 shadow-2xl">
-    
+
     <div class="p-6 sticky top-0 bg-[#1a1a1a] border-b border-white/5 z-10 flex items-center justify-between">
       <h2 class="text-2xl font-black text-white">Confirmar Pedido</h2>
       <button id="closeCheckout" class="flex items-center gap-1 px-3 py-2 hover:bg-white/10 rounded-lg transition text-sm font-semibold text-gray-300">
@@ -117,8 +118,9 @@
     </div>
 
     <div class="p-6">
+      <!-- PASO 1: DATOS DEL CLIENTE -->
       <div id="checkoutStep1" class="space-y-5 fade-in">
-        
+
         <div>
           <label class="block text-sm font-semibold mb-1 text-gray-300">WhatsApp <span class="text-orange-500">*</span></label>
           <div class="flex gap-2">
@@ -126,8 +128,15 @@
               <option value="0412">0412</option><option value="0414">0414</option><option value="0416">0416</option>
               <option value="0422">0422</option><option value="0424">0424</option><option value="0426">0426</option>
             </select>
-            <input type="tel" id="clientPhone" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500" placeholder="1234567" maxlength="7">
+            <div class="flex-1 relative">
+              <input type="tel" id="clientPhone" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500" placeholder="1234567" maxlength="7">
+            </div>
           </div>
+          <div id="phoneSearchIndicator" class="hidden text-xs text-orange-400 mt-1.5 flex items-center gap-1.5">
+            <svg class="animate-spin h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            Buscando cliente...
+          </div>
+          <button id="changePhoneBtn" class="hidden text-xs text-orange-400 hover:text-orange-300 underline mt-1.5 font-medium">Cambiar número</button>
         </div>
 
         <div>
@@ -171,8 +180,9 @@
         </button>
       </div>
 
+      <!-- PASO 2: TIPO DE SERVICIO -->
       <div id="checkoutStep2" class="space-y-5 hidden fade-in">
-        
+
         <div>
           <label class="block text-sm font-semibold mb-2 text-gray-300">Tipo de servicio <span class="text-orange-500">*</span></label>
           <div class="grid grid-cols-3 gap-2">
@@ -187,6 +197,7 @@
           <select id="zoneSelect" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500">
             <option value="">Selecciona una zona</option>
           </select>
+          <p id="zoneDisabledMsg" class="hidden text-xs text-gray-500 mt-1">No hay zonas disponibles actualmente. El delivery no tiene costo.</p>
         </div>
 
         <div id="addressSection" class="hidden fade-in">
@@ -194,13 +205,26 @@
           <textarea id="clientAddress" rows="2" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 resize-none" placeholder="Casa, calle, urbanización..."></textarea>
         </div>
 
-        <div class="border-t border-white/5 pt-3">
+        <div class="flex gap-2 mt-6">
+          <button id="backStep1Btn" class="px-5 py-3 rounded-xl font-bold text-gray-400 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition">
+            Atrás
+          </button>
+          <button id="nextStep2Btn" class="flex-1 btn-primary py-3 rounded-xl font-bold text-white transition">
+            Siguiente
+          </button>
+        </div>
+      </div>
+
+      <!-- PASO 3: DATOS DE PAGO Y TOTALES -->
+      <div id="checkoutStep3" class="space-y-5 hidden fade-in">
+
+        <div>
           <label class="block text-sm font-semibold mb-2 text-gray-300">Datos de Pago <span class="text-orange-500">*</span></label>
           <select id="paymentSelect" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500">
             <option value="">Seleccione cómo pagará</option>
           </select>
           <div id="paymentSelectedInfo" class="hidden mt-3 bg-gray-800/60 border border-gray-700 rounded-xl p-4 text-sm text-gray-300 fade-in">
-            </div>
+          </div>
         </div>
 
         <div class="bg-gray-800/50 rounded-xl p-4 space-y-2 border border-gray-700 mt-6">
@@ -212,7 +236,7 @@
         </div>
 
         <div class="flex gap-2 mt-4">
-          <button id="backStepBtn" class="px-5 py-3 rounded-xl font-bold text-gray-400 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition">
+          <button id="backStep2Btn" class="px-5 py-3 rounded-xl font-bold text-gray-400 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition">
             Atrás
           </button>
           <button id="confirmOrderBtn" class="flex-1 btn-primary py-3 rounded-xl font-bold text-white transition">
@@ -250,11 +274,9 @@
       </button>
     </div>
     <div class="p-6 flex-1">
-      <!-- Vista lista de pedidos -->
       <div id="ordersContent" class="space-y-4">
          <p class="text-center text-gray-500 py-4">Buscando pedidos...</p>
       </div>
-      <!-- Vista ítems de un pedido (inicialmente oculta) -->
       <div id="orderItemsView" class="hidden">
         <button id="backToOrdersBtn" class="flex items-center gap-1 px-3 py-2 mb-4 btn-primary rounded-lg transition text-sm font-bold text-white shadow-lg hover:scale-[1.02]">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
@@ -328,7 +350,6 @@
 // ============================================
 // CONFIGURACION Y ESTADO GENERAL
 // ============================================
-// Reemplaza la URL anterior por esta nueva versión limpia:
 const API_URL = "https://script.google.com/macros/s/AKfycbwaHA4SZAitO-Ai8H9ea_z6SyPcOAUGZQuP9CXHsiYdOMgRZdYkGdi5T_IocTDbZ6Fidg/exec";
 const PLACEHOLDER_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect fill='%23333' width='400' height='400'/%3E%3Ctext fill='%23666' font-family='sans-serif' font-size='24' dy='10.5' font-weight='bold' x='50%25' y='50%25' text-anchor='middle'%3E🍔%3C/text%3E%3C/svg%3E";
 
@@ -343,6 +364,15 @@ let config = {};
 let selectedService = "";
 let selectedZone = null;
 let currentClientPhone = localStorage.getItem("fb_client_phone") || "";
+let savedClientData = null;
+
+// Mapeo CodPago -> campo en config para mostrar info de pago
+const PAYMENT_CONFIG_MAP = {
+  'F001': { key: 'DatosPagoMovil', label: 'Pago Móvil' },
+  'F002': { key: 'DatosTransferencia', label: 'Transferencia' },
+  'F004': { key: 'CuentaZelle', label: 'Zelle' },
+  'F005': { key: 'CuentaBinance', label: 'Binance' }
+};
 
 document.addEventListener("DOMContentLoaded", init);
 
@@ -384,13 +414,11 @@ async function init() {
     const r = await apiGet("init");
     if (!r.success) throw new Error("Respuesta inválida del servidor");
 
-    // Desempaquetar respuesta única
     config = r.data.config || {};
     categories = r.data.categorias || [];
     zones = r.data.zonas || [];
     paymentMethods = r.data.formasPago || [];
 
-    // Mapear tasas de array nativo a objeto plano {USD: val, BS: 1, EUR: val, BN: val}
     const tasasArray = r.data.tasas || [];
     tasas = { BS: 1 };
     tasasArray.forEach(t => {
@@ -398,7 +426,6 @@ async function init() {
       if (simbolo) tasas[simbolo] = parseFloat(t.ValorTasa) || 0;
     });
 
-    // Procesar productos: calcular PrecioConvertido en cliente
     products = (r.data.productos || []).map(p => ({
       ...p,
       PrecioConvertido: calcularPrecioConvertido(parseFloat(p.PrecioDolar) || 0, currentCurrency)
@@ -442,19 +469,6 @@ async function apiPost(data) {
   });
   return res.json();
 }
-
-// Funciones de obtención (ahora recálculo local tras carga inicial única)
-async function loadConfig() { /* Datos ya cargados en init() */ }
-async function loadCategories() { /* Datos ya cargados en init() */ }
-async function loadProducts() {
-  // Recalcular PrecioConvertido localmente cuando cambia la moneda
-  products = products.map(p => ({
-    ...p,
-    PrecioConvertido: calcularPrecioConvertido(parseFloat(p.PrecioDolar) || 0, currentCurrency)
-  }));
-}
-async function loadZones() { /* Datos ya cargados en init() */ }
-async function loadPaymentMethods() { /* Datos ya cargados en init() */ }
 
 function updateStoreStatus() {
   const statusEl = document.getElementById("storeStatus");
@@ -591,7 +605,7 @@ function updateCartUI() {
   const subtotal = cart.reduce((sum, item) => sum + item.subtotalItem, 0);
   const totalItems = cart.reduce((sum, item) => sum + item.cantidad, 0);
   const delivery = selectedService === "delivery" && selectedZone ? convertirPrecioDelivery(selectedZone.TarifaZona) : 0;
-  
+
   if (totalItems > 0) { countEl.textContent = totalItems; countEl.classList.remove("hidden"); } 
   else { countEl.classList.add("hidden"); }
 
@@ -629,7 +643,7 @@ function convertirPrecioDelivery(tarifaUSD) {
 }
 
 // ============================================
-// FLUJO DE CHECKOUT EN 2 PASOS
+// FLUJO DE CHECKOUT EN 3 PASOS
 // ============================================
 function openCart() { document.getElementById("cartSidebar").classList.remove("translate-x-full"); document.getElementById("overlay").classList.remove("hidden"); }
 function closeCart() { document.getElementById("cartSidebar").classList.add("translate-x-full"); checkOverlay(); }
@@ -645,61 +659,91 @@ function openCheckout() {
   // Reset Pasos
   document.getElementById("checkoutStep1").classList.remove("hidden");
   document.getElementById("checkoutStep2").classList.add("hidden");
-
-  // Poblar Selectores
-  const zSel = document.getElementById("zoneSelect");
-  zSel.innerHTML = '<option value="">Selecciona una zona</option>';
-  zones.forEach(z => zSel.innerHTML += `<option value="${z.CodZona}" data-name="${z.NombreZona}" data-tarifa="${z.TarifaZona}">${z.NombreZona} - ${formatearPrecio(convertirPrecioDelivery(z.TarifaZona), currentCurrency)}</option>`);
-
-  const pSel = document.getElementById("paymentSelect");
-  pSel.innerHTML = '<option value="">Seleccione cómo pagará</option>';
-  
-  // Buscar CodTasa de cada forma de pago desde paymentMethods
-  const getCodTasa = (codPago) => {
-    const pm = paymentMethods.find(p => p.CodPago === codPago);
-    return pm ? pm.CodTasa : "T001";
-  };
-  
-  if (config.CuentaZelle) pSel.innerHTML += `<option value="zelle" data-label="Zelle" data-val="${config.CuentaZelle}" data-codtasa="${getCodTasa('F006')}">Zelle</option>`;
-  if (config.CuentaBinance) pSel.innerHTML += `<option value="binance" data-label="Binance Pay" data-val="${config.CuentaBinance}" data-codtasa="${getCodTasa('F008')}">Binance Pay</option>`;
-  if (config.DatosPagoMovil) pSel.innerHTML += `<option value="pagomovil" data-label="Pago Móvil" data-val="${config.DatosPagoMovil}" data-codtasa="${getCodTasa('F002')}">Pago Móvil</option>`;
-  if (config.DatosTransferencia) pSel.innerHTML += `<option value="transferencia" data-label="Transferencia" data-val="${config.DatosTransferencia}" data-codtasa="${getCodTasa('F003')}">Transferencia</option>`;
-
-
+  document.getElementById("checkoutStep3").classList.add("hidden");
 
   // Reset Payment Info
   document.getElementById("paymentSelectedInfo").innerHTML = "";
   document.getElementById("paymentSelectedInfo").classList.add("hidden");
 
+  // Poblar Zonas
+  const zSel = document.getElementById("zoneSelect");
+  const zoneMsg = document.getElementById("zoneDisabledMsg");
+  zSel.innerHTML = '<option value="">Selecciona una zona</option>';
+
+  if (zones.length === 0) {
+    zSel.disabled = true;
+    zoneMsg.classList.remove("hidden");
+  } else {
+    zSel.disabled = false;
+    zoneMsg.classList.add("hidden");
+    zones.forEach(z => {
+      zSel.innerHTML += `<option value="${z.CodZona}" data-name="${z.NombreZona}" data-tarifa="${z.TarifaZona}">${z.NombreZona} - ${formatearPrecio(convertirPrecioDelivery(z.TarifaZona), currentCurrency)}</option>`;
+    });
+  }
+
+  // Poblar Formas de Pago (dinámico desde paymentMethods ya filtradas por Activo en backend)
+  const pSel = document.getElementById("paymentSelect");
+  pSel.innerHTML = '<option value="">Seleccione cómo pagará</option>';
+  paymentMethods.forEach(pm => {
+    pSel.innerHTML += `<option value="${pm.CodPago}" data-codtasa="${pm.CodTasa}" data-despago="${pm.DesPago}">${pm.DesPago}</option>`;
+  });
+
   updateCheckoutSummary();
 }
 
-function nextCheckoutStep() {
+function nextCheckoutStep1() {
   const phone = document.getElementById("clientPhone").value.trim();
   const name = document.getElementById("clientName").value.trim();
 
   if (phone.length !== 7) return mostrarAlerta("error", "Dato inválido", "El número de WhatsApp debe tener 7 dígitos exactos.");
   if (!name) return mostrarAlerta("error", "Faltan datos", "Escribe tu nombre completo.");
 
-  // Guardar identidad del cliente para Mis Pedidos
-  const prefix = document.getElementById("phonePrefix").value;
-  currentClientPhone = prefix + phone;
-  localStorage.setItem("fb_client_phone", currentClientPhone);
-
   document.getElementById("checkoutStep1").classList.add("hidden");
   document.getElementById("checkoutStep2").classList.remove("hidden");
 }
 
-function backCheckoutStep() {
+function nextCheckoutStep2() {
+  if (!selectedService) return mostrarAlerta("error", "Faltan datos", "Selecciona el tipo de servicio.");
+
+  if (selectedService === "delivery") {
+    if (zones.length > 0 && !selectedZone) {
+      return mostrarAlerta("error", "Faltan datos", "Selecciona la zona de delivery.");
+    }
+    if (!document.getElementById("clientAddress").value.trim()) {
+      return mostrarAlerta("error", "Faltan datos", "Escribe la dirección de entrega.");
+    }
+  }
+
+  document.getElementById("checkoutStep2").classList.add("hidden");
+  document.getElementById("checkoutStep3").classList.remove("hidden");
+  updateCheckoutSummary();
+}
+
+function backToStep1() {
   document.getElementById("checkoutStep2").classList.add("hidden");
   document.getElementById("checkoutStep1").classList.remove("hidden");
 }
 
-function closeCheckout() { document.getElementById("checkoutModal").classList.add("hidden"); checkOverlay(); }
+function backToStep2() {
+  document.getElementById("checkoutStep3").classList.add("hidden");
+  document.getElementById("checkoutStep2").classList.remove("hidden");
+}
+
+function closeCheckout() { 
+  document.getElementById("checkoutModal").classList.add("hidden"); 
+  checkOverlay(); 
+}
 
 function updateCheckoutSummary() {
   const subtotal = cart.reduce((sum, item) => sum + item.subtotalItem, 0);
-  const delivery = selectedService === "delivery" && selectedZone ? convertirPrecioDelivery(selectedZone.TarifaZona) : 0;
+  let delivery = 0;
+  if (selectedService === "delivery") {
+    if (selectedZone) {
+      delivery = convertirPrecioDelivery(selectedZone.TarifaZona);
+    } else {
+      delivery = 0; // Sin zonas activas, delivery = 0
+    }
+  }
   document.getElementById("checkoutSubtotal").textContent = formatearPrecio(subtotal, currentCurrency);
   document.getElementById("checkoutDelivery").textContent = delivery > 0 ? formatearPrecio(delivery, currentCurrency) : "Gratis";
   document.getElementById("checkoutTotal").textContent = formatearPrecio(subtotal + delivery, currentCurrency);
@@ -710,26 +754,38 @@ function updateCheckoutSummary() {
 // ============================================
 async function confirmOrder() {
   const paySelect = document.getElementById("paymentSelect");
-  
-  if (!selectedService) return mostrarAlerta("error", "Faltan datos", "Selecciona el tipo de servicio.");
-  if (selectedService === "delivery" && !selectedZone) return mostrarAlerta("error", "Faltan datos", "Selecciona la zona de delivery.");
-  if (selectedService === "delivery" && !document.getElementById("clientAddress").value.trim()) return mostrarAlerta("error", "Faltan datos", "Escribe la dirección de entrega.");
+
   if (!paySelect.value) return mostrarAlerta("error", "Faltan datos", "Selecciona un método de pago.");
 
   const name = document.getElementById("clientName").value.trim();
   const phone = document.getElementById("phonePrefix").value + document.getElementById("clientPhone").value.trim();
-  
+
   let address = selectedService === "delivery" ? document.getElementById("clientAddress").value.trim() : "Retiro: " + selectedService;
   let cedula = document.getElementById("checkCedula").checked ? document.getElementById("docPrefix").value + document.getElementById("clientCedula").value.trim() : "";
   let email = document.getElementById("checkEmail").checked ? document.getElementById("clientEmail").value.trim() : "";
   let obs = document.getElementById("checkObs").checked ? document.getElementById("observations").value.trim() : "";
-  
+
   const pOpt = paySelect.selectedOptions[0];
-  const payLabel = pOpt.dataset.label;
-  const payVal = pOpt.dataset.val;
-  
+  const codPago = pOpt.value;
+  const payLabel = pOpt.dataset.despago;
+  const payCodTasa = pOpt.dataset.codtasa || "T001";
+
+  // Obtener info de pago desde config según mapeo
+  let payVal = "";
+  const configMap = PAYMENT_CONFIG_MAP[codPago];
+  if (configMap && config[configMap.key]) {
+    payVal = config[configMap.key];
+  }
+
   const subtotal = cart.reduce((s, i) => s + i.subtotalItem, 0);
-  const delivery = selectedService === "delivery" && selectedZone ? convertirPrecioDelivery(selectedZone.TarifaZona) : 0;
+  let delivery = 0;
+  if (selectedService === "delivery") {
+    if (selectedZone) {
+      delivery = convertirPrecioDelivery(selectedZone.TarifaZona);
+    } else {
+      delivery = 0;
+    }
+  }
   const total = subtotal + delivery;
 
   const orderData = {
@@ -739,9 +795,9 @@ async function confirmOrder() {
     codZone: selectedZone ? selectedZone.CodZona : "",
     zona: selectedZone ? selectedZone.NombreZona : "N/A",
     moneda: currentCurrency,
-    codTasa: pOpt.dataset.codtasa || "T001",
-    codFormaPago: paySelect.value,
-    desPago: payLabel + ": " + payVal,
+    codTasa: payCodTasa,
+    codFormaPago: codPago,
+    desPago: payLabel + (payVal ? ": " + payVal : ""),
     items: cart, subtotal: subtotal, delivery: delivery, total: total, observations: obs
   };
 
@@ -751,7 +807,7 @@ async function confirmOrder() {
   try {
     const res = await apiPost(orderData);
     btn.innerHTML = origTxt; btn.disabled = false;
-    
+
     if (res.success) {
       let misPedidos = JSON.parse(localStorage.getItem("mis_pedidos_fb") || "[]");
       if(!misPedidos.includes(res.nroPedido)) misPedidos.push(res.nroPedido);
@@ -771,28 +827,26 @@ async function confirmOrder() {
 function showConfirmation(nro, label, val, total, items, direccion, tipoServicio) {
   document.getElementById("confirmationModal").classList.remove("hidden");
   document.getElementById("orderNumber").textContent = nro;
-  document.getElementById("paymentInfo").innerHTML = `<p class="text-xs text-gray-400 mb-1">${label}</p><p class="text-sm text-white font-mono mb-2">${val}</p><p class="font-bold text-orange-400">Total a transferir: ${formatearPrecio(total, currentCurrency)}</p>`;
-  
-  // Construir lista de ítems para WhatsApp
-  let itemsText = "";
 
+  let infoHtml = `<p class="text-xs text-gray-400 mb-1">${label}</p>`;
+  if (val) infoHtml += `<p class="text-sm text-white font-mono mb-2">${val}</p>`;
+  infoHtml += `<p class="font-bold text-orange-400">Total a transferir: ${formatearPrecio(total, currentCurrency)}</p>`;
+  document.getElementById("paymentInfo").innerHTML = infoHtml;
+
+  let itemsText = "";
   items.forEach((item, idx) => {
     itemsText += `${idx + 1}. ${item.cantidad}x ${item.DesProducto} - ${formatearPrecio(item.subtotalItem, currentCurrency)}\n`;
   });
-  
-  // Construir mensaje completo
+
   let msg = `¡Hola! Acabo de realizar el pedido *${nro}*.\n\n`;
   msg += `*Productos:*\n${itemsText}\n`;
   msg += `*Total:* ${formatearPrecio(total, currentCurrency)}\n`;
   msg += `*Pago:* ${label}\n`;
-  
-  // Agregar dirección solo si es delivery
-  if (tipoServicio === "delivery" && direccion && direccion.trim() !== "") {
+
+  if (tipoServicio === "delivery" && direccion && direccion.trim() !== "" && !direccion.startsWith("Retiro:")) {
     msg += `*Dirección:* ${direccion}\n`;
   }
 
-
-  
   const waNumber = "58" + (config.WhatsAppNegocio || "").replace(/^0/, "");
   document.getElementById("whatsappBtn").href = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
 }
@@ -805,19 +859,18 @@ async function openMyOrders() {
   document.getElementById("ordersModal").classList.remove("hidden");
   document.getElementById("overlay").classList.remove("hidden");
   const container = document.getElementById("ordersContent");
-  
-  // Si no hay cliente identificado, mostrar vacío inmediatamente
+
   if (!currentClientPhone) {
     container.innerHTML = `<p class="text-center text-gray-500 py-10">Aún no hay Pedidos Pendientes</p>`;
     return;
   }
-  
+
   container.innerHTML = `<div class="flex justify-center py-10"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div></div>`;
-  
+
   try {
     const res = await apiGet("pedidos", { telefono: currentClientPhone });
     if (res.success) {
-      const mios = res.data; // Backend ya filtra por teléfono y estado Pendiente
+      const mios = res.data;
       if (mios.length === 0) {
          container.innerHTML = `<p class="text-center text-gray-500 py-10">Aún no hay Pedidos Pendientes</p>`;
          return;
@@ -830,21 +883,17 @@ async function openMyOrders() {
             <span class="font-bold text-orange-400">${p.NroPedido}</span>
             <span class="text-xs text-yellow-500 font-bold">${p.Estado}</span>
           </div>
-
-        <div class="flex justify-between text-sm text-gray-300 mb-1"><span>Fecha:</span> <span>${p.FechaPedido.substring(0,10)}</span></div>
-        <div class="flex justify-between text-sm text-gray-300 mb-2"><span>Monto:</span> <span class="font-bold text-white">${formatearPrecio(p.TotalPedido, p.Moneda)}</span></div>
-        <button class="view-items-btn w-full py-2 rounded-lg border border-orange-500/30 text-orange-400 text-sm font-semibold hover:bg-orange-500/10 transition" data-nro="${p.NroPedido}" data-moneda="${p.Moneda}">
-          Ver Ítems
-        </button>
-      </div>`;
-
+          <div class="flex justify-between text-sm text-gray-300 mb-1"><span>Fecha:</span> <span>${p.FechaPedido.substring(0,10)}</span></div>
+          <div class="flex justify-between text-sm text-gray-300 mb-2"><span>Monto:</span> <span class="font-bold text-white">${formatearPrecio(p.TotalPedido, p.Moneda)}</span></div>
+          <button class="view-items-btn w-full py-2 rounded-lg border border-orange-500/30 text-orange-400 text-sm font-semibold hover:bg-orange-500/10 transition" data-nro="${p.NroPedido}" data-moneda="${p.Moneda}">
+            Ver Ítems
+          </button>
+        </div>`;
       });
       container.innerHTML = html;
-
       container.querySelectorAll(".view-items-btn").forEach(btn => {
         btn.addEventListener("click", () => showOrderItems(btn.dataset.nro, btn.dataset.moneda));
       });
-
     } else {
       container.innerHTML = `<p class="text-center text-red-500 py-10">No se pudo cargar la información.</p>`;
     }
@@ -861,13 +910,17 @@ function setupEventListeners() {
   document.getElementById("closeCart").addEventListener("click", closeCart);
   document.getElementById("checkoutBtn").addEventListener("click", openCheckout);
   document.getElementById("closeCheckout").addEventListener("click", closeCheckout);
-  document.getElementById("nextStepBtn").addEventListener("click", nextCheckoutStep);
-  document.getElementById("backStepBtn").addEventListener("click", backCheckoutStep);
+
+  // Navegación 3 pasos
+  document.getElementById("nextStepBtn").addEventListener("click", nextCheckoutStep1);
+  document.getElementById("nextStep2Btn").addEventListener("click", nextCheckoutStep2);
+  document.getElementById("backStep1Btn").addEventListener("click", backToStep1);
+  document.getElementById("backStep2Btn").addEventListener("click", backToStep2);
   document.getElementById("confirmOrderBtn").addEventListener("click", confirmOrder);
-  
+
   document.getElementById("menuBtn").addEventListener("click", () => { document.getElementById("sideMenu").classList.remove("-translate-x-full"); document.getElementById("overlay").classList.remove("hidden"); });
   document.getElementById("closeMenu").addEventListener("click", () => { document.getElementById("sideMenu").classList.add("-translate-x-full"); checkOverlay(); });
-  
+
   document.getElementById("myOrdersBtn").addEventListener("click", openMyOrders);
   document.getElementById("closeOrdersModal").addEventListener("click", () => { document.getElementById("ordersModal").classList.add("hidden"); checkOverlay(); });
   document.getElementById("backToOrdersBtn").addEventListener("click", backToOrders);
@@ -875,7 +928,7 @@ function setupEventListeners() {
     document.getElementById("sideMenu").classList.add("-translate-x-full");
     document.getElementById("paymentInfoModal").classList.remove("hidden");
     document.getElementById("overlay").classList.remove("hidden");
-    
+
     const content = document.getElementById("paymentInfoContent");
     content.innerHTML = "";
     let opts = [];
@@ -883,7 +936,7 @@ function setupEventListeners() {
     if(config.CuentaBinance) opts.push({n:"Binance", v:config.CuentaBinance, c:"text-yellow-400"});
     if(config.DatosPagoMovil) opts.push({n:"Pago Móvil", v:config.DatosPagoMovil, c:"text-green-400"});
     if(config.DatosTransferencia) opts.push({n:"Transferencia", v:config.DatosTransferencia, c:"text-purple-400"});
-    
+
     opts.forEach(o => {
       content.innerHTML += `<div class="bg-gray-800/50 rounded-xl p-4 border border-gray-700 mb-3"><div class="font-bold ${o.c} mb-1">${o.n}</div><p class="text-sm text-gray-300 font-mono">${o.v}</p></div>`;
     });
@@ -902,10 +955,15 @@ function setupEventListeners() {
   });
 
   document.getElementById("currencySelector").addEventListener("change", async (e) => {
-    currentCurrency = e.target.value; showLoading(); await loadProducts(); renderProducts(); updateCartUI();
+    currentCurrency = e.target.value; showLoading(); 
+    products = products.map(p => ({
+      ...p,
+      PrecioConvertido: calcularPrecioConvertido(parseFloat(p.PrecioDolar) || 0, currentCurrency)
+    }));
+    renderProducts(); updateCartUI();
   });
 
-  // Checkboxes Opcionales Checkout Paso 1 (Toggling strict .hidden)
+  // Checkboxes Opcionales Checkout Paso 1
   const toggles = [
     {check: 'checkCedula', container: 'containerCedula'},
     {check: 'checkEmail', container: 'containerEmail'},
@@ -919,16 +977,21 @@ function setupEventListeners() {
     });
   });
 
+  // Botones de servicio
   document.querySelectorAll(".service-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".service-btn").forEach(b => { b.classList.remove("border-orange-500", "text-orange-400"); b.classList.add("border-gray-700"); });
       btn.classList.add("border-orange-500", "text-orange-400"); btn.classList.remove("border-gray-700");
       selectedService = btn.dataset.service;
-      
+
       const zs = document.getElementById("zoneSection"), as = document.getElementById("addressSection");
       if(selectedService === "delivery") { 
         zs.classList.remove("hidden");
         as.classList.remove("hidden");
+        // Precargar dirección si existe en savedClientData
+        if (savedClientData && savedClientData.direccion) {
+          document.getElementById("clientAddress").value = savedClientData.direccion;
+        }
       } else { 
         zs.classList.add("hidden");
         as.classList.add("hidden");
@@ -948,40 +1011,59 @@ function setupEventListeners() {
     const infoDiv = document.getElementById("paymentSelectedInfo");
     if(e.target.value) {
       const opt = e.target.selectedOptions[0];
-      infoDiv.innerHTML = `<span class="font-bold text-white">${opt.dataset.label}:</span> <span class="font-mono text-orange-400 ml-1">${opt.dataset.val}</span>`;
+      const codPago = opt.value;
+      const desPago = opt.dataset.despago;
+
+      let infoHtml = `<span class="font-bold text-white">${desPago}</span>`;
+      const configMap = PAYMENT_CONFIG_MAP[codPago];
+      if (configMap && config[configMap.key]) {
+        infoHtml += `<p class="font-mono text-orange-400 mt-1">${config[configMap.key]}</p>`;
+      }
+
+      infoDiv.innerHTML = infoHtml;
       infoDiv.classList.remove("hidden");
     } else {
       infoDiv.classList.add("hidden");
       infoDiv.innerHTML = "";
     }
   });
-  
-  document.getElementById("clientPhone").addEventListener("input", e => e.target.value = e.target.value.replace(/\D/g, "").slice(0, 7));
 
-////////
+  // Input de teléfono con búsqueda automática
+  const phoneInput = document.getElementById("clientPhone");
+  const prefixSelect = document.getElementById("phonePrefix");
+  const searchIndicator = document.getElementById("phoneSearchIndicator");
+  const changePhoneBtn = document.getElementById("changePhoneBtn");
+  const nameInput = document.getElementById("clientName");
 
-document.getElementById("clientPhone").addEventListener("input", async (e) => {
-    // 1. Limpieza y validación de 7 dígitos
+  phoneInput.addEventListener("input", async (e) => {
     let val = e.target.value.replace(/\D/g, "").slice(0, 7);
     e.target.value = val;
-    
-    // 2. Disparar búsqueda automática al completar el número
+
     if (val.length === 7) {
-      const prefix = document.getElementById("phonePrefix").value;
+      const prefix = prefixSelect.value;
       const fullPhone = prefix + val;
-      
+
+      // Bloquear inputs durante búsqueda
+      phoneInput.readOnly = true;
+      prefixSelect.disabled = true;
+      nameInput.disabled = true;
+      searchIndicator.classList.remove("hidden");
+      changePhoneBtn.classList.add("hidden");
+
       try {
         const res = await apiGet("clientes", { telefono: fullPhone });
-        
+
         if (res.success && res.data.length > 0) {
           const cli = res.data[0];
-          
-          // Cargar Nombre
-          if (cli.DesCliente) {
-            document.getElementById("clientName").value = cli.DesCliente;
-          }
-          
-          // Cargar Cédula/RIF y desplegar contenedor
+          savedClientData = {
+            nombre: cli.DesCliente || "",
+            cedula: cli.CedulaRifCliente || "",
+            direccion: cli.DirCliente || "",
+            email: cli.EmailCliente || ""
+          };
+
+          if (cli.DesCliente) nameInput.value = cli.DesCliente;
+
           if (cli.CedulaRifCliente) {
             const match = String(cli.CedulaRifCliente).match(/^([VEJGPC])[-]?(\d+)$/i);
             if (match) {
@@ -993,33 +1075,62 @@ document.getElementById("clientPhone").addEventListener("input", async (e) => {
             document.getElementById("checkCedula").checked = true;
             document.getElementById("containerCedula").classList.remove("hidden");
           }
-          
-          // Cargar Dirección
-          if (cli.DirCliente) {
-            document.getElementById("clientAddress").value = cli.DirCliente;
+
+          if (cli.EmailCliente) {
+            document.getElementById("clientEmail").value = cli.EmailCliente;
+            document.getElementById("checkEmail").checked = true;
+            document.getElementById("containerEmail").classList.remove("hidden");
           }
+        } else {
+          savedClientData = null;
         }
       } catch (err) {
         console.error("Fallo al recuperar datos del cliente:", err);
+        savedClientData = null;
       }
-      
-      // Guardar identidad del cliente para Mis Pedidos
-      currentClientPhone = prefix + val;
+
+      // Desbloquear
+      nameInput.disabled = false;
+      searchIndicator.classList.add("hidden");
+      changePhoneBtn.classList.remove("hidden");
+
+      currentClientPhone = fullPhone;
       localStorage.setItem("fb_client_phone", currentClientPhone);
     }
   });
 
-  // Listener para re-ejecutar búsqueda si el usuario cambia el prefijo (0414, 0424, etc)
-  document.getElementById("phonePrefix").addEventListener("change", () => {
-    const input = document.getElementById("clientPhone");
-    if (input.value.length === 7) {
-      input.dispatchEvent(new Event("input"));
-    }
+  // Botón cambiar número
+  changePhoneBtn.addEventListener("click", () => {
+    phoneInput.value = "";
+    phoneInput.readOnly = false;
+    prefixSelect.disabled = false;
+    nameInput.value = "";
+    nameInput.disabled = false;
+    savedClientData = null;
+
+    // Limpiar opcionales
+    document.getElementById("checkCedula").checked = false;
+    document.getElementById("containerCedula").classList.add("hidden");
+    document.getElementById("clientCedula").value = "";
+
+    document.getElementById("checkEmail").checked = false;
+    document.getElementById("containerEmail").classList.add("hidden");
+    document.getElementById("clientEmail").value = "";
+
+    document.getElementById("checkObs").checked = false;
+    document.getElementById("containerObs").classList.add("hidden");
+    document.getElementById("observations").value = "";
+
+    changePhoneBtn.classList.add("hidden");
+    phoneInput.focus();
   });
 
-
-/////////
-
+  // Re-ejecutar búsqueda si cambia prefijo
+  prefixSelect.addEventListener("change", () => {
+    if (phoneInput.value.length === 7) {
+      phoneInput.dispatchEvent(new Event("input"));
+    }
+  });
 
   document.getElementById("clientCedula").addEventListener("input", e => e.target.value = e.target.value.replace(/\D/g, "").slice(0, 9));
 }
@@ -1032,14 +1143,13 @@ async function showOrderItems(nroPedido, moneda) {
   const orderItemsView = document.getElementById("orderItemsView");
   const orderItemsList = document.getElementById("orderItemsList");
   const itemsOrderTitle = document.getElementById("itemsOrderTitle");
-  
-  // Ocultar lista de pedidos, mostrar vista de ítems
+
   ordersContent.classList.add("hidden");
   orderItemsView.classList.remove("hidden");
-  
+
   itemsOrderTitle.textContent = "Pedido " + nroPedido;
   orderItemsList.innerHTML = `<div class="flex justify-center py-6"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div></div>`;
-  
+
   try {
     const res = await apiGet("pedidoItems", { nroPedido: nroPedido });
     if (res.success && res.data.length > 0) {
@@ -1076,7 +1186,6 @@ function backToOrders() {
   document.getElementById("orderItemsView").classList.add("hidden");
   document.getElementById("orderItemsList").innerHTML = "";
 }
-
 
 function checkOverlay() {
   if (document.getElementById("sideMenu").classList.contains("-translate-x-full") &&
