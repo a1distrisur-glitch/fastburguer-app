@@ -33,6 +33,7 @@
   .content-auto{content-visibility:auto;contain-intrinsic-size:auto 350px;}
   .step-hidden{display:none !important;}
 </style>
+<base target="_blank">
 </head>
 <body class="min-h-screen">
 
@@ -186,9 +187,9 @@
         <div>
           <label class="block text-sm font-semibold mb-2 text-gray-300">Tipo de servicio <span class="text-orange-500">*</span></label>
           <div class="grid grid-cols-3 gap-2">
-            <button class="service-btn px-2 py-3 rounded-xl bg-gray-800 border border-gray-700 text-sm font-semibold text-gray-300 transition hover:border-orange-500" data-service="sitio">🍽️ En Sitio</button>
-            <button class="service-btn px-2 py-3 rounded-xl bg-gray-800 border border-gray-700 text-sm font-semibold text-gray-300 transition hover:border-orange-500" data-service="pickup">🛍️ Pick Up</button>
             <button class="service-btn px-2 py-3 rounded-xl bg-gray-800 border border-gray-700 text-sm font-semibold text-gray-300 transition hover:border-orange-500" data-service="delivery">🛵 Delivery</button>
+            <button class="service-btn px-2 py-3 rounded-xl bg-gray-800 border border-gray-700 text-sm font-semibold text-gray-300 transition hover:border-orange-500" data-service="pickup">🛍️ Pick Up</button>
+            <button class="service-btn px-2 py-3 rounded-xl bg-gray-800 border border-gray-700 text-sm font-semibold text-gray-300 transition hover:border-orange-500" data-service="sitio">🍽️ En Sitio</button>
           </div>
         </div>
 
@@ -203,6 +204,22 @@
         <div id="addressSection" class="hidden fade-in">
           <label class="block text-sm font-semibold mb-1 text-gray-300">Dirección exacta <span class="text-orange-500">*</span></label>
           <textarea id="clientAddress" rows="2" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 resize-none" placeholder="Casa, calle, urbanización..."></textarea>
+          <p id="deliveryWhatsAppMsg" class="hidden text-xs text-orange-400 mt-1">Puede enviar su Ubicación por WhatsApp</p>
+        </div>
+
+        <div id="pickupInfoSection" class="hidden fade-in">
+          <div class="bg-gray-800/60 border border-gray-700 rounded-xl p-4 text-sm text-gray-300">
+            <p class="font-semibold text-white mb-1">🛍️ Retiro en Tienda</p>
+            <p>Retirar el Pedido en Tienda</p>
+          </div>
+        </div>
+
+        <div id="enSitioSection" class="hidden fade-in">
+          <label class="block text-sm font-semibold mb-1 text-gray-300">Área / Mesa <span class="text-orange-500">*</span></label>
+          <select id="enSitioSelect" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500">
+            <option value="">Selecciona un área o mesa</option>
+          </select>
+          <p id="enSitioEmptyMsg" class="hidden text-xs text-gray-500 mt-1">No hay áreas disponibles actualmente.</p>
         </div>
 
         <div class="flex gap-2 mt-6">
@@ -227,9 +244,24 @@
           </div>
         </div>
 
+        <div id="propinaSection" class="hidden fade-in">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-semibold text-gray-300">Propina sugerida</label>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="propinaToggle" class="sr-only peer" checked>
+              <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+            </label>
+          </div>
+          <input type="number" id="propinaInput" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500" value="0" min="0" step="0.01">
+        </div>
+
         <div class="bg-gray-800/50 rounded-xl p-4 space-y-2 border border-gray-700 mt-6">
           <div class="flex justify-between text-sm text-gray-400"><span>Subtotal</span><span id="checkoutSubtotal" class="text-white font-semibold">Bs 0.00</span></div>
           <div class="flex justify-between text-sm text-gray-400"><span>Delivery</span><span id="checkoutDelivery" class="text-gray-300">Bs 0.00</span></div>
+          <div id="checkoutPropinaLine" class="hidden flex justify-between text-sm text-gray-400">
+            <span>Propina</span>
+            <span id="checkoutPropina" class="text-gray-300">Bs 0.00</span>
+          </div>
           <div class="flex justify-between text-lg font-black border-t border-white/10 pt-2 text-white">
             <span>Total a pagar</span><span id="checkoutTotal" class="text-orange-400">Bs 0.00</span>
           </div>
@@ -366,6 +398,12 @@ let selectedZone = null;
 let currentClientPhone = localStorage.getItem("fb_client_phone") || "";
 let savedClientData = null;
 
+// Nuevas variables v7.2
+let enSitioAreas = [];
+let selectedEnSitio = null;
+let propinaAplicada = 0;
+let propinaToggle = true;
+
 // Mapeo CodPago -> campo en config para mostrar info de pago
 const PAYMENT_CONFIG_MAP = {
   'F001': { key: 'DatosPagoMovil', label: 'Pago Móvil' },
@@ -418,6 +456,7 @@ async function init() {
     categories = r.data.categorias || [];
     zones = r.data.zonas || [];
     paymentMethods = r.data.formasPago || [];
+    enSitioAreas = r.data.enSitio || []; // v7.2
 
     const tasasArray = r.data.tasas || [];
     tasas = { BS: 1 };
@@ -447,13 +486,22 @@ function showLoading() {
     </div>`;
 }
 
+// v7.2: Nueva función reutilizable de conversión monetaria
+function convertirMonto(montoUSD, monedaDestino) {
+  if (!tasas || !tasas.USD) return montoUSD;
+  const montoEnBS = montoUSD * tasas.USD;
+  if (monedaDestino === "USD") return montoUSD;
+  if (monedaDestino === "BS") return montoEnBS;
+  const destRate = tasas[monedaDestino];
+  return (!destRate || destRate === 0) ? montoEnBS : montoEnBS / destRate;
+}
+
 function calcularPrecioConvertido(precioUSD, moneda) {
-  if (!tasas || !tasas.USD) return precioUSD;
-  const precioEnBS = precioUSD * tasas.USD;
-  if (moneda === "USD") return precioUSD;
-  if (moneda === "BS") return precioEnBS;
-  const destRate = tasas[moneda];
-  return (!destRate || destRate === 0) ? precioEnBS : precioEnBS / destRate;
+  return convertirMonto(precioUSD, moneda);
+}
+
+function convertirPrecioDelivery(tarifaUSD) {
+  return convertirMonto(tarifaUSD, currentCurrency);
 }
 
 async function apiGet(action, params) {
@@ -521,8 +569,7 @@ function renderProductGrid(list) {
   let html = "";
   list.forEach(p => {
     const isNoStock = p.StockProducto !== "Disponible";
-    const isInactive = p.Estado !== "Activo";
-    const noStockClass = (isNoStock || isInactive) ? "no-stock relative" : "";
+    const noStockClass = isNoStock ? "no-stock relative" : "";
     html += `
     <div class="product-card ${noStockClass} glass rounded-2xl overflow-hidden fade-in content-auto">
       <div class="relative aspect-square bg-gray-800 overflow-hidden">
@@ -535,7 +582,7 @@ function renderProductGrid(list) {
         <p class="text-sm text-gray-400 mb-3 line-clamp-2 min-h-[40px]">${p.DetalleProducto || ""}</p>
         <div class="flex items-center justify-between">
           <span class="text-xl font-black text-orange-400">${formatearPrecio(p.PrecioConvertido, currentCurrency)}</span>
-          <button class="add-btn btn-primary px-4 py-2 rounded-xl font-bold text-sm text-white transition ${isNoStock || isInactive ? 'hidden' : ''}" data-code="${p.CodProducto}">
+          <button class="add-btn btn-primary px-4 py-2 rounded-xl font-bold text-sm text-white transition ${isNoStock ? 'hidden' : ''}" data-code="${p.CodProducto}">
             Agregar
           </button>
         </div>
@@ -580,6 +627,11 @@ function syncAddButtonStates() {
 function addToCart(code) {
   const product = products.find(p => p.CodProducto === code);
   if (!product) return;
+  // v7.2: Defensa de stock
+  if (product.StockProducto !== "Disponible") {
+    mostrarAlerta("error", "Producto agotado", "Este producto no está disponible actualmente.");
+    return;
+  }
   const existing = cart.find(item => item.CodProducto === code);
   if (existing) {
     existing.cantidad++; existing.subtotalItem = existing.cantidad * existing.precioUnitario;
@@ -633,15 +685,6 @@ function updateCartUI() {
   syncAddButtonStates();
 }
 
-function convertirPrecioDelivery(tarifaUSD) {
-  if (!tasas || !tasas.USD) return tarifaUSD;
-  const precioEnBS = tarifaUSD * tasas.USD;
-  if (currentCurrency === "USD") return tarifaUSD;
-  if (currentCurrency === "BS") return precioEnBS;
-  const destRate = tasas[currentCurrency];
-  return (!destRate || destRate === 0) ? precioEnBS : precioEnBS / destRate;
-}
-
 // ============================================
 // FLUJO DE CHECKOUT EN 3 PASOS
 // ============================================
@@ -665,23 +708,43 @@ function openCheckout() {
   document.getElementById("paymentSelectedInfo").innerHTML = "";
   document.getElementById("paymentSelectedInfo").classList.add("hidden");
 
-  // Poblar Zonas
+  // v7.2: Reset de propina al abrir checkout
+  propinaAplicada = 0;
+  propinaToggle = true;
+  document.getElementById("propinaToggle").checked = true;
+  document.getElementById("propinaInput").value = "0";
+
+  // v7.2: Poblar EnSitio select
+  const eSel = document.getElementById("enSitioSelect");
+  const eMsg = document.getElementById("enSitioEmptyMsg");
+  eSel.innerHTML = '<option value="">Selecciona un área o mesa</option>';
+  if (enSitioAreas.length === 0) {
+    eMsg.classList.remove("hidden");
+  } else {
+    eMsg.classList.add("hidden");
+    enSitioAreas.forEach(e => {
+      const label = e.DetalleEnSitio ? `${e.DesEnSitio} — ${e.DetalleEnSitio}` : e.DesEnSitio;
+      eSel.innerHTML += `<option value="${e.CodEnSitio}" data-propina="${e.PropinaEnSitio}" data-codtasa="${e.CodTasa}">${label}</option>`;
+    });
+  }
+
+  // Poblar Zonas (v7.2: ocultar select si no hay zonas, no disabled)
   const zSel = document.getElementById("zoneSelect");
   const zoneMsg = document.getElementById("zoneDisabledMsg");
   zSel.innerHTML = '<option value="">Selecciona una zona</option>';
 
   if (zones.length === 0) {
-    zSel.disabled = true;
     zoneMsg.classList.remove("hidden");
+    document.getElementById("zoneSection").classList.add("hidden");
   } else {
-    zSel.disabled = false;
     zoneMsg.classList.add("hidden");
+    document.getElementById("zoneSection").classList.remove("hidden");
     zones.forEach(z => {
       zSel.innerHTML += `<option value="${z.CodZona}" data-name="${z.NombreZona}" data-tarifa="${z.TarifaZona}">${z.NombreZona} - ${formatearPrecio(convertirPrecioDelivery(z.TarifaZona), currentCurrency)}</option>`;
     });
   }
 
-  // Poblar Formas de Pago (dinámico desde paymentMethods ya filtradas por Activo en backend)
+  // Poblar Formas de Pago
   const pSel = document.getElementById("paymentSelect");
   pSel.innerHTML = '<option value="">Seleccione cómo pagará</option>';
   paymentMethods.forEach(pm => {
@@ -709,8 +772,15 @@ function nextCheckoutStep2() {
     if (zones.length > 0 && !selectedZone) {
       return mostrarAlerta("error", "Faltan datos", "Selecciona la zona de delivery.");
     }
-    if (!document.getElementById("clientAddress").value.trim()) {
+    const addr = document.getElementById("clientAddress").value.trim();
+    if (!addr || addr.length === 0) {
       return mostrarAlerta("error", "Faltan datos", "Escribe la dirección de entrega.");
+    }
+  }
+
+  if (selectedService === "sitio") {
+    if (enSitioAreas.length > 0 && !selectedEnSitio) {
+      return mostrarAlerta("error", "Faltan datos", "Selecciona un área o mesa.");
     }
   }
 
@@ -741,12 +811,34 @@ function updateCheckoutSummary() {
     if (selectedZone) {
       delivery = convertirPrecioDelivery(selectedZone.TarifaZona);
     } else {
-      delivery = 0; // Sin zonas activas, delivery = 0
+      delivery = 0;
     }
   }
+
+  // v7.2: Propina
+  let propina = 0;
+  const propinaLine = document.getElementById("checkoutPropinaLine");
+  const propinaSection = document.getElementById("propinaSection");
+
+  if (selectedService === "sitio" && selectedEnSitio && selectedEnSitio.PropinaEnSitio > 0) {
+    propinaSection.classList.remove("hidden");
+    const toggleOn = document.getElementById("propinaToggle").checked;
+    const inputVal = parseFloat(document.getElementById("propinaInput").value) || 0;
+    if (toggleOn && inputVal > 0) {
+      propina = inputVal;
+      propinaLine.classList.remove("hidden");
+      document.getElementById("checkoutPropina").textContent = formatearPrecio(propina, currentCurrency);
+    } else {
+      propinaLine.classList.add("hidden");
+    }
+  } else {
+    propinaSection.classList.add("hidden");
+    propinaLine.classList.add("hidden");
+  }
+
   document.getElementById("checkoutSubtotal").textContent = formatearPrecio(subtotal, currentCurrency);
   document.getElementById("checkoutDelivery").textContent = delivery > 0 ? formatearPrecio(delivery, currentCurrency) : "Gratis";
-  document.getElementById("checkoutTotal").textContent = formatearPrecio(subtotal + delivery, currentCurrency);
+  document.getElementById("checkoutTotal").textContent = formatearPrecio(subtotal + delivery + propina, currentCurrency);
 }
 
 // ============================================
@@ -760,7 +852,16 @@ async function confirmOrder() {
   const name = document.getElementById("clientName").value.trim();
   const phone = document.getElementById("phonePrefix").value + document.getElementById("clientPhone").value.trim();
 
-  let address = selectedService === "delivery" ? document.getElementById("clientAddress").value.trim() : "Retiro: " + selectedService;
+  // v7.2: Construcción de dirección según servicio
+  let address = "";
+  if (selectedService === "delivery") {
+    address = document.getElementById("clientAddress").value.trim();
+  } else if (selectedService === "pickup") {
+    address = "Retiro: Pick Up";
+  } else if (selectedService === "sitio") {
+    address = selectedEnSitio ? "En Sitio: " + selectedEnSitio.DesEnSitio : "En Sitio";
+  }
+
   let cedula = document.getElementById("checkCedula").checked ? document.getElementById("docPrefix").value + document.getElementById("clientCedula").value.trim() : "";
   let email = document.getElementById("checkEmail").checked ? document.getElementById("clientEmail").value.trim() : "";
   let obs = document.getElementById("checkObs").checked ? document.getElementById("observations").value.trim() : "";
@@ -770,7 +871,6 @@ async function confirmOrder() {
   const payLabel = pOpt.dataset.despago;
   const payCodTasa = pOpt.dataset.codtasa || "T001";
 
-  // Obtener info de pago desde config según mapeo
   let payVal = "";
   const configMap = PAYMENT_CONFIG_MAP[codPago];
   if (configMap && config[configMap.key]) {
@@ -786,7 +886,17 @@ async function confirmOrder() {
       delivery = 0;
     }
   }
-  const total = subtotal + delivery;
+
+  // v7.2: Cálculo de propina
+  let propina = 0;
+  if (selectedService === "sitio" && selectedEnSitio && selectedEnSitio.PropinaEnSitio > 0) {
+    const toggleOn = document.getElementById("propinaToggle").checked;
+    const inputVal = parseFloat(document.getElementById("propinaInput").value) || 0;
+    if (toggleOn && inputVal > 0) {
+      propina = inputVal;
+    }
+  }
+  const total = subtotal + delivery + propina;
 
   const orderData = {
     action: "pedido",
@@ -794,11 +904,18 @@ async function confirmOrder() {
     tipoServicio: selectedService,
     codZone: selectedZone ? selectedZone.CodZona : "",
     zona: selectedZone ? selectedZone.NombreZona : "N/A",
+    codEnSitio: selectedEnSitio ? selectedEnSitio.CodEnSitio : "",
+    desEnSitio: selectedEnSitio ? selectedEnSitio.DesEnSitio : "",
     moneda: currentCurrency,
     codTasa: payCodTasa,
     codFormaPago: codPago,
     desPago: payLabel + (payVal ? ": " + payVal : ""),
-    items: cart, subtotal: subtotal, delivery: delivery, total: total, observations: obs
+    items: cart,
+    subtotal: subtotal,
+    delivery: delivery,
+    propina: propina,
+    total: total,
+    observations: obs
   };
 
   const btn = document.getElementById("confirmOrderBtn");
@@ -813,7 +930,7 @@ async function confirmOrder() {
       if(!misPedidos.includes(res.nroPedido)) misPedidos.push(res.nroPedido);
       localStorage.setItem("mis_pedidos_fb", JSON.stringify(misPedidos));
 
-      showConfirmation(res.nroPedido, payLabel, payVal, total, cart, address, selectedService);
+      showConfirmation(res.nroPedido, payLabel, payVal, total, cart, address, selectedService, propina);
       cart = []; updateCartUI(); closeCheckout();
     } else {
       mostrarAlerta("error", "Error", res.error || "No se pudo registrar.");
@@ -824,7 +941,7 @@ async function confirmOrder() {
   }
 }
 
-function showConfirmation(nro, label, val, total, items, direccion, tipoServicio) {
+function showConfirmation(nro, label, val, total, items, direccion, tipoServicio, propina) {
   document.getElementById("confirmationModal").classList.remove("hidden");
   document.getElementById("orderNumber").textContent = nro;
 
@@ -835,16 +952,32 @@ function showConfirmation(nro, label, val, total, items, direccion, tipoServicio
 
   let itemsText = "";
   items.forEach((item, idx) => {
-    itemsText += `${idx + 1}. ${item.cantidad}x ${item.DesProducto} - ${formatearPrecio(item.subtotalItem, currentCurrency)}\n`;
+    itemsText += `${idx + 1}. ${item.cantidad}x ${item.DesProducto} - ${formatearPrecio(item.subtotalItem, currentCurrency)}
+`;
   });
 
-  let msg = `¡Hola! Acabo de realizar el pedido *${nro}*.\n\n`;
-  msg += `*Productos:*\n${itemsText}\n`;
-  msg += `*Total:* ${formatearPrecio(total, currentCurrency)}\n`;
-  msg += `*Pago:* ${label}\n`;
+  let msg = `¡Hola! Acabo de realizar el pedido *${nro}*.
+
+`;
+  msg += `*Productos:*
+${itemsText}
+`;
+  msg += `*Total:* ${formatearPrecio(total, currentCurrency)}
+`;
+  msg += `*Pago:* ${label}
+`;
 
   if (tipoServicio === "delivery" && direccion && direccion.trim() !== "" && !direccion.startsWith("Retiro:")) {
-    msg += `*Dirección:* ${direccion}\n`;
+    msg += `*Dirección:* ${direccion}
+`;
+  }
+  if (tipoServicio === "sitio" && selectedEnSitio) {
+    msg += `*Mesa/Área:* ${selectedEnSitio.DesEnSitio}
+`;
+  }
+  if (propina && propina > 0) {
+    msg += `*Propina:* ${formatearPrecio(propina, currentCurrency)}
+`;
   }
 
   const waNumber = "58" + (config.WhatsAppNegocio || "").replace(/^0/, "");
@@ -954,13 +1087,33 @@ function setupEventListeners() {
     window.scrollTo({top:0, behavior:"smooth"});
   });
 
+  // v7.2: BUG FIX - Recalcular carrito al cambiar moneda desde PrecioDolar original
   document.getElementById("currencySelector").addEventListener("change", async (e) => {
-    currentCurrency = e.target.value; showLoading(); 
+    currentCurrency = e.target.value;
+    showLoading();
+
+    // Recalcular productos
     products = products.map(p => ({
       ...p,
       PrecioConvertido: calcularPrecioConvertido(parseFloat(p.PrecioDolar) || 0, currentCurrency)
     }));
-    renderProducts(); updateCartUI();
+
+    // Recalcular carrito: cada item desde su PrecioDolar original
+    cart = cart.map(item => {
+      const prod = products.find(p => p.CodProducto === item.CodProducto);
+      if (prod) {
+        const nuevoPrecio = calcularPrecioConvertido(parseFloat(prod.PrecioDolar) || 0, currentCurrency);
+        return {
+          ...item,
+          precioUnitario: nuevoPrecio,
+          subtotalItem: item.cantidad * nuevoPrecio
+        };
+      }
+      return item;
+    });
+
+    renderProducts();
+    updateCartUI();
   });
 
   // Checkboxes Opcionales Checkout Paso 1
@@ -977,25 +1130,54 @@ function setupEventListeners() {
     });
   });
 
-  // Botones de servicio
+  // v7.2: Botones de servicio modificados
   document.querySelectorAll(".service-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-      document.querySelectorAll(".service-btn").forEach(b => { b.classList.remove("border-orange-500", "text-orange-400"); b.classList.add("border-gray-700"); });
-      btn.classList.add("border-orange-500", "text-orange-400"); btn.classList.remove("border-gray-700");
+      // Reset visual de botones
+      document.querySelectorAll(".service-btn").forEach(b => {
+        b.classList.remove("border-orange-500", "text-orange-400");
+        b.classList.add("border-gray-700");
+      });
+      btn.classList.add("border-orange-500", "text-orange-400");
+      btn.classList.remove("border-gray-700");
       selectedService = btn.dataset.service;
 
-      const zs = document.getElementById("zoneSection"), as = document.getElementById("addressSection");
-      if(selectedService === "delivery") { 
-        zs.classList.remove("hidden");
-        as.classList.remove("hidden");
-        // Precargar dirección si existe en savedClientData
-        if (savedClientData && savedClientData.direccion) {
-          document.getElementById("clientAddress").value = savedClientData.direccion;
+      const zs = document.getElementById("zoneSection");
+      const as = document.getElementById("addressSection");
+      const dwMsg = document.getElementById("deliveryWhatsAppMsg");
+      const puInfo = document.getElementById("pickupInfoSection");
+      const esSection = document.getElementById("enSitioSection");
+
+      // Reset todas las secciones
+      zs.classList.add("hidden");
+      as.classList.add("hidden");
+      dwMsg.classList.add("hidden");
+      puInfo.classList.add("hidden");
+      esSection.classList.add("hidden");
+      selectedZone = null;
+      selectedEnSitio = null;
+      document.getElementById("zoneSelect").value = "";
+      document.getElementById("enSitioSelect").value = "";
+
+      if (selectedService === "delivery") {
+        if (zones.length === 0) {
+          zs.classList.add("hidden");
+        } else {
+          zs.classList.remove("hidden");
         }
-      } else { 
-        zs.classList.add("hidden");
-        as.classList.add("hidden");
-        selectedZone = null; 
+        as.classList.remove("hidden");
+        dwMsg.classList.remove("hidden");
+        const addrInput = document.getElementById("clientAddress");
+        if (!addrInput.value.trim()) {
+          addrInput.value = "Ciudad Ojeda";
+        }
+        if (savedClientData && savedClientData.direccion) {
+          addrInput.value = savedClientData.direccion;
+        }
+      } else if (selectedService === "pickup") {
+        puInfo.classList.remove("hidden");
+      } else if (selectedService === "sitio") {
+        esSection.classList.remove("hidden");
       }
       updateCheckoutSummary();
     });
@@ -1007,6 +1189,48 @@ function setupEventListeners() {
     updateCheckoutSummary();
   });
 
+  // v7.2: Event Listener enSitioSelect
+  document.getElementById("enSitioSelect").addEventListener("change", (e) => {
+    const opt = e.target.selectedOptions[0];
+    if (opt && opt.value) {
+      const propinaBase = parseFloat(opt.dataset.propina) || 0;
+      const codTasaItem = opt.dataset.codtasa || "T002";
+      selectedEnSitio = {
+        CodEnSitio: opt.value,
+        DesEnSitio: opt.text,
+        PropinaEnSitio: propinaBase,
+        CodTasa: codTasaItem
+      };
+      if (propinaBase > 0) {
+        const tasaOrigen = tasas[codTasaItem] || tasas.USD || 1;
+        const propinaEnUSD = propinaBase / tasaOrigen;
+        propinaAplicada = convertirMonto(propinaEnUSD, currentCurrency);
+        document.getElementById("propinaInput").value = propinaAplicada.toFixed(2);
+      } else {
+        propinaAplicada = 0;
+        document.getElementById("propinaInput").value = "0";
+      }
+    } else {
+      selectedEnSitio = null;
+      propinaAplicada = 0;
+    }
+    updateCheckoutSummary();
+  });
+
+  // v7.2: Event Listeners Propina Toggle + Input
+  document.getElementById("propinaToggle").addEventListener("change", () => {
+    propinaToggle = document.getElementById("propinaToggle").checked;
+    updateCheckoutSummary();
+  });
+
+  document.getElementById("propinaInput").addEventListener("input", (e) => {
+    let val = parseFloat(e.target.value);
+    if (isNaN(val) || val < 0) val = 0;
+    propinaAplicada = val;
+    updateCheckoutSummary();
+  });
+
+  // v7.2: Event Listener paymentSelect modificado
   document.getElementById("paymentSelect").addEventListener("change", (e) => {
     const infoDiv = document.getElementById("paymentSelectedInfo");
     if(e.target.value) {
@@ -1014,14 +1238,19 @@ function setupEventListeners() {
       const codPago = opt.value;
       const desPago = opt.dataset.despago;
 
-      let infoHtml = `<span class="font-bold text-white">${desPago}</span>`;
-      const configMap = PAYMENT_CONFIG_MAP[codPago];
-      if (configMap && config[configMap.key]) {
-        infoHtml += `<p class="font-mono text-orange-400 mt-1">${config[configMap.key]}</p>`;
+      const codigosConInfo = ["F001", "F002", "F004", "F005"];
+      if (codigosConInfo.includes(codPago)) {
+        let infoHtml = `<span class="font-bold text-white">${desPago}</span>`;
+        const configMap = PAYMENT_CONFIG_MAP[codPago];
+        if (configMap && config[configMap.key]) {
+          infoHtml += `<p class="font-mono text-orange-400 mt-1">${config[configMap.key]}</p>`;
+        }
+        infoDiv.innerHTML = infoHtml;
+        infoDiv.classList.remove("hidden");
+      } else {
+        infoDiv.classList.add("hidden");
+        infoDiv.innerHTML = "";
       }
-
-      infoDiv.innerHTML = infoHtml;
-      infoDiv.classList.remove("hidden");
     } else {
       infoDiv.classList.add("hidden");
       infoDiv.innerHTML = "";
@@ -1043,7 +1272,6 @@ function setupEventListeners() {
       const prefix = prefixSelect.value;
       const fullPhone = prefix + val;
 
-      // Bloquear inputs durante búsqueda
       phoneInput.readOnly = true;
       prefixSelect.disabled = true;
       nameInput.disabled = true;
@@ -1089,7 +1317,6 @@ function setupEventListeners() {
         savedClientData = null;
       }
 
-      // Desbloquear
       nameInput.disabled = false;
       searchIndicator.classList.add("hidden");
       changePhoneBtn.classList.remove("hidden");
@@ -1108,7 +1335,6 @@ function setupEventListeners() {
     nameInput.disabled = false;
     savedClientData = null;
 
-    // Limpiar opcionales
     document.getElementById("checkCedula").checked = false;
     document.getElementById("containerCedula").classList.add("hidden");
     document.getElementById("clientCedula").value = "";
