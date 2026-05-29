@@ -364,15 +364,19 @@
       </button>
       <button id="paymentInfoBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white font-semibold transition text-left border border-transparent">
         <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-        Información de Pago
+        Datos de Pagos
+      </button>
+      <button id="salirBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/10 text-red-400 hover:text-red-500 font-semibold transition text-left border border-transparent">
+        <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Salir FastBurguer
+      </button>
+      <button id="opcionesBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white font-semibold transition text-left border border-transparent">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Opciones
       </button>
       <button id="sobreBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white font-semibold transition text-left border border-transparent">
         <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         Sobre FastBurguer
-      </button>
-      <button id="accesoBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white font-semibold transition text-left border border-transparent">
-        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-        Acceso Restringido
       </button>
     </nav>
   </div>
@@ -1142,7 +1146,7 @@ function setupEventListeners() {
     closeCart(); closeCheckout(); document.getElementById("paymentInfoModal").classList.add("hidden");
     document.getElementById("ordersModal").classList.add("hidden"); document.getElementById("sideMenu").classList.add("-translate-x-full");
     document.getElementById("sobreModal").classList.add("hidden");
-    document.getElementById("accesoModal").classList.add("hidden");
+    document.getElementById("despedidaModal").classList.add("hidden");
     document.getElementById("overlay").classList.add("hidden");
   });
 
@@ -1437,15 +1441,33 @@ function setupEventListeners() {
     checkOverlay();
   });
 
-  // Acceso Restringido
-  document.getElementById("accesoBtn").addEventListener("click", () => {
+  // Salir FastBurguer → Modal de despedida
+  document.getElementById("salirBtn").addEventListener("click", () => {
     document.getElementById("sideMenu").classList.add("-translate-x-full");
-    document.getElementById("accesoModal").classList.remove("hidden");
+    checkOverlay();
+    document.getElementById("despedidaModal").classList.remove("hidden");
     document.getElementById("overlay").classList.remove("hidden");
   });
-  document.getElementById("closeAccesoModal").addEventListener("click", () => {
-    document.getElementById("accesoModal").classList.add("hidden");
+
+  // Confirmar salida desde modal
+  document.getElementById("salirConfirmBtn").addEventListener("click", () => {
+    localStorage.removeItem("fb_client_phone");
+    localStorage.removeItem("mis_pedidos_fb");
+    document.getElementById("despedidaModal").classList.add("hidden");
+    document.getElementById("overlay").classList.add("hidden");
+    window.close();
+    setTimeout(() => { window.location.href = "about:blank"; }, 300);
+  });
+
+  // Regresar desde modal de despedida
+  document.getElementById("regresarDespedidaBtn").addEventListener("click", () => {
+    document.getElementById("despedidaModal").classList.add("hidden");
     checkOverlay();
+  });
+
+  // Opciones → Panel Admin
+  document.getElementById("opcionesBtn").addEventListener("click", () => {
+    window.location.href = "admin.html";
   });
 }
 
@@ -1539,34 +1561,26 @@ function checkOverlay() {
   </div>
 </div>
 
-<div id="accesoModal" class="fixed inset-0 z-[85] bg-black/80 flex items-center justify-center p-4 hidden">
-  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-sm p-8 border border-white/10 shadow-2xl">
-    <div class="text-center mb-6">
-      <h3 class="text-2xl font-black text-white tracking-wide">ACCESO RESTRINGIDO</h3>
-      <div class="w-16 h-0.5 bg-orange-500/30 mx-auto mt-2 mb-2"></div>
-      <p class="text-sm text-gray-400 font-light">Panel Administrativo</p>
-    </div>
-    <div class="space-y-4">
-      <div>
-        <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2">Usuario</label>
-        <input type="text" id="adminUser" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 opacity-50 cursor-not-allowed" placeholder="Nombre de usuario" disabled>
-      </div>
-      <div>
-        <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2">Clave</label>
-        <input type="password" id="adminPass" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 opacity-50 cursor-not-allowed" placeholder="••••••" disabled>
-      </div>
-      <button class="w-full btn-primary py-3 rounded-xl font-bold text-white transition opacity-50 cursor-not-allowed" disabled>
-        Ingresar
+
+
+
+<div id="despedidaModal" class="fixed inset-0 z-[85] bg-black/90 flex items-center justify-center p-4 hidden">
+  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-sm text-center p-8 border border-white/10 shadow-2xl fade-in">
+    <div class="text-6xl mb-4">🍔</div>
+    <h3 class="text-2xl font-black text-white mb-2 tracking-tight">FastBurguer</h3>
+    <p class="text-lg text-gray-300 mb-8 font-medium">Será una Delicia Verte de Nuevo</p>
+    <div class="flex gap-3">
+      <button id="salirConfirmBtn" class="flex-1 py-3 rounded-xl font-bold text-gray-400 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition">
+        Salir
+      </button>
+      <button id="regresarDespedidaBtn" class="flex-1 btn-primary py-3 rounded-xl font-bold text-white transition">
+        Regresar
       </button>
     </div>
-    <p class="text-center text-xs text-gray-600 mt-4">Fase 2 - Proximamente</p>
-    <button id="closeAccesoModal" class="mt-4 w-full py-3 rounded-xl font-bold text-gray-400 border border-gray-700 hover:bg-gray-800 transition">
-      Cerrar
-    </button>
   </div>
 </div>
 
 </body>
 </html>
-<CONTROL DE VERSION GLOBAL (Cambia este texto en cada nueva implementacion)
-var API_VERSION = "v7.4 - CodTasa + OrdenTasa>
+<!-- CONTROL DE VERSION ADMIN (Cambia este texto en cada nueva implementacion)
+var ADMIN_VERSION = "v8.0 - Panel Admin Fase 2"; -->
