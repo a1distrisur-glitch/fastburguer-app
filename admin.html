@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FastBurguer - Panel de Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;}
+  .glass{background:rgba(255,255,255,0.05);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);}
+  .btn-primary{background:linear-gradient(135deg,#ff6b35 0%,#f7931e 100%);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(255,107,53,0.4);}
+  .tab-btn.active{background:rgba(255,255,255,0.1);color:#fff;}
+  .fade-in{animation:fadeIn 0.4s ease-out;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .scrollbar-hide::-webkit-scrollbar{display:none;}
+  .scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none;}
+  input:focus, select:focus, textarea:focus{outline:none;border-color:#ff6b35;}
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- ==================== ESTADO LOGIN ==================== -->
+<div id="loginState" class="fixed inset-0 z-50 bg-[#0a0a0a] flex items-center justify-center p-4">
+  <div class="w-full max-w-md fade-in">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-black text-white tracking-tight">FastBurguer</h1>
+      <p class="text-gray-400 mt-1">Panel de Control</p>
+      <div class="w-16 h-0.5 bg-orange-500/30 mx-auto mt-3"></div>
+    </div>
+    <div class="glass rounded-2xl p-8">
+      <div class="space-y-5">
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2">Usuario</label>
+          <input type="text" id="adminUser" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500" placeholder="Nombre de usuario">
+        </div>
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2">Contraseña</label>
+          <input type="password" id="adminPass" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500" placeholder="••••••">
+        </div>
+        <button id="loginBtn" class="w-full btn-primary py-3 rounded-xl font-bold text-white transition">Ingresar</button>
+        <button id="backToMenuBtn" class="w-full py-3 rounded-xl font-bold text-gray-400 border border-gray-700 hover:bg-gray-800 transition flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          Regresar al menú
+        </button>
+      </div>
+    </div>
+    <p class="text-center text-xs text-gray-600 mt-6">FastBurguer Admin v8.0</p>
+  </div>
+</div>
+
+<!-- ==================== ESTADO PANEL ==================== -->
+<div id="panelState" class="hidden min-h-screen">
+  <!-- Header -->
+  <header class="glass fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3">
+    <div class="flex items-center gap-3">
+      <h1 class="font-black text-lg tracking-tight text-white">FastBurguer <span class="text-orange-400 font-light">Admin</span></h1>
+    </div>
+    <button id="logoutBtn" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 text-sm font-bold hover:bg-red-500/20 transition">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      Cerrar Sesión
+    </button>
+  </header>
+
+  <!-- Tabs -->
+  <nav class="fixed top-[60px] left-0 right-0 z-40 glass flex gap-2 px-4 py-2 overflow-x-auto scrollbar-hide">
+    <button class="tab-btn active px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition" data-tab="productos">📦 Productos</button>
+    <button class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-gray-400 transition hover:text-white" data-tab="config">⚙️ Configuración</button>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="pt-[120px] pb-8 px-4 max-w-7xl mx-auto">
+    <!-- TAB PRODUCTOS -->
+    <div id="tab-productos" class="tab-content fade-in">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+        <h2 class="text-xl font-bold text-white">Manejo de Productos</h2>
+        <div class="flex gap-2">
+          <button id="filterTodos" class="filter-btn px-3 py-1.5 rounded-lg bg-orange-500/20 text-orange-400 text-xs font-bold border border-orange-500/30">Todos</button>
+          <button id="filterActivos" class="filter-btn px-3 py-1.5 rounded-lg bg-gray-800 text-gray-400 text-xs font-bold border border-gray-700">Activos</button>
+          <button id="filterInactivos" class="filter-btn px-3 py-1.5 rounded-lg bg-gray-800 text-gray-400 text-xs font-bold border border-gray-700">Inactivos</button>
+        </div>
+      </div>
+      <div class="overflow-x-auto glass rounded-xl">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-gray-800/80 text-gray-400 text-xs uppercase tracking-wider">
+            <tr>
+              <th class="p-3 rounded-tl-lg">Código</th>
+              <th class="p-3">Producto</th>
+              <th class="p-3">Categoría</th>
+              <th class="p-3">Precio</th>
+              <th class="p-3">Moneda</th>
+              <th class="p-3">Stock</th>
+              <th class="p-3">Estado</th>
+              <th class="p-3 rounded-tr-lg text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="productosTableBody" class="divide-y divide-gray-800">
+            <tr><td colspan="8" class="p-6 text-center text-gray-500">Cargando productos...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB CONFIGURACIÓN -->
+    <div id="tab-config" class="tab-content hidden fade-in">
+      <h2 class="text-xl font-bold text-white mb-4">Configuración de Negocio</h2>
+      <div class="glass rounded-2xl p-6 space-y-4 max-w-3xl">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Estado Tienda</label>
+            <select id="configEstado" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
+              <option value="Abierto">Abierto</option>
+              <option value="Cerrado">Cerrado</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Código Tasa Base</label>
+            <input type="text" id="configCodTasa" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm" placeholder="T002">
+          </div>
+          <div>
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Horario Apertura</label>
+            <input type="text" id="configHorarioApertura" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm" placeholder="10:00">
+          </div>
+          <div>
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Horario Cierre</label>
+            <input type="text" id="configHorarioCierre" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm" placeholder="22:00">
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">WhatsApp Negocio</label>
+            <input type="text" id="configWhatsApp" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm" placeholder="584120000000">
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Cuenta Zelle</label>
+            <input type="text" id="configZelle" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Cuenta Binance</label>
+            <input type="text" id="configBinance" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Datos Pago Móvil</label>
+            <input type="text" id="configPagoMovil" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Datos Transferencia</label>
+            <input type="text" id="configTransferencia" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
+          </div>
+        </div>
+        <button id="saveConfigBtn" class="w-full btn-primary py-3 rounded-xl font-bold text-white transition mt-2">Guardar Cambios</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ==================== MODAL EDITAR PRODUCTO ==================== -->
+<div id="editModal" class="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4 hidden">
+  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto border border-white/10 shadow-2xl fade-in">
+    <div class="p-6 border-b border-white/5 flex items-center justify-between">
+      <h3 class="text-xl font-black text-white">Editar Producto</h3>
+      <button id="cancelEditBtn" class="p-2 hover:bg-white/10 rounded-lg text-gray-400">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-6 space-y-4">
+      <input type="hidden" id="editCodProducto">
+      <div>
+        <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Nombre Producto</label>
+        <input type="text" id="editDesProducto" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Precio</label>
+          <input type="number" id="editPrecio" step="0.01" min="0" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
+        </div>
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Moneda (CodTasa)</label>
+          <select id="editCodTasa" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm"></select>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Categoría</label>
+          <select id="editCodCategoria" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm"></select>
+        </div>
+        <div>
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Stock</label>
+          <select id="editStock" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
+            <option value="Disponible">Disponible</option>
+            <option value="No Disponible">No Disponible</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">URL Imagen</label>
+        <input type="text" id="editImagen" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
+      </div>
+      <div>
+        <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Estado</label>
+        <select id="editEstado" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
+          <option value="Activo">Activo</option>
+          <option value="Inactivo">Inactivo</option>
+        </select>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button id="cancelEditBtn2" class="flex-1 py-3 rounded-xl font-bold text-gray-400 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition">Cancelar</button>
+        <button id="saveEditBtn" class="flex-1 btn-primary py-3 rounded-xl font-bold text-white transition">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ALERTA CUSTOM ==================== -->
+<div id="adminAlert" class="fixed inset-0 z-[70] bg-black/80 flex items-center justify-center p-4 hidden">
+  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-sm text-center p-6 border border-white/10 shadow-2xl">
+    <div id="adminAlertIcon" class="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4"></div>
+    <h4 id="adminAlertTitle" class="text-xl font-black text-white mb-2"></h4>
+    <p id="adminAlertBody" class="text-sm text-gray-400 mb-6"></p>
+    <button id="adminAlertBtn" class="w-full btn-primary py-3 rounded-xl font-bold text-white transition"></button>
+  </div>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9FoXBkMYwPD4xkK1llpxakpExC6DspQvnOI6Vmw/exec";
+const PLACEHOLDER_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect fill='%23333' width='64' height='64'/%3E%3Ctext fill='%23666' font-family='sans-serif' font-size='20' dy='6.5' font-weight='bold' x='50%25' y='50%25' text-anchor='middle'%3E🍔%3C/text%3E%3C/svg%3E";
+
+let adminToken = localStorage.getItem("fb_admin_token") || "";
+let allProductos = [];
+let allCategorias = [];
+let allTasas = [];
+let currentFilter = "todos";
+
+function ofuscar(texto) {
+  const clave = "FB2025Secret";
+  let resultado = "";
+  for (let i = 0; i < texto.length; i++) {
+    resultado += String.fromCharCode(texto.charCodeAt(i) ^ clave.charCodeAt(i % clave.length));
+  }
+  return btoa(resultado);
+}
+
+function mostrarAlerta(tipo, titulo, mensaje, btnText, callback) {
+  const modal = document.getElementById("adminAlert");
+  const icon = document.getElementById("adminAlertIcon");
+  const title = document.getElementById("adminAlertTitle");
+  const body = document.getElementById("adminAlertBody");
+  const btn = document.getElementById("adminAlertBtn");
+
+  title.textContent = titulo;
+  body.textContent = mensaje;
+  btn.textContent = btnText || "Aceptar";
+
+  if (tipo === "error") {
+    icon.className = "mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-red-500/20 text-red-500";
+    icon.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
+  } else {
+    icon.className = "mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-green-500/20 text-green-500";
+    icon.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`;
+  }
+
+  btn.onclick = () => { modal.classList.add("hidden"); if (callback) callback(); };
+  modal.classList.remove("hidden");
+}
+
+async function apiPost(data) {
+  const res = await fetch(API_URL, {
+    method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(data)
+  });
+  return res.json();
+}
+
+async function initAdmin() {
+  if (!adminToken) { showLogin(); return; }
+  try {
+    const res = await apiPost({ action: "validateToken", token: adminToken });
+    if (res.success) { showPanel(); loadProductos(); loadConfig(); }
+    else { localStorage.removeItem("fb_admin_token"); showLogin(); }
+  } catch (e) { showLogin(); }
+}
+
+function showLogin() {
+  document.getElementById("loginState").classList.remove("hidden");
+  document.getElementById("panelState").classList.add("hidden");
+}
+function showPanel() {
+  document.getElementById("loginState").classList.add("hidden");
+  document.getElementById("panelState").classList.remove("hidden");
+}
+
+async function doLogin() {
+  const user = document.getElementById("adminUser").value.trim();
+  const pass = document.getElementById("adminPass").value.trim();
+  if (!user || !pass) { mostrarAlerta("error", "Campos vacíos", "Ingrese usuario y contraseña."); return; }
+
+  const btn = document.getElementById("loginBtn");
+  btn.disabled = true; btn.textContent = "Verificando...";
+
+  try {
+    const res = await apiPost({ action: "login", usuario: user, clave: ofuscar(pass) });
+    if (res.success && res.token) {
+      localStorage.setItem("fb_admin_token", res.token);
+      adminToken = res.token;
+      showPanel();
+      loadProductos();
+      loadConfig();
+    } else {
+      mostrarAlerta("error", "Acceso denegado", res.error || "Credenciales inválidas.");
+    }
+  } catch (e) {
+    mostrarAlerta("error", "Error de red", "No se pudo conectar con el servidor.");
+  } finally {
+    btn.disabled = false; btn.textContent = "Ingresar";
+  }
+}
+
+async function loadProductos() {
+  try {
+    const res = await apiPost({ action: "getProductosAdmin", token: adminToken });
+    if (res.success) {
+      allProductos = res.productos || [];
+      allCategorias = res.categorias || [];
+      allTasas = res.tasas || [];
+      renderProductos();
+    } else {
+      mostrarAlerta("error", "Error", res.error || "No se pudieron cargar los productos.");
+    }
+  } catch (e) {
+    mostrarAlerta("error", "Error de red", "Falló la carga de productos.");
+  }
+}
+
+function renderProductos() {
+  const tbody = document.getElementById("productosTableBody");
+  let filtered = allProductos;
+  if (currentFilter === "activos") filtered = allProductos.filter(p => p.Estado === "Activo");
+  if (currentFilter === "inactivos") filtered = allProductos.filter(p => p.Estado === "Inactivo");
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-gray-500">No hay productos para mostrar</td></tr>`;
+    return;
+  }
+
+  let html = "";
+  filtered.forEach(p => {
+    const cat = allCategorias.find(c => c.CodCategoria === p.CodCategoria);
+    const tasa = allTasas.find(t => t.CodTasa === p.CodTasa);
+    const stockClass = p.StockProducto === "Disponible" ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400";
+    const estadoClass = p.Estado === "Activo" ? "bg-green-500/20 text-green-400" : "bg-gray-700 text-gray-400";
+    html += `
+      <tr class="hover:bg-white/5 transition">
+        <td class="p-3 text-gray-400 font-mono text-xs">${p.CodProducto}</td>
+        <td class="p-3">
+          <div class="flex items-center gap-2">
+            <img src="${p.ImagenProducto || PLACEHOLDER_IMG}" class="w-8 h-8 rounded object-cover bg-gray-700 flex-shrink-0" onerror="this.src='${PLACEHOLDER_IMG}'" loading="lazy">
+            <span class="font-semibold text-white text-sm">${p.DesProducto || ""}</span>
+          </div>
+        </td>
+        <td class="p-3 text-gray-300 text-sm">${cat ? cat.DesCategoria : p.CodCategoria}</td>
+        <td class="p-3 text-orange-400 font-bold text-sm">${parseFloat(p.Precio || 0).toFixed(2)}</td>
+        <td class="p-3 text-gray-300 text-sm">${tasa ? (tasa.SimboloTasa || tasa.CodTasa) : p.CodTasa}</td>
+        <td class="p-3"><span class="px-2 py-1 rounded text-xs font-bold ${stockClass}">${p.StockProducto || "No Disponible"}</span></td>
+        <td class="p-3"><span class="px-2 py-1 rounded text-xs font-bold ${estadoClass}">${p.Estado || "Inactivo"}</span></td>
+        <td class="p-3 text-right">
+          <button class="edit-btn px-3 py-1.5 rounded-lg bg-orange-500/20 text-orange-400 text-xs font-bold border border-orange-500/30 hover:bg-orange-500/30 transition" data-code="${p.CodProducto}">Editar</button>
+        </td>
+      </tr>`;
+  });
+  tbody.innerHTML = html;
+  tbody.querySelectorAll(".edit-btn").forEach(btn => {
+    btn.addEventListener("click", () => openEditModal(btn.dataset.code));
+  });
+}
+
+function openEditModal(cod) {
+  const p = allProductos.find(x => x.CodProducto === cod);
+  if (!p) return;
+
+  document.getElementById("editCodProducto").value = p.CodProducto;
+  document.getElementById("editDesProducto").value = p.DesProducto || "";
+  document.getElementById("editPrecio").value = p.Precio || 0;
+  document.getElementById("editImagen").value = p.ImagenProducto || "";
+  document.getElementById("editStock").value = p.StockProducto || "No Disponible";
+  document.getElementById("editEstado").value = p.Estado || "Inactivo";
+
+  const catSel = document.getElementById("editCodCategoria");
+  catSel.innerHTML = "";
+  allCategorias.forEach(c => {
+    catSel.innerHTML += `<option value="${c.CodCategoria}" ${c.CodCategoria === p.CodCategoria ? "selected" : ""}>${c.DesCategoria}</option>`;
+  });
+
+  const tasaSel = document.getElementById("editCodTasa");
+  tasaSel.innerHTML = "";
+  allTasas.forEach(t => {
+    tasaSel.innerHTML += `<option value="${t.CodTasa}" ${t.CodTasa === p.CodTasa ? "selected" : ""}>${t.SimboloTasa || t.CodTasa} - ${t.DesTasa || ""}</option>`;
+  });
+
+  document.getElementById("editModal").classList.remove("hidden");
+}
+
+async function saveEditProducto() {
+  const data = {
+    action: "producto", method: "PUT", token: adminToken,
+    codProducto: document.getElementById("editCodProducto").value,
+    desProducto: document.getElementById("editDesProducto").value.trim(),
+    codCategoria: document.getElementById("editCodCategoria").value,
+    precio: parseFloat(document.getElementById("editPrecio").value) || 0,
+    codTasa: document.getElementById("editCodTasa").value,
+    stockProducto: document.getElementById("editStock").value,
+    imagenProducto: document.getElementById("editImagen").value.trim(),
+    estado: document.getElementById("editEstado").value
+  };
+
+  try {
+    const res = await apiPost(data);
+    if (res.success) {
+      document.getElementById("editModal").classList.add("hidden");
+      mostrarAlerta("success", "Guardado", "Producto actualizado correctamente.", "OK", loadProductos);
+    } else {
+      mostrarAlerta("error", "Error", res.error || "No se pudo actualizar el producto.");
+    }
+  } catch (e) {
+    mostrarAlerta("error", "Error de red", "Falló la comunicación con el servidor.");
+  }
+}
+
+async function loadConfig() {
+  try {
+    const res = await apiPost({ action: "getConfigAdmin", token: adminToken });
+    if (res.success && res.config) {
+      const c = res.config;
+      document.getElementById("configEstado").value = c.EstadoTienda || "Cerrado";
+      document.getElementById("configCodTasa").value = c.CodTasa || "T002";
+      document.getElementById("configHorarioApertura").value = c.HorarioApertura || "";
+      document.getElementById("configHorarioCierre").value = c.HorarioCierre || "";
+      document.getElementById("configWhatsApp").value = c.WhatsAppNegocio || "";
+      document.getElementById("configZelle").value = c.CuentaZelle || "";
+      document.getElementById("configBinance").value = c.CuentaBinance || "";
+      document.getElementById("configPagoMovil").value = c.DatosPagoMovil || "";
+      document.getElementById("configTransferencia").value = c.DatosTransferencia || "";
+    }
+  } catch (e) {
+    console.error("Error cargando config", e);
+  }
+}
+
+async function saveConfig() {
+  const data = {
+    action: "config", method: "PUT", token: adminToken,
+    estadoTienda: document.getElementById("configEstado").value,
+    codTasa: document.getElementById("configCodTasa").value.trim(),
+    horarioApertura: document.getElementById("configHorarioApertura").value.trim(),
+    horarioCierre: document.getElementById("configHorarioCierre").value.trim(),
+    whatsAppNegocio: document.getElementById("configWhatsApp").value.trim(),
+    cuentaZelle: document.getElementById("configZelle").value.trim(),
+    cuentaBinance: document.getElementById("configBinance").value.trim(),
+    datosPagoMovil: document.getElementById("configPagoMovil").value.trim(),
+    datosTransferencia: document.getElementById("configTransferencia").value.trim()
+  };
+
+  try {
+    const res = await apiPost(data);
+    if (res.success) {
+      mostrarAlerta("success", "Configuración guardada", "Los cambios se aplicaron exitosamente.", "OK");
+    } else {
+      mostrarAlerta("error", "Error", res.error || "No se pudo guardar la configuración.");
+    }
+  } catch (e) {
+    mostrarAlerta("error", "Error de red", "Falló la comunicación con el servidor.");
+  }
+}
+
+// Event Listeners
+document.getElementById("loginBtn").addEventListener("click", doLogin);
+document.getElementById("backToMenuBtn").addEventListener("click", () => window.location.href = "index.html");
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  localStorage.removeItem("fb_admin_token");
+  window.location.reload();
+});
+document.getElementById("saveConfigBtn").addEventListener("click", saveConfig);
+document.getElementById("saveEditBtn").addEventListener("click", saveEditProducto);
+document.getElementById("cancelEditBtn").addEventListener("click", () => document.getElementById("editModal").classList.add("hidden"));
+document.getElementById("cancelEditBtn2").addEventListener("click", () => document.getElementById("editModal").classList.add("hidden"));
+
+// Tabs
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => {
+      b.classList.remove("active", "text-white"); b.classList.add("text-gray-400");
+    });
+    btn.classList.add("active", "text-white"); btn.classList.remove("text-gray-400");
+    document.querySelectorAll(".tab-content").forEach(c => c.classList.add("hidden"));
+    document.getElementById("tab-" + btn.dataset.tab).classList.remove("hidden");
+  });
+});
+
+// Filters
+function setFilter(type, btnId) {
+  currentFilter = type;
+  document.querySelectorAll(".filter-btn").forEach(b => {
+    b.classList.remove("bg-orange-500/20", "text-orange-400", "border-orange-500/30");
+    b.classList.add("bg-gray-800", "text-gray-400", "border-gray-700");
+  });
+  const activeBtn = document.getElementById(btnId);
+  activeBtn.classList.remove("bg-gray-800", "text-gray-400", "border-gray-700");
+  activeBtn.classList.add("bg-orange-500/20", "text-orange-400", "border-orange-500/30");
+  renderProductos();
+}
+document.getElementById("filterTodos").addEventListener("click", () => setFilter("todos", "filterTodos"));
+document.getElementById("filterActivos").addEventListener("click", () => setFilter("activos", "filterActivos"));
+document.getElementById("filterInactivos").addEventListener("click", () => setFilter("inactivos", "filterInactivos"));
+
+// Enter en login
+document.getElementById("adminPass").addEventListener("keypress", e => { if (e.key === "Enter") doLogin(); });
+
+// Init
+document.addEventListener("DOMContentLoaded", initAdmin);
+</script>
+
+<!-- CONTROL DE VERSION ADMIN (Cambia este texto en cada nueva implementacion)
+var ADMIN_VERSION = "v8.0 - Panel Admin Fase 2"; -->
+</body>
+</html>
