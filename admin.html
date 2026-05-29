@@ -2,235 +2,398 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>FastBurguer - Panel de Control</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;}
+  body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;-webkit-tap-highlight-color:transparent;}
   .glass{background:rgba(255,255,255,0.05);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);}
   .btn-primary{background:linear-gradient(135deg,#ff6b35 0%,#f7931e 100%);}
   .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(255,107,53,0.4);}
-  .tab-btn.active{background:rgba(255,255,255,0.1);color:#fff;}
-  .fade-in{animation:fadeIn 0.4s ease-out;}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .btn-danger{background:linear-gradient(135deg,#dc2626 0%,#b91c1c 100%);}
+  .btn-danger:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(220,38,38,0.4);}
+  .btn-secondary{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);}
+  .btn-secondary:hover{background:rgba(255,255,255,0.15);}
+  .fade-in{animation:fadeIn 0.3s ease-out;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .slide-in{animation:slideIn 0.3s ease-out;}
+  @keyframes slideIn{from{transform:translateX(-100%);}to{transform:translateX(0);}}
   .scrollbar-hide::-webkit-scrollbar{display:none;}
   .scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none;}
   input:focus, select:focus, textarea:focus{outline:none;border-color:#ff6b35;}
+  .nav-item{transition:all 0.15s ease;}
+  .nav-item:active{transform:scale(0.98);}
+  .nav-item.active{background:rgba(255,107,53,0.15);border-left:3px solid #ff6b35;color:#ff6b35;}
+  .sub-nav-item{padding-left:2.5rem;font-size:0.875rem;color:#9ca3af;transition:all 0.15s;}
+  .sub-nav-item:active{background:rgba(255,255,255,0.05);}
+  .sub-nav-item.active{color:#ff6b35;background:rgba(255,107,53,0.08);}
+  .mobile-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:0.75rem;padding:1rem;margin-bottom:0.75rem;}
+  .mobile-card:active{background:rgba(255,255,255,0.06);}
+  .touch-btn{min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center;}
+  @media(min-width:769px){
+    .sidebar-pc{width:260px;transform:none!important;position:fixed;left:0;top:0;bottom:0;z-index:30;}
+    .main-pc{margin-left:260px;}
+    .hamburger-pc{display:none;}
+  }
+  @media(max-width:768px){
+    .sidebar-pc{position:fixed;left:0;top:0;bottom:0;width:280px;z-index:50;transform:translateX(-100%);transition:transform 0.3s ease;}
+    .sidebar-pc.open{transform:translateX(0);}
+    .main-pc{margin-left:0;}
+    .hamburger-pc{display:flex;}
+    .table-pc{display:none;}
+    .cards-mobile{display:block;}
+  }
+  @media(min-width:769px){
+    .table-pc{display:table;}
+    .cards-mobile{display:none;}
+  }
+  .toggle-btn { transition: all 0.2s ease; }
+  .toggle-btn.activo { background: rgba(34,197,94,0.2); color: #22c55e; border-color: rgba(34,197,94,0.4); }
+  .toggle-btn.inactivo { background: rgba(239,68,68,0.2); color: #ef4444; border-color: rgba(239,68,68,0.4); }
 </style>
 </head>
 <body class="min-h-screen">
 
 <!-- ==================== ESTADO LOGIN ==================== -->
 <div id="loginState" class="fixed inset-0 z-50 bg-[#0a0a0a] flex items-center justify-center p-4">
-  <div class="w-full max-w-md fade-in">
-    <div class="text-center mb-8">
-      <h1 class="text-3xl font-black text-white tracking-tight">FastBurguer</h1>
-      <p class="text-gray-400 mt-1">Panel de Control</p>
-      <div class="w-16 h-0.5 bg-orange-500/30 mx-auto mt-3"></div>
+  <div class="w-full max-w-sm fade-in">
+    <div class="text-center mb-6">
+      <div class="text-5xl mb-3">🍔</div>
+      <h1 class="text-2xl font-black text-white tracking-tight">FastBurguer</h1>
+      <p class="text-gray-400 text-sm mt-1">Panel de Control</p>
     </div>
-    <div class="glass rounded-2xl p-8">
-      <div class="space-y-5">
+    <div class="glass rounded-2xl p-6">
+      <div class="space-y-4">
         <div>
-          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2">Usuario</label>
-          <input type="text" id="adminUser" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500" placeholder="Nombre de usuario">
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Usuario</label>
+          <input type="text" id="adminUser" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 text-base" placeholder="Nombre de usuario" autocomplete="off">
         </div>
         <div>
-          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2">Contraseña</label>
-          <input type="password" id="adminPass" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500" placeholder="••••••">
+          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5">Contraseña</label>
+          <input type="password" id="adminPass" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 text-base" placeholder="••••••" autocomplete="off">
         </div>
-        <button id="loginBtn" class="w-full btn-primary py-3 rounded-xl font-bold text-white transition">Ingresar</button>
-        <button id="backToMenuBtn" class="w-full py-3 rounded-xl font-bold text-gray-400 border border-gray-700 hover:bg-gray-800 transition flex items-center justify-center gap-2">
+        <button id="loginBtn" class="w-full btn-primary py-3 rounded-xl font-bold text-white transition text-base touch-btn">Ingresar</button>
+        <button id="backToMenuBtn" class="w-full py-3 rounded-xl font-bold text-gray-400 border border-gray-700 hover:bg-gray-800 transition text-sm flex items-center justify-center gap-2 touch-btn">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
           Regresar al menú
         </button>
       </div>
     </div>
-    <p class="text-center text-xs text-gray-600 mt-6">FastBurguer Admin v8.0</p>
+    <p class="text-center text-xs text-gray-600 mt-4">FastBurguer Admin v8.1</p>
   </div>
 </div>
 
 <!-- ==================== ESTADO PANEL ==================== -->
 <div id="panelState" class="hidden min-h-screen">
-  <!-- Header -->
-  <header class="glass fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3">
+
+  <!-- ===== MOBILE HEADER ===== -->
+  <header class="fixed top-0 left-0 right-0 z-40 glass flex items-center justify-between px-4 py-3 h-[56px]">
     <div class="flex items-center gap-3">
-      <h1 class="font-black text-lg tracking-tight text-white">FastBurguer <span class="text-orange-400 font-light">Admin</span></h1>
+      <button id="menuToggle" class="hamburger-pc touch-btn p-2 rounded-lg hover:bg-white/10 text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <h1 class="font-black text-base tracking-tight text-white">FastBurguer <span class="text-orange-400 font-light text-sm">Admin</span></h1>
     </div>
-    <button id="logoutBtn" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 text-sm font-bold hover:bg-red-500/20 transition">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-      Cerrar Sesión
+    <button id="logoutBtnHeader" class="touch-btn px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-bold hover:bg-red-500/20 transition">
+      Salir
     </button>
   </header>
 
-  <!-- Tabs -->
-  <nav class="fixed top-[60px] left-0 right-0 z-40 glass flex gap-2 px-4 py-2 overflow-x-auto scrollbar-hide">
-    <button class="tab-btn active px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition" data-tab="productos">📦 Productos</button>
-    <button class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap text-gray-400 transition hover:text-white" data-tab="config">⚙️ Configuración</button>
-  </nav>
-
-  <!-- Main Content -->
-  <main class="pt-[120px] pb-8 px-4 max-w-7xl mx-auto">
-    <!-- TAB PRODUCTOS -->
-    <div id="tab-productos" class="tab-content fade-in">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
-        <h2 class="text-xl font-bold text-white">Manejo de Productos</h2>
-        <div class="flex gap-2">
-          <button id="filterTodos" class="filter-btn px-3 py-1.5 rounded-lg bg-orange-500/20 text-orange-400 text-xs font-bold border border-orange-500/30">Todos</button>
-          <button id="filterActivos" class="filter-btn px-3 py-1.5 rounded-lg bg-gray-800 text-gray-400 text-xs font-bold border border-gray-700">Activos</button>
-          <button id="filterInactivos" class="filter-btn px-3 py-1.5 rounded-lg bg-gray-800 text-gray-400 text-xs font-bold border border-gray-700">Inactivos</button>
-        </div>
-      </div>
-      <div class="overflow-x-auto glass rounded-xl">
-        <table class="w-full text-left text-sm">
-          <thead class="bg-gray-800/80 text-gray-400 text-xs uppercase tracking-wider">
-            <tr>
-              <th class="p-3 rounded-tl-lg">Código</th>
-              <th class="p-3">Producto</th>
-              <th class="p-3">Categoría</th>
-              <th class="p-3">Precio</th>
-              <th class="p-3">Moneda</th>
-              <th class="p-3">Stock</th>
-              <th class="p-3">Estado</th>
-              <th class="p-3 rounded-tr-lg text-right">Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="productosTableBody" class="divide-y divide-gray-800">
-            <tr><td colspan="8" class="p-6 text-center text-gray-500">Cargando productos...</td></tr>
-          </tbody>
-        </table>
-      </div>
+  <!-- ===== SIDEBAR / DRAWER ===== -->
+  <aside id="sidebar" class="sidebar-pc bg-[#111] border-r border-white/10">
+    <div class="hidden md:flex items-center justify-between p-4 border-b border-white/5">
+      <h1 class="font-black text-lg tracking-tight text-white">FastBurguer <span class="text-orange-400 font-light">Admin</span></h1>
+    </div>
+    <div class="md:hidden flex items-center justify-between p-4 border-b border-white/5">
+      <span class="font-bold text-white">FastBurguer</span>
+      <button id="menuClose" class="touch-btn p-2 rounded-lg hover:bg-white/10 text-gray-400">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
     </div>
 
-    <!-- TAB CONFIGURACIÓN -->
-    <div id="tab-config" class="tab-content hidden fade-in">
-      <h2 class="text-xl font-bold text-white mb-4">Configuración de Negocio</h2>
-      <div class="glass rounded-2xl p-6 space-y-4 max-w-3xl">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Estado Tienda</label>
-            <select id="configEstado" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
-              <option value="Abierto">Abierto</option>
-              <option value="Cerrado">Cerrado</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Código Tasa Base</label>
-            <input type="text" id="configCodTasa" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm" placeholder="T002">
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Horario Apertura</label>
-            <input type="text" id="configHorarioApertura" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm" placeholder="10:00">
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Horario Cierre</label>
-            <input type="text" id="configHorarioCierre" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm" placeholder="22:00">
-          </div>
-          <div class="md:col-span-2">
-            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">WhatsApp Negocio</label>
-            <input type="text" id="configWhatsApp" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm" placeholder="584120000000">
-          </div>
-          <div class="md:col-span-2">
-            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Cuenta Zelle</label>
-            <input type="text" id="configZelle" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
-          </div>
-          <div class="md:col-span-2">
-            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Cuenta Binance</label>
-            <input type="text" id="configBinance" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
-          </div>
-          <div class="md:col-span-2">
-            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Datos Pago Móvil</label>
-            <input type="text" id="configPagoMovil" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
-          </div>
-          <div class="md:col-span-2">
-            <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Datos Transferencia</label>
-            <input type="text" id="configTransferencia" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
+    <nav class="py-2 overflow-y-auto h-[calc(100%-60px)] scrollbar-hide" id="adminNav">
+      <div class="px-4 py-2 text-sm font-bold text-gray-400 uppercase tracking-wider">Datos</div>
+
+      <button class="nav-item w-full text-left px-4 py-3 text-gray-300 font-semibold flex items-center gap-3 text-sm" data-section="tasas">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Tasas de Cambio
+      </button>
+
+      <button class="nav-item w-full text-left px-4 py-3 text-gray-300 font-semibold flex items-center gap-3 text-sm" data-section="menu">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        Productos Menú
+      </button>
+      <div class="sub-nav hidden" id="sub-menu">
+        <button class="sub-nav-item w-full text-left py-2.5 px-4" data-sub="categorias">Categorías</button>
+        <button class="sub-nav-item w-full text-left py-2.5 px-4" data-sub="productos">Productos</button>
+      </div>
+
+      <button class="nav-item w-full text-left px-4 py-3 text-gray-300 font-semibold flex items-center gap-3 text-sm" data-section="servicios">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        Servicios
+      </button>
+      <div class="sub-nav hidden" id="sub-servicios">
+        <button class="sub-nav-item w-full text-left py-2.5 px-4" data-sub="servidores">Servidores</button>
+        <button class="sub-nav-item w-full text-left py-2.5 px-4" data-sub="zonas">Zonas Delivery</button>
+      </div>
+
+      <button class="nav-item w-full text-left px-4 py-3 text-gray-300 font-semibold flex items-center gap-3 text-sm" data-section="formaspago">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+        Formas de Pago
+      </button>
+
+      <button class="nav-item w-full text-left px-4 py-3 text-gray-300 font-semibold flex items-center gap-3 text-sm" data-section="negocio">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+        Negocio
+      </button>
+      <div class="sub-nav hidden" id="sub-negocio">
+        <button class="sub-nav-item w-full text-left py-2.5 px-4" data-sub="control">Control</button>
+        <button class="sub-nav-item w-full text-left py-2.5 px-4" data-sub="correlativos">Correlativos</button>
+        <button class="sub-nav-item w-full text-left py-2.5 px-4" data-sub="usuarios">Usuarios</button>
+      </div>
+
+      <div class="px-4 py-4 mt-4 border-t border-white/5">
+        <button id="logoutBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 text-sm font-bold hover:bg-red-500/20 transition touch-btn">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          Cerrar Sesión
+        </button>
+      </div>
+    </nav>
+  </aside>
+
+  <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-40 hidden md:hidden"></div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-pc pt-[56px] md:pt-0 min-h-screen">
+    <header class="hidden md:flex glass sticky top-0 z-20 items-center justify-between px-6 py-3">
+      <h2 id="pageTitle" class="text-lg font-bold text-white">Bienvenido</h2>
+      <div class="text-xs text-gray-500">v8.1</div>
+    </header>
+
+    <div id="contentArea" class="p-4 md:p-6 pb-24">
+
+      <!-- VISTA INICIAL VACÍA -->
+      <div id="view-welcome" class="view-section fade-in flex flex-col items-center justify-center min-h-[60vh] text-center">
+        <div class="text-6xl mb-4">🍔</div>
+        <h3 class="text-xl font-bold text-white mb-2">Panel de Control</h3>
+        <p class="text-gray-400 text-sm max-w-xs">Selecciona una opción del menú lateral para comenzar a administrar.</p>
+      </div>
+
+      <!-- CONTROL -->
+      <div id="view-control" class="view-section hidden fade-in">
+        <div class="glass rounded-2xl p-4 md:p-6 max-w-3xl mx-auto">
+          <h3 class="text-base md:text-lg font-bold text-white mb-4">Configuración de Negocio</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4" id="controlForm"></div>
+          <div class="flex gap-3 mt-6">
+            <button id="btnSaveControl" class="flex-1 btn-primary py-3 rounded-xl font-bold text-white transition text-sm md:text-base touch-btn">Guardar Cambios</button>
+            <button class="btn-salir px-4 md:px-6 py-3 rounded-xl font-bold text-gray-400 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition text-sm touch-btn">Salir</button>
           </div>
         </div>
-        <button id="saveConfigBtn" class="w-full btn-primary py-3 rounded-xl font-bold text-white transition mt-2">Guardar Cambios</button>
       </div>
+
+      <!-- CORRELATIVOS (SOLO LECTURA) -->
+      <div id="view-correlativos" class="view-section hidden fade-in">
+        <div class="glass rounded-2xl p-4 md:p-6 max-w-3xl mx-auto">
+          <h3 class="text-base md:text-lg font-bold text-white mb-4">Correlativos del Sistema</h3>
+          <p class="text-xs text-gray-500 mb-4">Solo lectura. Los correlativos se asignan automáticamente.</p>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-3" id="correlativosGrid"></div>
+          <div class="flex gap-3 mt-6">
+            <button class="btn-salir px-4 md:px-6 py-3 rounded-xl font-bold text-gray-400 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition text-sm touch-btn">Salir</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- USUARIOS -->
+      <div id="view-usuarios" class="view-section hidden fade-in">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-base md:text-lg font-bold text-white">Usuarios</h3>
+          <button class="btn-agregar btn-primary px-3 py-2 rounded-lg font-bold text-xs text-white transition flex items-center gap-1.5 touch-btn">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span class="hidden sm:inline">Agregar</span>
+          </button>
+        </div>
+        <div class="overflow-x-auto glass rounded-xl table-pc">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-gray-800/80 text-gray-400 text-xs uppercase"><tr><th class="p-3">Código</th><th class="p-3">Nombre</th><th class="p-3">Rol</th><th class="p-3">Teléfono</th><th class="p-3">Email</th><th class="p-3">Estado</th><th class="p-3 text-right">Acciones</th></tr></thead>
+            <tbody id="usuariosTableBody" class="divide-y divide-gray-800"></tbody>
+          </table>
+        </div>
+        <div id="usuariosCards" class="cards-mobile"></div>
+      </div>
+
+      <!-- TASAS -->
+      <div id="view-tasas" class="view-section hidden fade-in">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-base md:text-lg font-bold text-white">Tasas de Cambio</h3>
+          <button class="btn-agregar btn-primary px-3 py-2 rounded-lg font-bold text-xs text-white transition flex items-center gap-1.5 touch-btn">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span class="hidden sm:inline">Agregar</span>
+          </button>
+        </div>
+        <div class="overflow-x-auto glass rounded-xl table-pc">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-gray-800/80 text-gray-400 text-xs uppercase"><tr><th class="p-3">Código</th><th class="p-3">Descripción</th><th class="p-3">Símbolo</th><th class="p-3">Orden</th><th class="p-3">Valor</th><th class="p-3">Estado</th><th class="p-3 text-right">Acciones</th></tr></thead>
+            <tbody id="tasasTableBody" class="divide-y divide-gray-800"></tbody>
+          </table>
+        </div>
+        <div id="tasasCards" class="cards-mobile"></div>
+      </div>
+
+      <!-- CATEGORÍAS -->
+      <div id="view-categorias" class="view-section hidden fade-in">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-base md:text-lg font-bold text-white">Categorías</h3>
+          <button class="btn-agregar btn-primary px-3 py-2 rounded-lg font-bold text-xs text-white transition flex items-center gap-1.5 touch-btn">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span class="hidden sm:inline">Agregar</span>
+          </button>
+        </div>
+        <div class="overflow-x-auto glass rounded-xl table-pc">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-gray-800/80 text-gray-400 text-xs uppercase"><tr><th class="p-3">Código</th><th class="p-3">Nombre</th><th class="p-3">Orden</th><th class="p-3">Detalle</th><th class="p-3">Estado</th><th class="p-3 text-right">Acciones</th></tr></thead>
+            <tbody id="categoriasTableBody" class="divide-y divide-gray-800"></tbody>
+          </table>
+        </div>
+        <div id="categoriasCards" class="cards-mobile"></div>
+      </div>
+
+      <!-- PRODUCTOS -->
+      <div id="view-productos" class="view-section hidden fade-in">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-base md:text-lg font-bold text-white">Productos</h3>
+          <button class="btn-agregar btn-primary px-3 py-2 rounded-lg font-bold text-xs text-white transition flex items-center gap-1.5 touch-btn">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span class="hidden sm:inline">Agregar</span>
+          </button>
+        </div>
+        <div class="flex gap-2 mb-4 overflow-x-auto scrollbar-hide">
+          <button class="filter-btn px-3 py-1.5 rounded-lg bg-orange-500/20 text-orange-400 text-xs font-bold border border-orange-500/30 whitespace-nowrap" data-filter="todos">Todos</button>
+          <button class="filter-btn px-3 py-1.5 rounded-lg bg-gray-800 text-gray-400 text-xs font-bold border border-gray-700 whitespace-nowrap" data-filter="activos">Activos</button>
+          <button class="filter-btn px-3 py-1.5 rounded-lg bg-gray-800 text-gray-400 text-xs font-bold border border-gray-700 whitespace-nowrap" data-filter="inactivos">Inactivos</button>
+        </div>
+        <div class="overflow-x-auto glass rounded-xl table-pc">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-gray-800/80 text-gray-400 text-xs uppercase"><tr><th class="p-3">Código</th><th class="p-3">Producto</th><th class="p-3">Cat.</th><th class="p-3">Precio</th><th class="p-3">Stock</th><th class="p-3">Est.</th><th class="p-3 text-right">Acc.</th></tr></thead>
+            <tbody id="productosTableBody" class="divide-y divide-gray-800"></tbody>
+          </table>
+        </div>
+        <div id="productosCards" class="cards-mobile"></div>
+      </div>
+
+      <!-- SERVIDORES -->
+      <div id="view-servidores" class="view-section hidden fade-in">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-base md:text-lg font-bold text-white">Servidores</h3>
+          <button class="btn-agregar btn-primary px-3 py-2 rounded-lg font-bold text-xs text-white transition flex items-center gap-1.5 touch-btn">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span class="hidden sm:inline">Agregar</span>
+          </button>
+        </div>
+        <div class="overflow-x-auto glass rounded-xl table-pc">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-gray-800/80 text-gray-400 text-xs uppercase"><tr><th class="p-3">Código</th><th class="p-3">Nombre</th><th class="p-3">Mesero</th><th class="p-3">Delivery</th><th class="p-3">Vehículo</th><th class="p-3">Teléfono</th><th class="p-3">Estado</th><th class="p-3 text-right">Acciones</th></tr></thead>
+            <tbody id="servidoresTableBody" class="divide-y divide-gray-800"></tbody>
+          </table>
+        </div>
+        <div id="servidoresCards" class="cards-mobile"></div>
+      </div>
+
+      <!-- ZONAS -->
+      <div id="view-zonas" class="view-section hidden fade-in">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-base md:text-lg font-bold text-white">Zonas Delivery</h3>
+          <button class="btn-agregar btn-primary px-3 py-2 rounded-lg font-bold text-xs text-white transition flex items-center gap-1.5 touch-btn">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span class="hidden sm:inline">Agregar</span>
+          </button>
+        </div>
+        <div class="overflow-x-auto glass rounded-xl table-pc">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-gray-800/80 text-gray-400 text-xs uppercase"><tr><th class="p-3">Código</th><th class="p-3">Nombre</th><th class="p-3">Descripción</th><th class="p-3">Tarifa</th><th class="p-3">Moneda</th><th class="p-3">Estado</th><th class="p-3 text-right">Acciones</th></tr></thead>
+            <tbody id="zonasTableBody" class="divide-y divide-gray-800"></tbody>
+          </table>
+        </div>
+        <div id="zonasCards" class="cards-mobile"></div>
+      </div>
+
+      <!-- FORMAS DE PAGO -->
+      <div id="view-formaspago" class="view-section hidden fade-in">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-base md:text-lg font-bold text-white">Formas de Pago</h3>
+          <button class="btn-agregar btn-primary px-3 py-2 rounded-lg font-bold text-xs text-white transition flex items-center gap-1.5 touch-btn">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span class="hidden sm:inline">Agregar</span>
+          </button>
+        </div>
+        <div class="overflow-x-auto glass rounded-xl table-pc">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-gray-800/80 text-gray-400 text-xs uppercase"><tr><th class="p-3">Código</th><th class="p-3">Descripción</th><th class="p-3">Moneda</th><th class="p-3">Símbolo</th><th class="p-3">Estado</th><th class="p-3 text-right">Acciones</th></tr></thead>
+            <tbody id="formasPagoTableBody" class="divide-y divide-gray-800"></tbody>
+          </table>
+        </div>
+        <div id="formasPagoCards" class="cards-mobile"></div>
+      </div>
+
     </div>
   </main>
 </div>
 
-<!-- ==================== MODAL EDITAR PRODUCTO ==================== -->
-<div id="editModal" class="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4 hidden">
-  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto border border-white/10 shadow-2xl fade-in">
-    <div class="p-6 border-b border-white/5 flex items-center justify-between">
-      <h3 class="text-xl font-black text-white">Editar Producto</h3>
-      <button id="cancelEditBtn" class="p-2 hover:bg-white/10 rounded-lg text-gray-400">
+<!-- MODAL CRUD -->
+<div id="crudModal" class="fixed inset-0 z-[60] bg-black/80 flex items-end md:items-center justify-center p-0 md:p-4 hidden">
+  <div class="bg-[#1a1a1a] rounded-t-2xl md:rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto border border-white/10 shadow-2xl fade-in">
+    <div class="p-4 md:p-6 border-b border-white/5 flex items-center justify-between sticky top-0 bg-[#1a1a1a] z-10">
+      <h3 id="crudModalTitle" class="text-lg md:text-xl font-black text-white">Título</h3>
+      <button id="crudModalClose" class="touch-btn p-2 hover:bg-white/10 rounded-lg text-gray-400">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
-    <div class="p-6 space-y-4">
-      <input type="hidden" id="editCodProducto">
-      <div>
-        <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Nombre Producto</label>
-        <input type="text" id="editDesProducto" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
-      </div>
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Precio</label>
-          <input type="number" id="editPrecio" step="0.01" min="0" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
-        </div>
-        <div>
-          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Moneda (CodTasa)</label>
-          <select id="editCodTasa" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm"></select>
-        </div>
-      </div>
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Categoría</label>
-          <select id="editCodCategoria" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm"></select>
-        </div>
-        <div>
-          <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Stock</label>
-          <select id="editStock" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
-            <option value="Disponible">Disponible</option>
-            <option value="No Disponible">No Disponible</option>
-          </select>
-        </div>
-      </div>
-      <div>
-        <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">URL Imagen</label>
-        <input type="text" id="editImagen" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
-      </div>
-      <div>
-        <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1">Estado</label>
-        <select id="editEstado" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">
-          <option value="Activo">Activo</option>
-          <option value="Inactivo">Inactivo</option>
-        </select>
-      </div>
-      <div class="flex gap-2 pt-2">
-        <button id="cancelEditBtn2" class="flex-1 py-3 rounded-xl font-bold text-gray-400 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition">Cancelar</button>
-        <button id="saveEditBtn" class="flex-1 btn-primary py-3 rounded-xl font-bold text-white transition">Guardar</button>
-      </div>
+    <div id="crudModalBody" class="p-4 md:p-6 space-y-3 md:space-y-4"></div>
+    <div class="p-4 md:p-6 border-t border-white/5 flex gap-3 sticky bottom-0 bg-[#1a1a1a]">
+      <button id="crudModalSave" class="flex-1 btn-primary py-3 rounded-xl font-bold text-white transition text-sm md:text-base touch-btn">Guardar</button>
+      <button id="crudModalCancel" class="px-4 md:px-6 py-3 rounded-xl font-bold text-gray-400 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition text-sm touch-btn">Salir</button>
     </div>
   </div>
 </div>
 
-<!-- ==================== ALERTA CUSTOM ==================== -->
+<!-- ALERTA CENTRADA -->
 <div id="adminAlert" class="fixed inset-0 z-[70] bg-black/80 flex items-center justify-center p-4 hidden">
   <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-sm text-center p-6 border border-white/10 shadow-2xl">
     <div id="adminAlertIcon" class="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4"></div>
     <h4 id="adminAlertTitle" class="text-xl font-black text-white mb-2"></h4>
     <p id="adminAlertBody" class="text-sm text-gray-400 mb-6"></p>
-    <button id="adminAlertBtn" class="w-full btn-primary py-3 rounded-xl font-bold text-white transition"></button>
+    <button id="adminAlertBtn" class="w-full btn-primary py-3 rounded-xl font-bold text-white transition touch-btn"></button>
+  </div>
+</div>
+
+<!-- CONFIRMAR CAMBIOS SIN GUARDAR -->
+<div id="unsavedModal" class="fixed inset-0 z-[75] bg-black/80 flex items-center justify-center p-4 hidden">
+  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-sm text-center p-6 border border-white/10 shadow-2xl">
+    <div class="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-yellow-500/20 text-yellow-500">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    </div>
+    <h4 class="text-xl font-black text-white mb-2">Cambios sin guardar</h4>
+    <p class="text-sm text-gray-400 mb-6">¿Deseas guardar los cambios antes de salir?</p>
+    <div class="flex gap-3">
+      <button id="unsavedSave" class="flex-1 btn-primary py-3 rounded-xl font-bold text-white transition text-sm touch-btn">Guardar</button>
+      <button id="unsavedDiscard" class="flex-1 py-3 rounded-xl font-bold text-gray-400 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition text-sm touch-btn">Salir sin guardar</button>
+    </div>
+    <button id="unsavedCancel" class="w-full mt-3 py-2 rounded-xl font-bold text-gray-500 hover:text-gray-300 transition text-sm touch-btn">Cancelar</button>
   </div>
 </div>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9FoXBkMYwPD4xkK1llpxakpExC6DspQvnOI6Vmw/exec";
-const PLACEHOLDER_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect fill='%23333' width='64' height='64'/%3E%3Ctext fill='%23666' font-family='sans-serif' font-size='20' dy='6.5' font-weight='bold' x='50%25' y='50%25' text-anchor='middle'%3E🍔%3C/text%3E%3C/svg%3E";
-
 let adminToken = localStorage.getItem("fb_admin_token") || "";
-let allProductos = [];
-let allCategorias = [];
-let allTasas = [];
+let currentSub = "";
+let modalMode = "";
+let editingId = null;
+let currentData = [];
 let currentFilter = "todos";
+let hasChanges = false;
+let pendingSalir = null;
 
 function ofuscar(texto) {
   const clave = "FB2025Secret";
@@ -241,29 +404,6 @@ function ofuscar(texto) {
   return btoa(resultado);
 }
 
-function mostrarAlerta(tipo, titulo, mensaje, btnText, callback) {
-  const modal = document.getElementById("adminAlert");
-  const icon = document.getElementById("adminAlertIcon");
-  const title = document.getElementById("adminAlertTitle");
-  const body = document.getElementById("adminAlertBody");
-  const btn = document.getElementById("adminAlertBtn");
-
-  title.textContent = titulo;
-  body.textContent = mensaje;
-  btn.textContent = btnText || "Aceptar";
-
-  if (tipo === "error") {
-    icon.className = "mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-red-500/20 text-red-500";
-    icon.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
-  } else {
-    icon.className = "mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-green-500/20 text-green-500";
-    icon.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`;
-  }
-
-  btn.onclick = () => { modal.classList.add("hidden"); if (callback) callback(); };
-  modal.classList.remove("hidden");
-}
-
 async function apiPost(data) {
   const res = await fetch(API_URL, {
     method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(data)
@@ -271,11 +411,29 @@ async function apiPost(data) {
   return res.json();
 }
 
+function mostrarAlerta(tipo, titulo, mensaje, btnText, callback) {
+  const modal = document.getElementById("adminAlert");
+  const icon = document.getElementById("adminAlertIcon");
+  const title = document.getElementById("adminAlertTitle");
+  const body = document.getElementById("adminAlertBody");
+  const btn = document.getElementById("adminAlertBtn");
+  title.textContent = titulo; body.textContent = mensaje; btn.textContent = btnText || "Aceptar";
+  if (tipo === "error") {
+    icon.className = "mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-red-500/20 text-red-500";
+    icon.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
+  } else {
+    icon.className = "mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-green-500/20 text-green-500";
+    icon.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`;
+  }
+  btn.onclick = () => { modal.classList.add("hidden"); if (callback) callback(); };
+  modal.classList.remove("hidden");
+}
+
 async function initAdmin() {
   if (!adminToken) { showLogin(); return; }
   try {
     const res = await apiPost({ action: "validateToken", token: adminToken });
-    if (res.success) { showPanel(); loadProductos(); loadConfig(); }
+    if (res.success) { showPanel(); showWelcome(); }
     else { localStorage.removeItem("fb_admin_token"); showLogin(); }
   } catch (e) { showLogin(); }
 }
@@ -288,23 +446,24 @@ function showPanel() {
   document.getElementById("loginState").classList.add("hidden");
   document.getElementById("panelState").classList.remove("hidden");
 }
+function showWelcome() {
+  document.querySelectorAll(".view-section").forEach(v => v.classList.add("hidden"));
+  document.getElementById("view-welcome").classList.remove("hidden");
+  document.getElementById("pageTitle").textContent = "Bienvenido";
+}
 
 async function doLogin() {
   const user = document.getElementById("adminUser").value.trim();
   const pass = document.getElementById("adminPass").value.trim();
   if (!user || !pass) { mostrarAlerta("error", "Campos vacíos", "Ingrese usuario y contraseña."); return; }
-
   const btn = document.getElementById("loginBtn");
   btn.disabled = true; btn.textContent = "Verificando...";
-
   try {
     const res = await apiPost({ action: "login", usuario: user, clave: ofuscar(pass) });
     if (res.success && res.token) {
       localStorage.setItem("fb_admin_token", res.token);
       adminToken = res.token;
-      showPanel();
-      loadProductos();
-      loadConfig();
+      showPanel(); showWelcome();
     } else {
       mostrarAlerta("error", "Acceso denegado", res.error || "Credenciales inválidas.");
     }
@@ -315,210 +474,565 @@ async function doLogin() {
   }
 }
 
-async function loadProductos() {
-  try {
-    const res = await apiPost({ action: "getProductosAdmin", token: adminToken });
-    if (res.success) {
-      allProductos = res.productos || [];
-      allCategorias = res.categorias || [];
-      allTasas = res.tasas || [];
-      renderProductos();
+const sidebar = document.getElementById("sidebar");
+const sidebarOverlay = document.getElementById("sidebarOverlay");
+function openSidebar() { sidebar.classList.add("open"); sidebarOverlay.classList.remove("hidden"); document.body.style.overflow = "hidden"; }
+function closeSidebar() { sidebar.classList.remove("open"); sidebarOverlay.classList.add("hidden"); document.body.style.overflow = ""; }
+
+document.getElementById("menuToggle").addEventListener("click", openSidebar);
+document.getElementById("menuClose").addEventListener("click", closeSidebar);
+sidebarOverlay.addEventListener("click", closeSidebar);
+
+document.querySelectorAll(".nav-item").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const section = btn.dataset.section;
+    const sub = document.getElementById("sub-" + section);
+    if (sub) {
+      sub.classList.toggle("hidden");
+      btn.classList.toggle("active");
     } else {
-      mostrarAlerta("error", "Error", res.error || "No se pudieron cargar los productos.");
+      document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".sub-nav-item"forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      showView(section);
+      if (window.innerWidth <= 768) closeSidebar();
     }
-  } catch (e) {
-    mostrarAlerta("error", "Error de red", "Falló la carga de productos.");
+  });
+});
+
+document.querySelectorAll(".sub-nav-item").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".sub-nav-item").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    showView(btn.dataset.sub);
+    if (window.innerWidth <= 768) closeSidebar();
+  });
+});
+
+function showView(viewId) {
+  if (hasChanges) { pendingSalir = () => switchView(viewId); document.getElementById("unsavedModal").classList.remove("hidden"); return; }
+  switchView(viewId);
+}
+
+function switchView(viewId) {
+  document.querySelectorAll(".view-section").forEach(v => v.classList.add("hidden"));
+  const view = document.getElementById("view-" + viewId);
+  if (view) {
+    view.classList.remove("hidden");
+    document.getElementById("pageTitle").textContent = getViewTitle(viewId);
+    currentSub = viewId;
+    hasChanges = false;
+    loadDataForView(viewId);
   }
 }
 
-function renderProductos() {
-  const tbody = document.getElementById("productosTableBody");
-  let filtered = allProductos;
-  if (currentFilter === "activos") filtered = allProductos.filter(p => p.Estado === "Activo");
-  if (currentFilter === "inactivos") filtered = allProductos.filter(p => p.Estado === "Inactivo");
-
-  if (filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-gray-500">No hay productos para mostrar</td></tr>`;
-    return;
-  }
-
-  let html = "";
-  filtered.forEach(p => {
-    const cat = allCategorias.find(c => c.CodCategoria === p.CodCategoria);
-    const tasa = allTasas.find(t => t.CodTasa === p.CodTasa);
-    const stockClass = p.StockProducto === "Disponible" ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400";
-    const estadoClass = p.Estado === "Activo" ? "bg-green-500/20 text-green-400" : "bg-gray-700 text-gray-400";
-    html += `
-      <tr class="hover:bg-white/5 transition">
-        <td class="p-3 text-gray-400 font-mono text-xs">${p.CodProducto}</td>
-        <td class="p-3">
-          <div class="flex items-center gap-2">
-            <img src="${p.ImagenProducto || PLACEHOLDER_IMG}" class="w-8 h-8 rounded object-cover bg-gray-700 flex-shrink-0" onerror="this.src='${PLACEHOLDER_IMG}'" loading="lazy">
-            <span class="font-semibold text-white text-sm">${p.DesProducto || ""}</span>
-          </div>
-        </td>
-        <td class="p-3 text-gray-300 text-sm">${cat ? cat.DesCategoria : p.CodCategoria}</td>
-        <td class="p-3 text-orange-400 font-bold text-sm">${parseFloat(p.Precio || 0).toFixed(2)}</td>
-        <td class="p-3 text-gray-300 text-sm">${tasa ? (tasa.SimboloTasa || tasa.CodTasa) : p.CodTasa}</td>
-        <td class="p-3"><span class="px-2 py-1 rounded text-xs font-bold ${stockClass}">${p.StockProducto || "No Disponible"}</span></td>
-        <td class="p-3"><span class="px-2 py-1 rounded text-xs font-bold ${estadoClass}">${p.Estado || "Inactivo"}</span></td>
-        <td class="p-3 text-right">
-          <button class="edit-btn px-3 py-1.5 rounded-lg bg-orange-500/20 text-orange-400 text-xs font-bold border border-orange-500/30 hover:bg-orange-500/30 transition" data-code="${p.CodProducto}">Editar</button>
-        </td>
-      </tr>`;
-  });
-  tbody.innerHTML = html;
-  tbody.querySelectorAll(".edit-btn").forEach(btn => {
-    btn.addEventListener("click", () => openEditModal(btn.dataset.code));
-  });
-}
-
-function openEditModal(cod) {
-  const p = allProductos.find(x => x.CodProducto === cod);
-  if (!p) return;
-
-  document.getElementById("editCodProducto").value = p.CodProducto;
-  document.getElementById("editDesProducto").value = p.DesProducto || "";
-  document.getElementById("editPrecio").value = p.Precio || 0;
-  document.getElementById("editImagen").value = p.ImagenProducto || "";
-  document.getElementById("editStock").value = p.StockProducto || "No Disponible";
-  document.getElementById("editEstado").value = p.Estado || "Inactivo";
-
-  const catSel = document.getElementById("editCodCategoria");
-  catSel.innerHTML = "";
-  allCategorias.forEach(c => {
-    catSel.innerHTML += `<option value="${c.CodCategoria}" ${c.CodCategoria === p.CodCategoria ? "selected" : ""}>${c.DesCategoria}</option>`;
-  });
-
-  const tasaSel = document.getElementById("editCodTasa");
-  tasaSel.innerHTML = "";
-  allTasas.forEach(t => {
-    tasaSel.innerHTML += `<option value="${t.CodTasa}" ${t.CodTasa === p.CodTasa ? "selected" : ""}>${t.SimboloTasa || t.CodTasa} - ${t.DesTasa || ""}</option>`;
-  });
-
-  document.getElementById("editModal").classList.remove("hidden");
-}
-
-async function saveEditProducto() {
-  const data = {
-    action: "producto", method: "PUT", token: adminToken,
-    codProducto: document.getElementById("editCodProducto").value,
-    desProducto: document.getElementById("editDesProducto").value.trim(),
-    codCategoria: document.getElementById("editCodCategoria").value,
-    precio: parseFloat(document.getElementById("editPrecio").value) || 0,
-    codTasa: document.getElementById("editCodTasa").value,
-    stockProducto: document.getElementById("editStock").value,
-    imagenProducto: document.getElementById("editImagen").value.trim(),
-    estado: document.getElementById("editEstado").value
+function getViewTitle(id) {
+  const titles = {
+    welcome: "Bienvenido", control: "Configuración de Negocio", correlativos: "Correlativos del Sistema",
+    usuarios: "Usuarios", tasas: "Tasas de Cambio", categorias: "Categorías", productos: "Productos",
+    servidores: "Servidores", zonas: "Zonas Delivery", formaspago: "Formas de Pago"
   };
+  return titles[id] || "Panel de Control";
+}
 
+async function loadDataForView(viewId) {
+  switch(viewId) {
+    case "control": await loadControl(); break;
+    case "correlativos": await loadCorrelativos(); break;
+    case "usuarios": await loadGeneric("Usuarios", "usuarios", mapUsuario); break;
+    case "tasas": await loadGeneric("Tasas", "tasas", mapTasa); break;
+    case "categorias": await loadGeneric("Categorias", "categorias", mapCategoria); break;
+    case "productos": await loadGeneric("ProductoMenu", "productos", mapProducto); break;
+    case "servidores": await loadGeneric("Servidores", "servidores", mapServidor); break;
+    case "zonas": await loadGeneric("ZonasDelivery", "zonas", mapZona); break;
+    case "formaspago": await loadGeneric("FormasPago", "formaspago", mapFormaPago); break;
+  }
+}
+
+async function loadGeneric(sheetName, viewPrefix, mapper) {
+  setLoading(viewPrefix);
   try {
-    const res = await apiPost(data);
+    const res = await apiPost({ action: "adminData", method: "GET", sheetName: sheetName, token: adminToken });
     if (res.success) {
-      document.getElementById("editModal").classList.add("hidden");
-      mostrarAlerta("success", "Guardado", "Producto actualizado correctamente.", "OK", loadProductos);
+      currentData = (res.data || []).map(mapper);
+      renderTable(viewPrefix, currentData);
+      renderCards(viewPrefix, currentData);
     } else {
-      mostrarAlerta("error", "Error", res.error || "No se pudo actualizar el producto.");
+      mostrarAlerta("error", "Error", res.error || "No se pudieron cargar los datos.");
     }
   } catch (e) {
     mostrarAlerta("error", "Error de red", "Falló la comunicación con el servidor.");
   }
 }
 
-async function loadConfig() {
+function setLoading(prefix) {
+  const tb = document.getElementById(prefix + "TableBody");
+  const cd = document.getElementById(prefix + "Cards");
+  if (tb) tb.innerHTML = `<tr><td colspan="10" class="p-6 text-center text-gray-500">Cargando...</td></tr>`;
+  if (cd) cd.innerHTML = `<div class="p-6 text-center text-gray-500">Cargando...</div>`;
+}
+
+function renderTable(prefix, data) {
+  const tb = document.getElementById(prefix + "TableBody");
+  if (!tb) return;
+  if (data.length === 0) { tb.innerHTML = `<tr><td colspan="10" class="p-6 text-center text-gray-500">No hay registros</td></tr>`; return; }
+  let html = "";
+  data.forEach(row => {
+    html += `<tr class="hover:bg-white/5 transition">` + row.cells + `<td class="p-3 text-right">
+      <button class="btn-editar text-blue-400 hover:text-blue-300 text-xs font-bold mr-2" data-id="${row.id}">Editar</button>
+      <button class="btn-borrar text-red-400 hover:text-red-300 text-xs font-bold" data-id="${row.id}">Borrar</button>
+    </td></tr>`;
+  });
+  tb.innerHTML = html;
+  tb.querySelectorAll(".btn-editar").forEach(b => b.addEventListener("click", () => openEditModal(prefix, b.dataset.id)));
+  tb.querySelectorAll(".btn-borrar").forEach(b => b.addEventListener("click", () => doDelete(prefix, b.dataset.id)));
+}
+
+function renderCards(prefix, data) {
+  const cd = document.getElementById(prefix + "Cards");
+  if (!cd) return;
+  if (data.length === 0) { cd.innerHTML = `<div class="p-6 text-center text-gray-500">No hay registros</div>`; return; }
+  let html = "";
+  data.forEach(row => {
+    html += `<div class="mobile-card">${row.card}<div class="flex gap-2 mt-3">
+      <button class="btn-editar flex-1 py-2 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-bold" data-id="${row.id}">Editar</button>
+      <button class="btn-borrar flex-1 py-2 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-bold" data-id="${row.id}">Borrar</button>
+    </div></div>`;
+  });
+  cd.innerHTML = html;
+  cd.querySelectorAll(".btn-editar").forEach(b => b.addEventListener("click", () => openEditModal(prefix, b.dataset.id)));
+  cd.querySelectorAll(".btn-borrar").forEach(b => b.addEventListener("click", () => doDelete(prefix, b.dataset.id)));
+}
+
+// ===== MAPPERS =====
+function mapUsuario(r) {
+  const estado = String(r.Estado || "Inactivo").trim();
+  return {
+    id: r.CodUsuario, cells: `<td class="p-3">${r.CodUsuario}</td><td class="p-3">${r.NombreUsuario}</td><td class="p-3">${r.RolUsuario}</td><td class="p-3">${r.TelUsuario}</td><td class="p-3">${r.EmailUsuario || ""}</td><td class="p-3">${estadoBadge(estado)}</td>`,
+    card: `<div class="font-bold text-white">${r.NombreUsuario}</div><div class="text-xs text-gray-400">${r.CodUsuario} · ${r.RolUsuario}</div><div class="text-xs text-gray-400 mt-1">${r.TelUsuario}</div><div class="mt-2">${estadoBadge(estado)}</div>`,
+    raw: r
+  };
+}
+function mapTasa(r) {
+  const estado = String(r.Estado || "Inactivo").trim();
+  return {
+    id: r.CodTasa, cells: `<td class="p-3">${r.CodTasa}</td><td class="p-3">${r.DesTasa}</td><td class="p-3">${r.SimboloTasa}</td><td class="p-3">${r.OrdenTasa}</td><td class="p-3">${r.ValorTasa}</td><td class="p-3">${estadoBadge(estado)}</td>`,
+    card: `<div class="font-bold text-white">${r.DesTasa}</div><div class="text-xs text-gray-400">${r.CodTasa} · ${r.SimboloTasa}</div><div class="text-xs text-gray-400 mt-1">Valor: ${r.ValorTasa}</div><div class="mt-2">${estadoBadge(estado)}</div>`,
+    raw: r
+  };
+}
+function mapCategoria(r) {
+  const estado = String(r.Estado || "Inactivo").trim();
+  return {
+    id: r.CodCategoria, cells: `<td class="p-3">${r.CodCategoria}</td><td class="p-3">${r.DesCategoria}</td><td class="p-3">${r.OrdenCategoria}</td><td class="p-3">${r.DetalleCategoria || ""}</td><td class="p-3">${estadoBadge(estado)}</td>`,
+    card: `<div class="font-bold text-white">${r.DesCategoria}</div><div class="text-xs text-gray-400">${r.CodCategoria} · Orden ${r.OrdenCategoria}</div><div class="mt-2">${estadoBadge(estado)}</div>`,
+    raw: r
+  };
+}
+function mapProducto(r) {
+  const estado = String(r.Estado || "Inactivo").trim();
+  return {
+    id: r.CodProducto, cells: `<td class="p-3">${r.CodProducto}</td><td class="p-3">${r.DesProducto}</td><td class="p-3">${r.CodCategoria}</td><td class="p-3">${r.Precio}</td><td class="p-3">${r.StockProducto}</td><td class="p-3">${estadoBadge(estado)}</td>`,
+    card: `<div class="font-bold text-white">${r.DesProducto}</div><div class="text-xs text-gray-400">${r.CodProducto} · ${r.CodCategoria}</div><div class="text-xs text-gray-400 mt-1">$${r.Precio} · ${r.StockProducto}</div><div class="mt-2">${estadoBadge(estado)}</div>`,
+    raw: r
+  };
+}
+function mapServidor(r) {
+  const estado = String(r.Estado || "Inactivo").trim();
+  return {
+    id: r.CodServidor, cells: `<td class="p-3">${r.CodServidor}</td><td class="p-3">${r.NombreServidor}</td><td class="p-3">${r.MeseroServidor}</td><td class="p-3">${r.DeliveryServidor}</td><td class="p-3">${r.VehiculoServidor || ""}</td><td class="p-3">${r.TelefonoServidor || ""}</td><td class="p-3">${estadoBadge(estado)}</td>`,
+    card: `<div class="font-bold text-white">${r.NombreServidor}</div><div class="text-xs text-gray-400">${r.CodServidor}</div><div class="text-xs text-gray-400 mt-1">${r.MeseroServidor === "SI" ? "🍽️ Mesero" : ""} ${r.DeliveryServidor === "SI" ? "🛵 Delivery" : ""}</div><div class="mt-2">${estadoBadge(estado)}</div>`,
+    raw: r
+  };
+}
+function mapZona(r) {
+  const estado = String(r.Estado || "Inactivo").trim();
+  return {
+    id: r.CodZona, cells: `<td class="p-3">${r.CodZona}</td><td class="p-3">${r.NombreZona}</td><td class="p-3">${r.DescripcionZona || ""}</td><td class="p-3">${r.TarifaZona}</td><td class="p-3">${r.CodTasa || ""}</td><td class="p-3">${estadoBadge(estado)}</td>`,
+    card: `<div class="font-bold text-white">${r.NombreZona}</div><div class="text-xs text-gray-400">${r.CodZona}</div><div class="text-xs text-gray-400 mt-1">Tarifa: ${r.TarifaZona} ${r.CodTasa || ""}</div><div class="mt-2">${estadoBadge(estado)}</div>`,
+    raw: r
+  };
+}
+function mapFormaPago(r) {
+  const estado = String(r.Estado || "Inactivo").trim();
+  return {
+    id: r.CodPago, cells: `<td class="p-3">${r.CodPago}</td><td class="p-3">${r.DesPago}</td><td class="p-3">${r.CodTasa || ""}</td><td class="p-3">${r.SimboloTasa || ""}</td><td class="p-3">${estadoBadge(estado)}</td>`,
+    card: `<div class="font-bold text-white">${r.DesPago}</div><div class="text-xs text-gray-400">${r.CodPago}</div><div class="text-xs text-gray-400 mt-1">${r.CodTasa || ""} · ${r.SimboloTasa || ""}</div><div class="mt-2">${estadoBadge(estado)}</div>`,
+    raw: r
+  };
+}
+
+function estadoBadge(estado) {
+  const isActivo = estado === "Activo";
+  return `<span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-bold ${isActivo ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}">${isActivo ? 'Activo' : 'Inactivo'}</span>`;
+}
+
+// ===== CONTROL =====
+async function loadControl() {
   try {
     const res = await apiPost({ action: "getConfigAdmin", token: adminToken });
     if (res.success && res.config) {
       const c = res.config;
-      document.getElementById("configEstado").value = c.EstadoTienda || "Cerrado";
-      document.getElementById("configCodTasa").value = c.CodTasa || "T002";
-      document.getElementById("configHorarioApertura").value = c.HorarioApertura || "";
-      document.getElementById("configHorarioCierre").value = c.HorarioCierre || "";
-      document.getElementById("configWhatsApp").value = c.WhatsAppNegocio || "";
-      document.getElementById("configZelle").value = c.CuentaZelle || "";
-      document.getElementById("configBinance").value = c.CuentaBinance || "";
-      document.getElementById("configPagoMovil").value = c.DatosPagoMovil || "";
-      document.getElementById("configTransferencia").value = c.DatosTransferencia || "";
+      const form = document.getElementById("controlForm");
+      form.innerHTML = `
+        <div><label class="block text-[10px] md:text-xs text-gray-500 uppercase tracking-wider mb-1">Estado Tienda</label><select id="ctrlEstado" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm"><option value="Abierto">Abierto</option><option value="Cerrado">Cerrado</option></select></div>
+        <div><label class="block text-[10px] md:text-xs text-gray-500 uppercase tracking-wider mb-1">Código Tasa Base</label><input type="text" id="ctrlCodTasa" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm"></div>
+        <div><label class="block text-[10px] md:text-xs text-gray-500 uppercase tracking-wider mb-1">Horario Apertura</label><input type="text" id="ctrlApertura" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm" placeholder="10:00"></div>
+        <div><label class="block text-[10px] md:text-xs text-gray-500 uppercase tracking-wider mb-1">Horario Cierre</label><input type="text" id="ctrlCierre" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm" placeholder="22:00"></div>
+        <div class="md:col-span-2"><label class="block text-[10px] md:text-xs text-gray-500 uppercase tracking-wider mb-1">WhatsApp Negocio</label><input type="text" id="ctrlWhatsApp" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm" placeholder="584120000000"></div>
+        <div class="md:col-span-2"><label class="block text-[10px] md:text-xs text-gray-500 uppercase tracking-wider mb-1">Cuenta Zelle</label><input type="text" id="ctrlZelle" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm"></div>
+        <div class="md:col-span-2"><label class="block text-[10px] md:text-xs text-gray-500 uppercase tracking-wider mb-1">Cuenta Binance</label><input type="text" id="ctrlBinance" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm"></div>
+        <div class="md:col-span-2"><label class="block text-[10px] md:text-xs text-gray-500 uppercase tracking-wider mb-1">Datos Pago Móvil</label><input type="text" id="ctrlPagoMovil" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm"></div>
+        <div class="md:col-span-2"><label class="block text-[10px] md:text-xs text-gray-500 uppercase tracking-wider mb-1">Datos Transferencia</label><input type="text" id="ctrlTransferencia" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm"></div>
+        <div class="md:col-span-2"><label class="block text-[10px] md:text-xs text-gray-500 uppercase tracking-wider mb-1">ImgKey</label><input type="text" id="ctrlImgKey" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm"></div>
+        <div class="md:col-span-2"><label class="block text-[10px] md:text-xs text-gray-500 uppercase tracking-wider mb-1">DataURL</label><input type="text" id="ctrlDataURL" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm"></div>
+      `;
+      document.getElementById("ctrlEstado").value = c.EstadoTienda || "Cerrado";
+      document.getElementById("ctrlCodTasa").value = c.CodTasa || "T002";
+      document.getElementById("ctrlApertura").value = c.HorarioApertura || "";
+      document.getElementById("ctrlCierre").value = c.HorarioCierre || "";
+      document.getElementById("ctrlWhatsApp").value = c.WhatsAppNegocio || "";
+      document.getElementById("ctrlZelle").value = c.CuentaZelle || "";
+      document.getElementById("ctrlBinance").value = c.CuentaBinance || "";
+      document.getElementById("ctrlPagoMovil").value = c.DatosPagoMovil || "";
+      document.getElementById("ctrlTransferencia").value = c.DatosTransferencia || "";
+      document.getElementById("ctrlImgKey").value = c.ImgKey || "";
+      document.getElementById("ctrlDataURL").value = c.DataURL || "";
+      form.querySelectorAll("input, select").forEach(el => el.addEventListener("input", () => hasChanges = true));
     }
-  } catch (e) {
-    console.error("Error cargando config", e);
+  } catch(e) { console.error(e); }
+}
+
+// ===== CORRELATIVOS (SOLO LECTURA) =====
+async function loadCorrelativos() {
+  try {
+    const res = await apiPost({ action: "adminData", method: "GET", sheetName: "Correlativos", token: adminToken });
+    const grid = document.getElementById("correlativosGrid");
+    if (res.success && res.data && res.data.length > 0) {
+      const row = res.data[0];
+      const campos = ["CodProducto","CodTasa","CodCategoria","CodZona","CodFormaPago","CodUsuario","CodCliente","CodServidor","NroHistoricoTasa","NroPedido","NroPedidoItem","NroPago","NroDelivery","NroPropina","CodEnSitio"];
+      let html = "";
+      campos.forEach(c => {
+        html += `<div><label class="block text-[10px] md:text-xs text-gray-500 uppercase mb-1">${c}</label><input type="text" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-gray-400 text-sm" value="${row[c] || ''}" disabled></div>`;
+      });
+      grid.innerHTML = html;
+    } else {
+      grid.innerHTML = `<div class="col-span-full text-center text-gray-500 py-4">No se pudieron cargar los correlativos</div>`;
+    }
+  } catch(e) {
+    document.getElementById("correlativosGrid").innerHTML = `<div class="col-span-full text-center text-gray-500 py-4">Error de carga</div>`;
   }
 }
 
-async function saveConfig() {
+// ===== MODAL CRUD =====
+function openModal(title, fields, mode, data) {
+  modalMode = mode;
+  editingId = data ? data.id : null;
+  document.getElementById("crudModalTitle").textContent = title;
+  const body = document.getElementById("crudModalBody");
+  let html = "";
+  fields.forEach(f => {
+    const val = data && data[f.name] !== undefined ? data[f.name] : "";
+    if (f.name === "Estado") {
+      const isActivo = String(val).trim() === "Activo";
+      html += `<div><label class="block text-[10px] md:text-xs text-gray-500 uppercase mb-1">${f.label}</label>
+        <button type="button" id="fld_Estado" class="toggle-btn w-full py-2.5 rounded-lg font-bold border text-sm transition ${isActivo ? 'activo border-green-500/40' : 'inactivo border-red-500/40'}" data-value="${isActivo ? 'Activo' : 'Inactivo'}">
+          ${isActivo ? 'Activo' : 'Inactivo'}
+        </button></div>`;
+    } else if (f.type === "select") {
+      html += `<div><label class="block text-[10px] md:text-xs text-gray-500 uppercase mb-1">${f.label}</label><select id="fld_${f.name}" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm">`;
+      f.options.forEach(o => html += `<option value="${o.value}" ${String(o.value) === String(val) ? "selected" : ""}>${o.text}</option>`);
+      html += `</select></div>`;
+    } else {
+      html += `<div><label class="block text-[10px] md:text-xs text-gray-500 uppercase mb-1">${f.label}</label><input type="${f.type || "text"}" id="fld_${f.name}" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm" value="${val}" ${f.placeholder ? `placeholder="${f.placeholder}"` : ""}></div>`;
+    }
+  });
+  body.innerHTML = html;
+  const toggleBtn = body.querySelector("#fld_Estado");
+  if (toggleBtn) {
+    toggleBtn.addEventListener("click", () => {
+      const isActivo = toggleBtn.dataset.value === "Activo";
+      toggleBtn.dataset.value = isActivo ? "Inactivo" : "Activo";
+      toggleBtn.textContent = isActivo ? "Inactivo" : "Activo";
+      toggleBtn.classList.toggle("activo", !isActivo);
+      toggleBtn.classList.toggle("inactivo", isActivo);
+      hasChanges = true;
+    });
+  }
+  body.querySelectorAll("input, select").forEach(el => el.addEventListener("input", () => hasChanges = true));
+  document.getElementById("crudModal").classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal() {
+  if (hasChanges) { pendingSalir = closeModalConfirm; document.getElementById("unsavedModal").classList.remove("hidden"); return; }
+  closeModalConfirm();
+}
+function closeModalConfirm() {
+  document.getElementById("crudModal").classList.add("hidden");
+  document.body.style.overflow = "";
+  hasChanges = false;
+  pendingSalir = null;
+}
+
+document.getElementById("crudModalClose").addEventListener("click", closeModal);
+document.getElementById("crudModalCancel").addEventListener("click", closeModal);
+
+// ===== BOTONES AGREGAR =====
+document.querySelectorAll(".btn-agregar").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const activeView = document.querySelector(".view-section:not(.hidden)").id.replace("view-","");
+    const configs = {
+      usuarios: { title: "Agregar Usuario", sheet: "Usuarios", codeField: "CodUsuario", fields: [
+        {name:"NombreUsuario",label:"Nombre Usuario",type:"text"},
+        {name:"RolUsuario",label:"Rol",type:"select",options:[{value:"admin",text:"Administrador"},{value:"cliente",text:"Cliente"}]},
+        {name:"Clave",label:"Contraseña",type:"password"},
+        {name:"TelUsuario",label:"Teléfono",type:"text"},
+        {name:"EmailUsuario",label:"Email",type:"text"},
+        {name:"Estado",label:"Estado"}
+      ]},
+      tasas: { title: "Agregar Tasa", sheet: "Tasas", codeField: "CodTasa", fields: [
+        {name:"DesTasa",label:"Descripción",type:"text"},
+        {name:"SimboloTasa",label:"Símbolo",type:"text"},
+        {name:"OrdenTasa",label:"Orden",type:"number"},
+        {name:"FijarTasa",label:"Fijar",type:"select",options:[{value:"SI",text:"SI"},{value:"No",text:"No"}]},
+        {name:"ValorTasa",label:"Valor",type:"number"},
+        {name:"Estado",label:"Estado"}
+      ]},
+      categorias: { title: "Agregar Categoría", sheet: "Categorias", codeField: "CodCategoria", fields: [
+        {name:"DesCategoria",label:"Nombre",type:"text"},
+        {name:"OrdenCategoria",label:"Orden",type:"number"},
+        {name:"DetalleCategoria",label:"Detalle",type:"text"},
+        {name:"Estado",label:"Estado"}
+      ]},
+      productos: { title: "Agregar Producto", sheet: "ProductoMenu", codeField: "CodProducto", fields: [
+        {name:"DesProducto",label:"Nombre",type:"text"},
+        {name:"CodCategoria",label:"Categoría",type:"text"},
+        {name:"Precio",label:"Precio",type:"number"},
+        {name:"CodTasa",label:"Moneda (CodTasa)",type:"text"},
+        {name:"StockProducto",label:"Stock",type:"select",options:[{value:"Disponible",text:"Disponible"},{value:"No Disponible",text:"No Disponible"}]},
+        {name:"ImagenProducto",label:"URL Imagen",type:"text"},
+        {name:"Estado",label:"Estado"}
+      ]},
+      servidores: { title: "Agregar Servidor", sheet: "Servidores", codeField: "CodServidor", fields: [
+        {name:"NombreServidor",label:"Nombre",type:"text"},
+        {name:"MeseroServidor",label:"Mesero",type:"select",options:[{value:"SI",text:"SI"},{value:"No",text:"No"}]},
+        {name:"DeliveryServidor",label:"Delivery",type:"select",options:[{value:"SI",text:"SI"},{value:"No",text:"No"}]},
+        {name:"VehiculoServidor",label:"Vehículo",type:"text"},
+        {name:"TelefonoServidor",label:"Teléfono",type:"text"},
+        {name:"Estado",label:"Estado"}
+      ]},
+      zonas: { title: "Agregar Zona", sheet: "ZonasDelivery", codeField: "CodZona", fields: [
+        {name:"NombreZona",label:"Nombre",type:"text"},
+        {name:"DescripcionZona",label:"Descripción",type:"text"},
+        {name:"TarifaZona",label:"Tarifa",type:"number"},
+        {name:"CodTasa",label:"Moneda (CodTasa)",type:"text"},
+        {name:"Estado",label:"Estado"}
+      ]},
+      formaspago: { title: "Agregar Forma de Pago", sheet: "FormasPago", codeField: "CodPago", fields: [
+        {name:"DesPago",label:"Descripción",type:"text"},
+        {name:"CodTasa",label:"Moneda (CodTasa)",type:"text"},
+        {name:"SimboloTasa",label:"Símbolo",type:"text"},
+        {name:"Estado",label:"Estado"}
+      ]}
+    };
+    const cfg = configs[activeView];
+    if (cfg) openModal(cfg.title, cfg.fields, "add", null);
+  });
+});
+
+// ===== BOTONES SALIR =====
+document.querySelectorAll(".btn-salir").forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (hasChanges) { pendingSalir = showWelcome; document.getElementById("unsavedModal").classList.remove("hidden"); return; }
+    showWelcome();
+  });
+});
+
+// ===== GUARDAR CONTROL =====
+document.getElementById("btnSaveControl").addEventListener("click", async () => {
   const data = {
     action: "config", method: "PUT", token: adminToken,
-    estadoTienda: document.getElementById("configEstado").value,
-    codTasa: document.getElementById("configCodTasa").value.trim(),
-    horarioApertura: document.getElementById("configHorarioApertura").value.trim(),
-    horarioCierre: document.getElementById("configHorarioCierre").value.trim(),
-    whatsAppNegocio: document.getElementById("configWhatsApp").value.trim(),
-    cuentaZelle: document.getElementById("configZelle").value.trim(),
-    cuentaBinance: document.getElementById("configBinance").value.trim(),
-    datosPagoMovil: document.getElementById("configPagoMovil").value.trim(),
-    datosTransferencia: document.getElementById("configTransferencia").value.trim()
+    estadoTienda: document.getElementById("ctrlEstado").value,
+    codTasa: document.getElementById("ctrlCodTasa").value.trim(),
+    horarioApertura: document.getElementById("ctrlApertura").value.trim(),
+    horarioCierre: document.getElementById("ctrlCierre").value.trim(),
+    whatsAppNegocio: document.getElementById("ctrlWhatsApp").value.trim(),
+    cuentaZelle: document.getElementById("ctrlZelle").value.trim(),
+    cuentaBinance: document.getElementById("ctrlBinance").value.trim(),
+    datosPagoMovil: document.getElementById("ctrlPagoMovil").value.trim(),
+    datosTransferencia: document.getElementById("ctrlTransferencia").value.trim(),
+    imgKey: document.getElementById("ctrlImgKey").value.trim(),
+    dataURL: document.getElementById("ctrlDataURL").value.trim()
   };
-
   try {
     const res = await apiPost(data);
+    if (res.success) { hasChanges = false; mostrarAlerta("success", "Guardado", "Configuración actualizada correctamente.", "OK"); }
+    else mostrarAlerta("error", "Error", res.error || "No se pudo guardar.");
+  } catch(e) { mostrarAlerta("error", "Error de red", "Falló la comunicación."); }
+});
+
+// ===== MODAL GUARDAR / SALIR SIN GUARDAR / CANCELAR =====
+document.getElementById("unsavedSave").addEventListener("click", () => {
+  document.getElementById("unsavedModal").classList.add("hidden");
+  if (currentSub === "control") document.getElementById("btnSaveControl").click();
+  else document.getElementById("crudModalSave").click();
+});
+document.getElementById("unsavedDiscard").addEventListener("click", () => {
+  document.getElementById("unsavedModal").classList.add("hidden");
+  hasChanges = false;
+  if (pendingSalir) { pendingSalir(); pendingSalir = null; }
+});
+document.getElementById("unsavedCancel").addEventListener("click", () => {
+  document.getElementById("unsavedModal").classList.add("hidden");
+  pendingSalir = null;
+});
+
+// ===== GUARDAR MODAL CRUD =====
+document.getElementById("crudModalSave").addEventListener("click", async () => {
+  const activeView = currentSub;
+  const configs = {
+    usuarios: { sheet: "Usuarios", codeField: "CodUsuario", pk: "CodUsuario" },
+    tasas: { sheet: "Tasas", codeField: "CodTasa", pk: "CodTasa" },
+    categorias: { sheet: "Categorias", codeField: "CodCategoria", pk: "CodCategoria" },
+    productos: { sheet: "ProductoMenu", codeField: "CodProducto", pk: "CodProducto" },
+    servidores: { sheet: "Servidores", codeField: "CodServidor", pk: "CodServidor" },
+    zonas: { sheet: "ZonasDelivery", codeField: "CodZona", pk: "CodZona" },
+    formaspago: { sheet: "FormasPago", codeField: "CodPago", pk: "CodPago" }
+  };
+  const cfg = configs[activeView];
+  if (!cfg) return;
+
+  const payload = { action: "adminData", method: modalMode === "add" ? "POST" : "PUT", sheetName: cfg.sheet, token: adminToken, data: {} };
+  const fields = document.querySelectorAll("#crudModalBody input, #crudModalBody select, #crudModalBody button.toggle-btn");
+  fields.forEach(f => {
+    const key = f.id.replace("fld_", "");
+    payload.data[key] = f.dataset.value !== undefined ? f.dataset.value : f.value;
+  });
+  if (modalMode === "edit") payload.data[cfg.pk] = editingId;
+
+  try {
+    const res = await apiPost(payload);
     if (res.success) {
-      mostrarAlerta("success", "Configuración guardada", "Los cambios se aplicaron exitosamente.", "OK");
+      hasChanges = false;
+      mostrarAlerta("success", "Guardado", modalMode === "add" ? "Registro agregado correctamente." : "Registro actualizado correctamente.", "OK", () => {
+        closeModalConfirm();
+        loadDataForView(activeView);
+      });
     } else {
-      mostrarAlerta("error", "Error", res.error || "No se pudo guardar la configuración.");
+      mostrarAlerta("error", "Error", res.error || "No se pudo guardar.");
     }
-  } catch (e) {
-    mostrarAlerta("error", "Error de red", "Falló la comunicación con el servidor.");
-  }
+  } catch(e) { mostrarAlerta("error", "Error de red", "Falló la comunicación."); }
+});
+
+// ===== EDITAR / BORRAR =====
+function openEditModal(prefix, id) {
+  const row = currentData.find(r => r.id === id);
+  if (!row) return;
+  const configs = {
+    usuarios: { title: "Editar Usuario", sheet: "Usuarios", fields: [
+      {name:"NombreUsuario",label:"Nombre Usuario",type:"text"},
+      {name:"RolUsuario",label:"Rol",type:"select",options:[{value:"admin",text:"Administrador"},{value:"cliente",text:"Cliente"}]},
+      {name:"Clave",label:"Contraseña",type:"password"},
+      {name:"TelUsuario",label:"Teléfono",type:"text"},
+      {name:"EmailUsuario",label:"Email",type:"text"},
+      {name:"Estado",label:"Estado"}
+    ]},
+    tasas: { title: "Editar Tasa", sheet: "Tasas", fields: [
+      {name:"DesTasa",label:"Descripción",type:"text"},
+      {name:"SimboloTasa",label:"Símbolo",type:"text"},
+      {name:"OrdenTasa",label:"Orden",type:"number"},
+      {name:"FijarTasa",label:"Fijar",type:"select",options:[{value:"SI",text:"SI"},{value:"No",text:"No"}]},
+      {name:"ValorTasa",label:"Valor",type:"number"},
+      {name:"Estado",label:"Estado"}
+    ]},
+    categorias: { title: "Editar Categoría", sheet: "Categorias", fields: [
+      {name:"DesCategoria",label:"Nombre",type:"text"},
+      {name:"OrdenCategoria",label:"Orden",type:"number"},
+      {name:"DetalleCategoria",label:"Detalle",type:"text"},
+      {name:"Estado",label:"Estado"}
+    ]},
+    productos: { title: "Editar Producto", sheet: "ProductoMenu", fields: [
+      {name:"DesProducto",label:"Nombre",type:"text"},
+      {name:"CodCategoria",label:"Categoría",type:"text"},
+      {name:"Precio",label:"Precio",type:"number"},
+      {name:"CodTasa",label:"Moneda (CodTasa)",type:"text"},
+      {name:"StockProducto",label:"Stock",type:"select",options:[{value:"Disponible",text:"Disponible"},{value:"No Disponible",text:"No Disponible"}]},
+      {name:"ImagenProducto",label:"URL Imagen",type:"text"},
+      {name:"Estado",label:"Estado"}
+    ]},
+    servidores: { title: "Editar Servidor", sheet: "Servidores", fields: [
+      {name:"NombreServidor",label:"Nombre",type:"text"},
+      {name:"MeseroServidor",label:"Mesero",type:"select",options:[{value:"SI",text:"SI"},{value:"No",text:"No"}]},
+      {name:"DeliveryServidor",label:"Delivery",type:"select",options:[{value:"SI",text:"SI"},{value:"No",text:"No"}]},
+      {name:"VehiculoServidor",label:"Vehículo",type:"text"},
+      {name:"TelefonoServidor",label:"Teléfono",type:"text"},
+      {name:"Estado",label:"Estado"}
+    ]},
+    zonas: { title: "Editar Zona", sheet: "ZonasDelivery", fields: [
+      {name:"NombreZona",label:"Nombre",type:"text"},
+      {name:"DescripcionZona",label:"Descripción",type:"text"},
+      {name:"TarifaZona",label:"Tarifa",type:"number"},
+      {name:"CodTasa",label:"Moneda (CodTasa)",type:"text"},
+      {name:"Estado",label:"Estado"}
+    ]},
+    formaspago: { title: "Editar Forma de Pago", sheet: "FormasPago", fields: [
+      {name:"DesPago",label:"Descripción",type:"text"},
+      {name:"CodTasa",label:"Moneda (CodTasa)",type:"text"},
+      {name:"SimboloTasa",label:"Símbolo",type:"text"},
+      {name:"Estado",label:"Estado"}
+    ]}
+  };
+  const cfg = configs[prefix];
+  if (!cfg) return;
+  openModal(cfg.title, cfg.fields, "edit", row.raw);
 }
 
-// Event Listeners
+async function doDelete(prefix, id) {
+  const sheets = { usuarios: "Usuarios", tasas: "Tasas", categorias: "Categorias", productos: "ProductoMenu", servidores: "Servidores", zonas: "ZonasDelivery", formaspago: "FormasPago" };
+  const pks = { usuarios: "CodUsuario", tasas: "CodTasa", categorias: "CodCategoria", productos: "CodProducto", servidores: "CodServidor", zonas: "CodZona", formaspago: "CodPago" };
+  const sheet = sheets[prefix];
+  const pk = pks[prefix];
+  if (!sheet) return;
+
+  mostrarAlerta("error", "Confirmar", "¿Estás seguro de cambiar el estado a Inactivo?", "Confirmar", async () => {
+    try {
+      const res = await apiPost({ action: "adminData", method: "DELETE", sheetName: sheet, token: adminToken, data: { [pk]: id } });
+      if (res.success) {
+        mostrarAlerta("success", "Listo", "Estado actualizado a Inactivo.", "OK", () => loadDataForView(prefix));
+      } else {
+        mostrarAlerta("error", "Error", res.error || "No se pudo actualizar.");
+      }
+    } catch(e) { mostrarAlerta("error", "Error de red", "Falló la comunicación."); }
+  });
+}
+
+// ===== FILTROS PRODUCTOS =====
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-btn").forEach(b => {
+      b.classList.remove("bg-orange-500/20", "text-orange-400", "border-orange-500/30");
+      b.classList.add("bg-gray-800", "text-gray-400", "border-gray-700");
+    });
+    btn.classList.remove("bg-gray-800", "text-gray-400", "border-gray-700");
+    btn.classList.add("bg-orange-500/20", "text-orange-400", "border-orange-500/30");
+    currentFilter = btn.dataset.filter;
+    let filtered = currentData;
+    if (currentFilter === "activos") filtered = currentData.filter(r => String(r.raw.Estado).trim() === "Activo");
+    if (currentFilter === "inactivos") filtered = currentData.filter(r => String(r.raw.Estado).trim() !== "Activo");
+    renderTable("productos", filtered);
+    renderCards("productos", filtered);
+  });
+});
+
+// ===== EVENT LISTENERS =====
 document.getElementById("loginBtn").addEventListener("click", doLogin);
 document.getElementById("backToMenuBtn").addEventListener("click", () => window.location.href = "index.html");
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  localStorage.removeItem("fb_admin_token");
-  window.location.reload();
-});
-document.getElementById("saveConfigBtn").addEventListener("click", saveConfig);
-document.getElementById("saveEditBtn").addEventListener("click", saveEditProducto);
-document.getElementById("cancelEditBtn").addEventListener("click", () => document.getElementById("editModal").classList.add("hidden"));
-document.getElementById("cancelEditBtn2").addEventListener("click", () => document.getElementById("editModal").classList.add("hidden"));
-
-// Tabs
-document.querySelectorAll(".tab-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".tab-btn").forEach(b => {
-      b.classList.remove("active", "text-white"); b.classList.add("text-gray-400");
-    });
-    btn.classList.add("active", "text-white"); btn.classList.remove("text-gray-400");
-    document.querySelectorAll(".tab-content").forEach(c => c.classList.add("hidden"));
-    document.getElementById("tab-" + btn.dataset.tab).classList.remove("hidden");
-  });
-});
-
-// Filters
-function setFilter(type, btnId) {
-  currentFilter = type;
-  document.querySelectorAll(".filter-btn").forEach(b => {
-    b.classList.remove("bg-orange-500/20", "text-orange-400", "border-orange-500/30");
-    b.classList.add("bg-gray-800", "text-gray-400", "border-gray-700");
-  });
-  const activeBtn = document.getElementById(btnId);
-  activeBtn.classList.remove("bg-gray-800", "text-gray-400", "border-gray-700");
-  activeBtn.classList.add("bg-orange-500/20", "text-orange-400", "border-orange-500/30");
-  renderProductos();
-}
-document.getElementById("filterTodos").addEventListener("click", () => setFilter("todos", "filterTodos"));
-document.getElementById("filterActivos").addEventListener("click", () => setFilter("activos", "filterActivos"));
-document.getElementById("filterInactivos").addEventListener("click", () => setFilter("inactivos", "filterInactivos"));
-
-// Enter en login
+document.getElementById("logoutBtn").addEventListener("click", () => { localStorage.removeItem("fb_admin_token"); window.location.reload(); });
+document.getElementById("logoutBtnHeader").addEventListener("click", () => { localStorage.removeItem("fb_admin_token"); window.location.reload(); });
 document.getElementById("adminPass").addEventListener("keypress", e => { if (e.key === "Enter") doLogin(); });
 
-// Init
 document.addEventListener("DOMContentLoaded", initAdmin);
 </script>
-
-<!-- CONTROL DE VERSION ADMIN (Cambia este texto en cada nueva implementacion)
-var ADMIN_VERSION = "v8.0 - Panel Admin Fase 2"; -->
 </body>
 </html>
