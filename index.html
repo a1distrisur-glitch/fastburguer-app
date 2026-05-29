@@ -32,6 +32,11 @@
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
   .content-auto{content-visibility:auto;contain-intrinsic-size:auto 350px;}
   .step-hidden{display:none !important;}
+  #propinaInput:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #1f2937;
+  }
 </style>
 <base target="_blank">
 </head>
@@ -50,10 +55,10 @@
     </div>
     <div class="flex items-center gap-3">
       <select id="currencySelector" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500">
-        <option value="USD" selected>$ USD</option>
-        <option value="BS">Bs</option>
-        <option value="EUR">€ EUR</option>
-        <option value="BN">BN</option>
+        <option value="T002" selected>$ USD</option>
+        <option value="T001">Bs</option>
+        <option value="T003">€ EUR</option>
+        <option value="T004">BN</option>
       </select>
       <button id="cartBtn" class="relative p-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 transition border border-gray-700" aria-label="Ver Carrito">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
@@ -176,9 +181,14 @@
           </div>
         </div>
 
-        <button id="nextStepBtn" class="w-full btn-primary py-3 rounded-xl font-bold text-lg text-white transition mt-6">
-          Siguiente
-        </button>
+        <div class="flex gap-2 mt-6">
+          <button id="backToCartBtn" class="px-5 py-3 rounded-xl font-bold text-gray-400 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition">
+            Atrás
+          </button>
+          <button id="nextStepBtn" class="flex-1 btn-primary py-3 rounded-xl font-bold text-lg text-white transition">
+            Siguiente
+          </button>
+        </div>
       </div>
 
       <!-- PASO 2: TIPO DE SERVICIO -->
@@ -248,11 +258,11 @@
           <div class="flex items-center justify-between mb-2">
             <label class="text-sm font-semibold text-gray-300">Propina sugerida</label>
             <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" id="propinaToggle" class="sr-only peer" checked>
+              <input type="checkbox" id="propinaToggle" class="sr-only peer">
               <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
             </label>
           </div>
-          <input type="number" id="propinaInput" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500" value="0" min="0" step="0.01">
+          <input type="number" id="propinaInput" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500" value="0" min="0" step="0.01" disabled>
         </div>
 
         <div class="bg-gray-800/50 rounded-xl p-4 space-y-2 border border-gray-700 mt-6">
@@ -390,21 +400,21 @@ let categories = [];
 let zones = [];
 let paymentMethods = [];
 let cart = [];
-let currentCurrency = "USD"; 
-let tasas = {};
+let currentCurrency = ""; // Ahora es CodTasa (ej: "T002")
+let tasasPorCod = {};     // { T001: 1, T002: 550, ... }
+let simboloACod = {};     // { BS: 'T001', USD: 'T002', ... }
+let codASimbolo = {};     // { T001: 'BS', T002: 'USD', ... }
+let desTasaPorCod = {};   // { T001: 'Bolivar', T002: 'Dolar', ... }
 let config = {};
 let selectedService = "";
 let selectedZone = null;
 let currentClientPhone = localStorage.getItem("fb_client_phone") || "";
 let savedClientData = null;
-
-// Nuevas variables v7.2
 let enSitioAreas = [];
 let selectedEnSitio = null;
 let propinaAplicada = 0;
-let propinaToggle = true;
+let propinaToggle = false;
 
-// Mapeo CodPago -> campo en config para mostrar info de pago
 const PAYMENT_CONFIG_MAP = {
   'F001': { key: 'DatosPagoMovil', label: 'Pago Móvil' },
   'F002': { key: 'DatosTransferencia', label: 'Transferencia' },
@@ -456,18 +466,54 @@ async function init() {
     categories = r.data.categorias || [];
     zones = r.data.zonas || [];
     paymentMethods = r.data.formasPago || [];
-    enSitioAreas = r.data.enSitio || []; // v7.2
+    enSitioAreas = r.data.enSitio || [];
 
+    // Construir índices por CodTasa
     const tasasArray = r.data.tasas || [];
-    tasas = { BS: 1 };
+    tasasPorCod = {};
+    simboloACod = {};
+    codASimbolo = {};
+    desTasaPorCod = {};
     tasasArray.forEach(t => {
-      const simbolo = t.SimboloTasa || t.CodTasa;
-      if (simbolo) tasas[simbolo] = parseFloat(t.ValorTasa) || 0;
+      const cod = t.CodTasa;
+      const simbolo = t.SimboloTasa;
+      const valor = parseFloat(t.ValorTasa) || 0;
+      const des = t.DesTasa || "";
+      if (cod) {
+        tasasPorCod[cod] = valor;
+        desTasaPorCod[cod] = des;
+        if (simbolo) {
+          simboloACod[simbolo] = cod;
+          codASimbolo[cod] = simbolo;
+        }
+      }
+    });
+
+    // Moneda por defecto desde Control.CodTasa
+    currentCurrency = config.CodTasa || "T002";
+
+    // Poblar selector de moneda con CodTasa como value
+    const currencySelector = document.getElementById("currencySelector");
+    currencySelector.innerHTML = "";
+    tasasArray.forEach(t => {
+      const cod = t.CodTasa;
+      const simbolo = t.SimboloTasa;
+      const des = t.DesTasa;
+      let label = simbolo;
+      if (simbolo === "USD") label = "$ USD";
+      else if (simbolo === "BS") label = "Bs";
+      else if (simbolo === "EUR") label = "€ EUR";
+      else if (simbolo === "BN") label = "BN";
+      const option = document.createElement("option");
+      option.value = cod;
+      option.textContent = label + (des ? " (" + des + ")" : "");
+      if (cod === currentCurrency) option.selected = true;
+      currencySelector.appendChild(option);
     });
 
     products = (r.data.productos || []).map(p => ({
       ...p,
-      PrecioConvertido: calcularPrecioConvertido(parseFloat(p.PrecioDolar) || 0, currentCurrency)
+      PrecioConvertido: calcularPrecioConvertido(parseFloat(p.Precio) || 0, p.CodTasa, currentCurrency)
     }));
 
     renderCategories();
@@ -486,22 +532,24 @@ function showLoading() {
     </div>`;
 }
 
-// v7.2: Nueva función reutilizable de conversión monetaria
-function convertirMonto(montoUSD, monedaDestino) {
-  if (!tasas || !tasas.USD) return montoUSD;
-  const montoEnBS = montoUSD * tasas.USD;
-  if (monedaDestino === "USD") return montoUSD;
-  if (monedaDestino === "BS") return montoEnBS;
-  const destRate = tasas[monedaDestino];
-  return (!destRate || destRate === 0) ? montoEnBS : montoEnBS / destRate;
+function convertirMonto(monto, codTasaOrigen, codTasaDestino) {
+  if (!tasasPorCod || !tasasPorCod[codTasaOrigen] || !tasasPorCod[codTasaDestino]) return monto;
+  const montoEnBS = monto * tasasPorCod[codTasaOrigen];
+  return montoEnBS / tasasPorCod[codTasaDestino];
 }
 
-function calcularPrecioConvertido(precioUSD, moneda) {
-  return convertirMonto(precioUSD, moneda);
+function calcularPrecioConvertido(precio, codTasaOrigen, codTasaDestino) {
+  return convertirMonto(precio, codTasaOrigen, codTasaDestino);
 }
 
-function convertirPrecioDelivery(tarifaUSD) {
-  return convertirMonto(tarifaUSD, currentCurrency);
+function formatearPrecio(valor, codTasa) {
+  const v = parseFloat(valor) || 0;
+  const simbolo = codASimbolo[codTasa] || "BS";
+  if (simbolo === "USD") return "$" + v.toFixed(2);
+  if (simbolo === "BS") return "Bs " + v.toFixed(2);
+  if (simbolo === "EUR") return "€" + v.toFixed(2);
+  if (simbolo === "BN") return "BN " + v.toFixed(2);
+  return v.toFixed(2);
 }
 
 async function apiGet(action, params) {
@@ -594,15 +642,6 @@ function renderProductGrid(list) {
   syncAddButtonStates();
 }
 
-function formatearPrecio(valor, moneda) {
-  const v = parseFloat(valor) || 0;
-  if (moneda === "USD") return "$" + v.toFixed(2);
-  if (moneda === "BS") return "Bs " + v.toFixed(2);
-  if (moneda === "EUR") return "€" + v.toFixed(2);
-  if (moneda === "BN") return "BN " + v.toFixed(2);
-  return v.toFixed(2);
-}
-
 // ============================================
 // LOGICA DE CARRITO
 // ============================================
@@ -627,7 +666,6 @@ function syncAddButtonStates() {
 function addToCart(code) {
   const product = products.find(p => p.CodProducto === code);
   if (!product) return;
-  // v7.2: Defensa de stock
   if (product.StockProducto !== "Disponible") {
     mostrarAlerta("error", "Producto agotado", "Este producto no está disponible actualmente.");
     return;
@@ -636,7 +674,16 @@ function addToCart(code) {
   if (existing) {
     existing.cantidad++; existing.subtotalItem = existing.cantidad * existing.precioUnitario;
   } else {
-    cart.push({ CodProducto: product.CodProducto, CodCategoria: product.CodCategoria, DesCategoria: product.DesCategoria, DesProducto: product.DesProducto, cantidad: 1, precioUnitario: product.PrecioConvertido, subtotalItem: product.PrecioConvertido });
+    cart.push({ 
+      CodProducto: product.CodProducto, 
+      CodCategoria: product.CodCategoria, 
+      DesCategoria: product.DesCategoria, 
+      DesProducto: product.DesProducto, 
+      cantidad: 1, 
+      precioUnitario: product.PrecioConvertido, 
+      subtotalItem: product.PrecioConvertido,
+      CodTasaProducto: product.CodTasa
+    });
   }
   updateCartUI();
   const badge = document.getElementById("cartCount");
@@ -656,7 +703,9 @@ function updateCartUI() {
   const countEl = document.getElementById("cartCount"), itemsEl = document.getElementById("cartItems");
   const subtotal = cart.reduce((sum, item) => sum + item.subtotalItem, 0);
   const totalItems = cart.reduce((sum, item) => sum + item.cantidad, 0);
-  const delivery = selectedService === "delivery" && selectedZone ? convertirPrecioDelivery(selectedZone.TarifaZona) : 0;
+  const delivery = selectedService === "delivery" && selectedZone 
+    ? convertirMonto(selectedZone.TarifaZona, selectedZone.CodTasa || "T002", currentCurrency) 
+    : 0;
 
   if (totalItems > 0) { countEl.textContent = totalItems; countEl.classList.remove("hidden"); } 
   else { countEl.classList.add("hidden"); }
@@ -699,22 +748,23 @@ function openCheckout() {
   document.getElementById("checkoutModal").classList.remove("hidden");
   document.getElementById("overlay").classList.remove("hidden");
 
-  // Reset Pasos
   document.getElementById("checkoutStep1").classList.remove("hidden");
   document.getElementById("checkoutStep2").classList.add("hidden");
   document.getElementById("checkoutStep3").classList.add("hidden");
 
-  // Reset Payment Info
   document.getElementById("paymentSelectedInfo").innerHTML = "";
   document.getElementById("paymentSelectedInfo").classList.add("hidden");
 
-  // v7.2: Reset de propina al abrir checkout
+  // Reset propina OFF/bloqueado/valor 0
   propinaAplicada = 0;
-  propinaToggle = true;
-  document.getElementById("propinaToggle").checked = true;
-  document.getElementById("propinaInput").value = "0";
+  propinaToggle = false;
+  const propinaToggleEl = document.getElementById("propinaToggle");
+  const propinaInputEl = document.getElementById("propinaInput");
+  propinaToggleEl.checked = false;
+  propinaInputEl.value = "0";
+  propinaInputEl.disabled = true;
 
-  // v7.2: Poblar EnSitio select
+  // Poblar EnSitio select
   const eSel = document.getElementById("enSitioSelect");
   const eMsg = document.getElementById("enSitioEmptyMsg");
   eSel.innerHTML = '<option value="">Selecciona un área o mesa</option>';
@@ -728,7 +778,7 @@ function openCheckout() {
     });
   }
 
-  // Poblar Zonas (v7.2: ocultar select si no hay zonas, no disabled)
+  // Poblar Zonas
   const zSel = document.getElementById("zoneSelect");
   const zoneMsg = document.getElementById("zoneDisabledMsg");
   zSel.innerHTML = '<option value="">Selecciona una zona</option>';
@@ -740,7 +790,8 @@ function openCheckout() {
     zoneMsg.classList.add("hidden");
     document.getElementById("zoneSection").classList.remove("hidden");
     zones.forEach(z => {
-      zSel.innerHTML += `<option value="${z.CodZona}" data-name="${z.NombreZona}" data-tarifa="${z.TarifaZona}">${z.NombreZona} - ${formatearPrecio(convertirPrecioDelivery(z.TarifaZona), currentCurrency)}</option>`;
+      const tarifaConvertida = convertirMonto(z.TarifaZona, z.CodTasa || "T002", currentCurrency);
+      zSel.innerHTML += `<option value="${z.CodZona}" data-name="${z.NombreZona}" data-tarifa="${z.TarifaZona}" data-codtasa="${z.CodTasa || 'T002'}">${z.NombreZona} - ${formatearPrecio(tarifaConvertida, currentCurrency)}</option>`;
     });
   }
 
@@ -809,28 +860,29 @@ function updateCheckoutSummary() {
   let delivery = 0;
   if (selectedService === "delivery") {
     if (selectedZone) {
-      delivery = convertirPrecioDelivery(selectedZone.TarifaZona);
+      delivery = convertirMonto(selectedZone.TarifaZona, selectedZone.CodTasa || "T002", currentCurrency);
     } else {
       delivery = 0;
     }
   }
 
-  // v7.2: Propina
   let propina = 0;
   const propinaLine = document.getElementById("checkoutPropinaLine");
   const propinaSection = document.getElementById("propinaSection");
 
   if (selectedService === "sitio" && selectedEnSitio && selectedEnSitio.PropinaEnSitio > 0) {
     propinaSection.classList.remove("hidden");
-    const toggleOn = document.getElementById("propinaToggle").checked;
     const inputVal = parseFloat(document.getElementById("propinaInput").value) || 0;
-    if (toggleOn && inputVal > 0) {
+    if (propinaToggle && inputVal > 0) {
       propina = inputVal;
       propinaLine.classList.remove("hidden");
       document.getElementById("checkoutPropina").textContent = formatearPrecio(propina, currentCurrency);
     } else {
+      propina = 0;
       propinaLine.classList.add("hidden");
     }
+
+
   } else {
     propinaSection.classList.add("hidden");
     propinaLine.classList.add("hidden");
@@ -852,19 +904,24 @@ async function confirmOrder() {
   const name = document.getElementById("clientName").value.trim();
   const phone = document.getElementById("phonePrefix").value + document.getElementById("clientPhone").value.trim();
 
-  // v7.2: Construcción de dirección según servicio
+  // Tres campos separados
   let address = "";
+  let observationsPayload = "";
+
   if (selectedService === "delivery") {
     address = document.getElementById("clientAddress").value.trim();
+    observationsPayload = "";
   } else if (selectedService === "pickup") {
-    address = "Retiro: Pick Up";
+    address = "";
+    observationsPayload = "Retiro: Pick Up";
   } else if (selectedService === "sitio") {
-    address = selectedEnSitio ? "En Sitio: " + selectedEnSitio.DesEnSitio : "En Sitio";
+    address = "";
+    observationsPayload = selectedEnSitio ? "En Sitio: " + selectedEnSitio.DesEnSitio : "En Sitio";
   }
 
   let cedula = document.getElementById("checkCedula").checked ? document.getElementById("docPrefix").value + document.getElementById("clientCedula").value.trim() : "";
   let email = document.getElementById("checkEmail").checked ? document.getElementById("clientEmail").value.trim() : "";
-  let obs = document.getElementById("checkObs").checked ? document.getElementById("observations").value.trim() : "";
+  let observationsCliente = document.getElementById("checkObs").checked ? document.getElementById("observations").value.trim() : "";
 
   const pOpt = paySelect.selectedOptions[0];
   const codPago = pOpt.value;
@@ -881,18 +938,17 @@ async function confirmOrder() {
   let delivery = 0;
   if (selectedService === "delivery") {
     if (selectedZone) {
-      delivery = convertirPrecioDelivery(selectedZone.TarifaZona);
+      delivery = convertirMonto(selectedZone.TarifaZona, selectedZone.CodTasa || "T002", currentCurrency);
     } else {
       delivery = 0;
     }
   }
 
-  // v7.2: Cálculo de propina
+  // Propina del input directo
   let propina = 0;
   if (selectedService === "sitio" && selectedEnSitio && selectedEnSitio.PropinaEnSitio > 0) {
-    const toggleOn = document.getElementById("propinaToggle").checked;
     const inputVal = parseFloat(document.getElementById("propinaInput").value) || 0;
-    if (toggleOn && inputVal > 0) {
+    if (inputVal > 0) {
       propina = inputVal;
     }
   }
@@ -900,14 +956,20 @@ async function confirmOrder() {
 
   const orderData = {
     action: "pedido",
-    cliente: { nombre: name, telefono: phone, direccion: address, cedula: cedula, email: email },
+    cliente: { 
+      nombre: name, 
+      telefono: phone, 
+      direccion: address, 
+      cedula: cedula, 
+      email: email 
+    },
     tipoServicio: selectedService,
     codZone: selectedZone ? selectedZone.CodZona : "",
     zona: selectedZone ? selectedZone.NombreZona : "N/A",
     codEnSitio: selectedEnSitio ? selectedEnSitio.CodEnSitio : "",
     desEnSitio: selectedEnSitio ? selectedEnSitio.DesEnSitio : "",
-    moneda: currentCurrency,
-    codTasa: payCodTasa,
+    codTasa: currentCurrency,
+    desTasa: desTasaPorCod[currentCurrency] || "",
     codFormaPago: codPago,
     desPago: payLabel + (payVal ? ": " + payVal : ""),
     items: cart,
@@ -915,7 +977,8 @@ async function confirmOrder() {
     delivery: delivery,
     propina: propina,
     total: total,
-    observations: obs
+    observations: observationsPayload,
+    observationsCliente: observationsCliente
   };
 
   const btn = document.getElementById("confirmOrderBtn");
@@ -930,7 +993,7 @@ async function confirmOrder() {
       if(!misPedidos.includes(res.nroPedido)) misPedidos.push(res.nroPedido);
       localStorage.setItem("mis_pedidos_fb", JSON.stringify(misPedidos));
 
-      showConfirmation(res.nroPedido, payLabel, payVal, total, cart, address, selectedService, propina);
+      showConfirmation(res.nroPedido, payLabel, payVal, total, cart, address, selectedService, propina, currentCurrency, payCodTasa);
       cart = []; updateCartUI(); closeCheckout();
     } else {
       mostrarAlerta("error", "Error", res.error || "No se pudo registrar.");
@@ -941,43 +1004,36 @@ async function confirmOrder() {
   }
 }
 
-function showConfirmation(nro, label, val, total, items, direccion, tipoServicio, propina) {
+function showConfirmation(nro, label, val, total, items, direccion, tipoServicio, propina, codTasaPedido, codTasaPago) {
   document.getElementById("confirmationModal").classList.remove("hidden");
   document.getElementById("orderNumber").textContent = nro;
 
+  // Recalcular total a moneda de pago para mostrar al usuario
+  const totalDisplay = convertirMonto(total, codTasaPedido, codTasaPago);
+
   let infoHtml = `<p class="text-xs text-gray-400 mb-1">${label}</p>`;
   if (val) infoHtml += `<p class="text-sm text-white font-mono mb-2">${val}</p>`;
-  infoHtml += `<p class="font-bold text-orange-400">Total a transferir: ${formatearPrecio(total, currentCurrency)}</p>`;
+  infoHtml += `<p class="font-bold text-orange-400">Total a transferir: ${formatearPrecio(totalDisplay, codTasaPago)}</p>`;
   document.getElementById("paymentInfo").innerHTML = infoHtml;
 
   let itemsText = "";
   items.forEach((item, idx) => {
-    itemsText += `${idx + 1}. ${item.cantidad}x ${item.DesProducto} - ${formatearPrecio(item.subtotalItem, currentCurrency)}
-`;
+    itemsText += `${idx + 1}. ${item.cantidad}x ${item.DesProducto} - ${formatearPrecio(item.subtotalItem, codTasaPedido)}\n`;
   });
 
-  let msg = `¡Hola! Acabo de realizar el pedido *${nro}*.
-
-`;
-  msg += `*Productos:*
-${itemsText}
-`;
-  msg += `*Total:* ${formatearPrecio(total, currentCurrency)}
-`;
-  msg += `*Pago:* ${label}
-`;
+  let msg = `¡Hola! Acabo de realizar el pedido *${nro}*.\n\n`;
+  msg += `*Productos:*\n${itemsText}\n`;
+  msg += `*Total:* ${formatearPrecio(totalDisplay, codTasaPago)}\n`;
+  msg += `*Pago:* ${label}\n`;
 
   if (tipoServicio === "delivery" && direccion && direccion.trim() !== "" && !direccion.startsWith("Retiro:")) {
-    msg += `*Dirección:* ${direccion}
-`;
+    msg += `*Dirección:* ${direccion}\n`;
   }
   if (tipoServicio === "sitio" && selectedEnSitio) {
-    msg += `*Mesa/Área:* ${selectedEnSitio.DesEnSitio}
-`;
+    msg += `*Mesa/Área:* ${selectedEnSitio.DesEnSitio}\n`;
   }
   if (propina && propina > 0) {
-    msg += `*Propina:* ${formatearPrecio(propina, currentCurrency)}
-`;
+    msg += `*Propina:* ${formatearPrecio(propina, codTasaPedido)}\n`;
   }
 
   const waNumber = "58" + (config.WhatsAppNegocio || "").replace(/^0/, "");
@@ -1017,15 +1073,15 @@ async function openMyOrders() {
             <span class="text-xs text-yellow-500 font-bold">${p.Estado}</span>
           </div>
           <div class="flex justify-between text-sm text-gray-300 mb-1"><span>Fecha:</span> <span>${p.FechaPedido.substring(0,10)}</span></div>
-          <div class="flex justify-between text-sm text-gray-300 mb-2"><span>Monto:</span> <span class="font-bold text-white">${formatearPrecio(p.TotalPedido, p.Moneda)}</span></div>
-          <button class="view-items-btn w-full py-2 rounded-lg border border-orange-500/30 text-orange-400 text-sm font-semibold hover:bg-orange-500/10 transition" data-nro="${p.NroPedido}" data-moneda="${p.Moneda}">
+          <div class="flex justify-between text-sm text-gray-300 mb-2"><span>Monto:</span> <span class="font-bold text-white">${formatearPrecio(p.TotalPedido, p.CodTasa)}</span></div>
+          <button class="view-items-btn w-full py-2 rounded-lg border border-orange-500/30 text-orange-400 text-sm font-semibold hover:bg-orange-500/10 transition" data-nro="${p.NroPedido}" data-codtasa="${p.CodTasa}">
             Ver Ítems
           </button>
         </div>`;
       });
       container.innerHTML = html;
       container.querySelectorAll(".view-items-btn").forEach(btn => {
-        btn.addEventListener("click", () => showOrderItems(btn.dataset.nro, btn.dataset.moneda));
+        btn.addEventListener("click", () => showOrderItems(btn.dataset.nro, btn.dataset.codtasa));
       });
     } else {
       container.innerHTML = `<p class="text-center text-red-500 py-10">No se pudo cargar la información.</p>`;
@@ -1044,12 +1100,16 @@ function setupEventListeners() {
   document.getElementById("checkoutBtn").addEventListener("click", openCheckout);
   document.getElementById("closeCheckout").addEventListener("click", closeCheckout);
 
-  // Navegación 3 pasos
   document.getElementById("nextStepBtn").addEventListener("click", nextCheckoutStep1);
   document.getElementById("nextStep2Btn").addEventListener("click", nextCheckoutStep2);
   document.getElementById("backStep1Btn").addEventListener("click", backToStep1);
   document.getElementById("backStep2Btn").addEventListener("click", backToStep2);
   document.getElementById("confirmOrderBtn").addEventListener("click", confirmOrder);
+
+  document.getElementById("backToCartBtn").addEventListener("click", () => {
+    closeCheckout();
+    openCart();
+  });
 
   document.getElementById("menuBtn").addEventListener("click", () => { document.getElementById("sideMenu").classList.remove("-translate-x-full"); document.getElementById("overlay").classList.remove("hidden"); });
   document.getElementById("closeMenu").addEventListener("click", () => { document.getElementById("sideMenu").classList.add("-translate-x-full"); checkOverlay(); });
@@ -1087,22 +1147,22 @@ function setupEventListeners() {
     window.scrollTo({top:0, behavior:"smooth"});
   });
 
-  // v7.2: BUG FIX - Recalcular carrito al cambiar moneda desde PrecioDolar original
+  // Cambio de moneda: recalcular todo por CodTasa
   document.getElementById("currencySelector").addEventListener("change", async (e) => {
     currentCurrency = e.target.value;
     showLoading();
 
-    // Recalcular productos
+    // Recalcular productos desde su CodTasa propio
     products = products.map(p => ({
       ...p,
-      PrecioConvertido: calcularPrecioConvertido(parseFloat(p.PrecioDolar) || 0, currentCurrency)
+      PrecioConvertido: calcularPrecioConvertido(parseFloat(p.Precio) || 0, p.CodTasa, currentCurrency)
     }));
 
-    // Recalcular carrito: cada item desde su PrecioDolar original
+    // Recalcular carrito
     cart = cart.map(item => {
       const prod = products.find(p => p.CodProducto === item.CodProducto);
       if (prod) {
-        const nuevoPrecio = calcularPrecioConvertido(parseFloat(prod.PrecioDolar) || 0, currentCurrency);
+        const nuevoPrecio = calcularPrecioConvertido(parseFloat(prod.Precio) || 0, prod.CodTasa, currentCurrency);
         return {
           ...item,
           precioUnitario: nuevoPrecio,
@@ -1130,10 +1190,9 @@ function setupEventListeners() {
     });
   });
 
-  // v7.2: Botones de servicio modificados
+  // Botones de servicio
   document.querySelectorAll(".service-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-      // Reset visual de botones
       document.querySelectorAll(".service-btn").forEach(b => {
         b.classList.remove("border-orange-500", "text-orange-400");
         b.classList.add("border-gray-700");
@@ -1148,7 +1207,6 @@ function setupEventListeners() {
       const puInfo = document.getElementById("pickupInfoSection");
       const esSection = document.getElementById("enSitioSection");
 
-      // Reset todas las secciones
       zs.classList.add("hidden");
       as.classList.add("hidden");
       dwMsg.classList.add("hidden");
@@ -1168,11 +1226,12 @@ function setupEventListeners() {
         as.classList.remove("hidden");
         dwMsg.classList.remove("hidden");
         const addrInput = document.getElementById("clientAddress");
-        if (!addrInput.value.trim()) {
-          addrInput.value = "Ciudad Ojeda";
-        }
+        addrInput.value = "Ciudad Ojeda";
         if (savedClientData && savedClientData.direccion) {
-          addrInput.value = savedClientData.direccion;
+          const dir = savedClientData.direccion.trim();
+          if (dir && !dir.toLowerCase().includes("en sitio") && !dir.toLowerCase().includes("retiro")) {
+            addrInput.value = dir;
+          }
         }
       } else if (selectedService === "pickup") {
         puInfo.classList.remove("hidden");
@@ -1185,41 +1244,46 @@ function setupEventListeners() {
 
   document.getElementById("zoneSelect").addEventListener("change", (e) => {
     const opt = e.target.selectedOptions[0];
-    selectedZone = opt.value ? { CodZona: opt.value, NombreZona: opt.dataset.name, TarifaZona: parseFloat(opt.dataset.tarifa)||0 } : null;
+    selectedZone = opt.value ? { 
+      CodZona: opt.value, 
+      NombreZona: opt.dataset.name, 
+      TarifaZona: parseFloat(opt.dataset.tarifa)||0,
+      CodTasa: opt.dataset.codtasa || "T002"
+    } : null;
     updateCheckoutSummary();
   });
 
-  // v7.2: Event Listener enSitioSelect
   document.getElementById("enSitioSelect").addEventListener("change", (e) => {
     const opt = e.target.selectedOptions[0];
+    const propinaInputEl = document.getElementById("propinaInput");
     if (opt && opt.value) {
       const propinaBase = parseFloat(opt.dataset.propina) || 0;
-      const codTasaItem = opt.dataset.codtasa || "T002";
+      const codTasaMesa = opt.dataset.codtasa || "T002";
       selectedEnSitio = {
         CodEnSitio: opt.value,
         DesEnSitio: opt.text,
         PropinaEnSitio: propinaBase,
-        CodTasa: codTasaItem
+        CodTasa: codTasaMesa
       };
       if (propinaBase > 0) {
-        const tasaOrigen = tasas[codTasaItem] || tasas.USD || 1;
-        const propinaEnUSD = propinaBase / tasaOrigen;
-        propinaAplicada = convertirMonto(propinaEnUSD, currentCurrency);
-        document.getElementById("propinaInput").value = propinaAplicada.toFixed(2);
+        propinaAplicada = convertirMonto(propinaBase, codTasaMesa, currentCurrency);
+        propinaInputEl.value = propinaAplicada.toFixed(2);
       } else {
         propinaAplicada = 0;
-        document.getElementById("propinaInput").value = "0";
+        propinaInputEl.value = "0";
       }
     } else {
       selectedEnSitio = null;
       propinaAplicada = 0;
+      propinaInputEl.value = "0";
     }
     updateCheckoutSummary();
   });
 
-  // v7.2: Event Listeners Propina Toggle + Input
   document.getElementById("propinaToggle").addEventListener("change", () => {
     propinaToggle = document.getElementById("propinaToggle").checked;
+    const input = document.getElementById("propinaInput");
+    input.disabled = !propinaToggle;
     updateCheckoutSummary();
   });
 
@@ -1230,7 +1294,6 @@ function setupEventListeners() {
     updateCheckoutSummary();
   });
 
-  // v7.2: Event Listener paymentSelect modificado
   document.getElementById("paymentSelect").addEventListener("change", (e) => {
     const infoDiv = document.getElementById("paymentSelectedInfo");
     if(e.target.value) {
@@ -1287,7 +1350,8 @@ function setupEventListeners() {
             nombre: cli.DesCliente || "",
             cedula: cli.CedulaRifCliente || "",
             direccion: cli.DirCliente || "",
-            email: cli.EmailCliente || ""
+            email: cli.EmailCliente || "",
+            codTasa: cli.CodTasa || ""
           };
 
           if (cli.DesCliente) nameInput.value = cli.DesCliente;
@@ -1326,7 +1390,6 @@ function setupEventListeners() {
     }
   });
 
-  // Botón cambiar número
   changePhoneBtn.addEventListener("click", () => {
     phoneInput.value = "";
     phoneInput.readOnly = false;
@@ -1351,7 +1414,6 @@ function setupEventListeners() {
     phoneInput.focus();
   });
 
-  // Re-ejecutar búsqueda si cambia prefijo
   prefixSelect.addEventListener("change", () => {
     if (phoneInput.value.length === 7) {
       phoneInput.dispatchEvent(new Event("input"));
@@ -1364,7 +1426,7 @@ function setupEventListeners() {
 // ============================================
 // VER ÍTEMS DE UN PEDIDO
 // ============================================
-async function showOrderItems(nroPedido, moneda) {
+async function showOrderItems(nroPedido, codTasa) {
   const ordersContent = document.getElementById("ordersContent");
   const orderItemsView = document.getElementById("orderItemsView");
   const orderItemsList = document.getElementById("orderItemsList");
@@ -1390,11 +1452,11 @@ async function showOrderItems(nroPedido, moneda) {
           <p class="text-xs text-gray-400 mb-2">${item.DesCategoria || ""}</p>
           <div class="flex justify-between text-sm">
             <span class="text-gray-400">Precio unit:</span>
-            <span class="text-white font-mono">${formatearPrecio(item.PrecioUnitario || 0, moneda)}</span>
+            <span class="text-white font-mono">${formatearPrecio(item.PrecioUnitario || 0, codTasa)}</span>
           </div>
           <div class="flex justify-between text-sm font-bold border-t border-gray-700 pt-1 mt-1">
             <span class="text-gray-300">Subtotal:</span>
-            <span class="text-orange-400">${formatearPrecio(item.SubtotalItem || 0, moneda)}</span>
+            <span class="text-orange-400">${formatearPrecio(item.SubtotalItem || 0, codTasa)}</span>
           </div>
         </div>`;
       });
