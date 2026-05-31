@@ -185,11 +185,9 @@ function goTo(page){
   if(t){
     var url=page+".html?t="+encodeURIComponent(t);
     console.log("Navigating to:", url);
-    alert("DEBUG: Navigating to "+url);
     window.location.href=url;
   }else{
     toast("Inicie sesion primero",false);
-    alert("DEBUG: No token found!");
   }
 }
 
