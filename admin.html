@@ -1,633 +1,219 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>FastBurguer - Admin</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #0a0a0a;
-      color: #fff;
-      min-height: 100vh;
-      overflow-x: hidden;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .hidden { display: none !important; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>FastBurguer - Admin</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+.hidden{display:none!important}
 
-    /* Loading */
-    #load {
-      position: fixed;
-      inset: 0;
-      background: rgba(10,10,10,0.9);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      flex-direction: column;
-      gap: 12px;
-    }
-    #load.show { display: flex; }
-    .spin {
-      width: 36px;
-      height: 36px;
-      border: 3px solid rgba(255,255,255,0.1);
-      border-top-color: #f7931e;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+#load{position:fixed;inset:0;background:rgba(10,10,10,0.9);display:none;justify-content:center;align-items:center;z-index:9999;flex-direction:column;gap:12px}
+#load.show{display:flex}
+.spin{width:36px;height:36px;border:3px solid rgba(255,255,255,0.1);border-top-color:#f7931e;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-    /* Toast */
-    #toast {
-      position: fixed;
-      top: 16px;
-      right: 16px;
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-size: 13px;
-      font-weight: 600;
-      z-index: 9999;
-      display: none;
-      backdrop-filter: blur(10px);
-    }
-    #toast.ok {
-      background: rgba(34,197,94,0.15);
-      border: 1px solid rgba(34,197,94,0.3);
-      color: #22c55e;
-    }
-    #toast.err {
-      background: rgba(239,68,68,0.15);
-      border: 1px solid rgba(239,68,68,0.3);
-      color: #ef4444;
-    }
+#toast{position:fixed;top:16px;right:16px;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;display:none;backdrop-filter:blur(10px)}
+#toast.ok{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#22c55e}
+#toast.err{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444}
 
-    /* Menu Overlay */
-    #menuOverlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      z-index: 998;
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-    }
-    #menuOverlay.show { opacity: 1; pointer-events: auto; }
+#menuOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:998;opacity:0;transition:opacity 0.3s;pointer-events:none}
+#menuOverlay.show{opacity:1;pointer-events:auto}
 
-    /* Menu Panel */
-    #menuPanel {
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 260px;
-      height: 100vh;
-      background: #111;
-      z-index: 999;
-      border-right: 1px solid rgba(255,255,255,0.06);
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
-      padding: 20px 0;
-      overflow-y: auto;
-    }
-    #menuPanel.open { transform: translateX(0); }
+#menuPanel{position:fixed;left:0;top:0;width:260px;height:100vh;background:#111;z-index:999;border-right:1px solid rgba(255,255,255,0.06);transform:translateX(-100%);transition:transform 0.3s ease;padding:20px 0;overflow-y:auto}
+#menuPanel.open{transform:translateX(0)}
 
-    .menuHeader {
-      padding: 0 20px 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .menuLogo {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #ff6b35, #f7931e);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-    }
-    .menuTitle { font-size: 14px; font-weight: 700; }
-    .menuStatus {
-      font-size: 11px;
-      color: #6b7280;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #22c55e;
-      box-shadow: 0 0 6px rgba(34,197,94,0.4);
-    }
+.menuHeader{padding:0 20px 16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:12px}
+.menuLogo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#ff6b35,#f7931e);display:flex;align-items:center;justify-content:center;font-size:20px}
+.menuTitle{font-size:14px;font-weight:700}
+.menuStatus{font-size:11px;color:#6b7280;display:flex;align-items:center;gap:6px}
+.dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px rgba(34,197,94,0.4)}
 
-    .menuItem {
-      padding: 13px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .menuItem:hover { background: rgba(255,107,53,0.08); }
-    .menuItem:hover .mIcon { color: #ff6b35; }
-    .menuItem:hover .mLabel { color: #fff; }
-    .mIcon {
-      width: 20px;
-      height: 20px;
-      color: #6b7280;
-      transition: 0.2s;
-    }
-    .mLabel {
-      font-size: 14px;
-      font-weight: 500;
-      color: #d1d5db;
-    }
+.menuItem{padding:13px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:0.2s}
+.menuItem:hover{background:rgba(255,107,53,0.08)}
+.menuItem:hover .mIcon{color:#ff6b35}
+.menuItem:hover .mLabel{color:#fff}
+.mIcon{width:20px;height:20px;color:#6b7280;transition:0.2s}
+.mLabel{font-size:14px;font-weight:500;color:#d1d5db}
 
-    .menuFooter {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 16px 20px;
-      border-top: 1px solid rgba(255,255,255,0.06);
-    }
-    .btnLogout {
-      width: 100%;
-      padding: 11px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: #9ca3af;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: 0.2s;
-    }
-    .btnLogout:hover {
-      background: rgba(239,68,68,0.1);
-      color: #ef4444;
-      border-color: rgba(239,68,68,0.3);
-    }
+.menuFooter{position:absolute;bottom:0;left:0;right:0;padding:16px 20px;border-top:1px solid rgba(255,255,255,0.06)}
+.btnLogout{width:100%;padding:11px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#9ca3af;border-radius:12px;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;transition:0.2s}
+.btnLogout:hover{background:rgba(239,68,68,0.1);color:#ef4444;border-color:rgba(239,68,68,0.3)}
 
-    /* Login Screen */
-    #loginScreen {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      position: relative;
-    }
-    #loginScreen::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 250px;
-      background: linear-gradient(180deg, rgba(255,107,53,0.06), transparent);
-      pointer-events: none;
-    }
-    .loginCard {
-      width: 100%;
-      max-width: 340px;
-      background: rgba(17,17,17,0.9);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px;
-      padding: 28px;
-      position: relative;
-      z-index: 1;
-      backdrop-filter: blur(12px);
-    }
-    .loginLogo {
-      width: 72px;
-      height: 72px;
-      border-radius: 20px;
-      background: linear-gradient(135deg, #ff6b35, #f7931e);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-      font-size: 32px;
-      box-shadow: 0 16px 32px rgba(255,107,53,0.25);
-    }
-    .loginTitle {
-      text-align: center;
-      font-size: 26px;
-      font-weight: 800;
-      margin-bottom: 2px;
-      background: linear-gradient(135deg, #ff6b35, #f7931e);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .loginSub {
-      text-align: center;
-      color: #6b7280;
-      font-size: 13px;
-      margin-bottom: 24px;
-    }
-    .fieldLabel {
-      font-size: 11px;
-      font-weight: 700;
-      color: #9ca3af;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
-    }
-    .fieldInput {
-      width: 100%;
-      background: rgba(26,26,26,0.8);
-      border: 1.5px solid rgba(255,255,255,0.08);
-      color: #fff;
-      border-radius: 12px;
-      padding: 13px 14px;
-      font-size: 15px;
-      outline: none;
-      transition: 0.3s;
-    }
-    .fieldInput:focus {
-      border-color: #ff6b35;
-      box-shadow: 0 0 0 3px rgba(255,107,53,0.12);
-    }
-    .fieldInput::placeholder { color: #4b5563; }
-    .loginError {
-      color: #ef4444;
-      font-size: 13px;
-      margin: 10px 0;
-      min-height: 18px;
-    }
-    .btnLogin {
-      width: 100%;
-      padding: 13px;
-      background: linear-gradient(135deg, #ff6b35, #f7931e);
-      border: none;
-      color: #fff;
-      border-radius: 14px;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 700;
-      transition: 0.3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .btnLogin:active { transform: scale(0.97); }
-    .btnBack {
-      width: 100%;
-      padding: 11px;
-      margin-top: 10px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: #9ca3af;
-      border-radius: 14px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: 0.2s;
-    }
-    .btnBack:hover { background: rgba(255,255,255,0.08); }
-    .version {
-      text-align: center;
-      color: #374151;
-      font-size: 11px;
-      margin-top: 20px;
-    }
+#loginScreen{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px;position:relative}
+#loginScreen::before{content:'';position:absolute;top:0;left:0;right:0;height:250px;background:linear-gradient(180deg,rgba(255,107,53,0.06),transparent);pointer-events:none}
+.loginCard{width:100%;max-width:340px;background:rgba(17,17,17,0.9);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:28px;position:relative;z-index:1;backdrop-filter:blur(12px)}
+.loginLogo{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#ff6b35,#f7931e);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px;box-shadow:0 16px 32px rgba(255,107,53,0.25)}
+.loginTitle{text-align:center;font-size:26px;font-weight:800;margin-bottom:2px;background:linear-gradient(135deg,#ff6b35,#f7931e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.loginSub{text-align:center;color:#6b7280;font-size:13px;margin-bottom:24px}
+.fieldLabel{font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+.fieldInput{width:100%;background:rgba(26,26,26,0.8);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:12px;padding:13px 14px;font-size:15px;outline:none;transition:0.3s}
+.fieldInput:focus{border-color:#ff6b35;box-shadow:0 0 0 3px rgba(255,107,53,0.12)}
+.fieldInput::placeholder{color:#4b5563}
+.loginError{color:#ef4444;font-size:13px;margin:10px 0;min-height:18px}
+.btnLogin{width:100%;padding:13px;background:linear-gradient(135deg,#ff6b35,#f7931e);border:none;color:#fff;border-radius:14px;cursor:pointer;font-size:15px;font-weight:700;transition:0.3s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btnLogin:active{transform:scale(0.97)}
+.btnBack{width:100%;padding:11px;margin-top:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#9ca3af;border-radius:14px;cursor:pointer;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:8px;transition:0.2s}
+.btnBack:hover{background:rgba(255,255,255,0.08)}
+.version{text-align:center;color:#374151;font-size:11px;margin-top:20px}
 
-    /* Main Screen */
-    #mainScreen { display: none; }
-    .header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 54px;
-      background: rgba(10,10,10,0.92);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 14px;
-      z-index: 100;
-    }
-    .hBtn {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: 0.2s;
-      background: rgba(255,255,255,0.05);
-      border: none;
-      color: #fff;
-    }
-    .hBtn:active {
-      transform: scale(0.93);
-      background: rgba(255,107,53,0.15);
-    }
-    .hTitle {
-      font-size: 15px;
-      font-weight: 700;
-      color: #f7931e;
-    }
-    .hRegresar {
-      background: #ef4444 !important;
-      color: #fff !important;
-      padding: 0 14px !important;
-      width: auto !important;
-      font-size: 13px;
-      font-weight: 600;
-    }
-    .content {
-      padding: 70px 16px 20px;
-      min-height: 100vh;
-    }
-    .welcome {
-      text-align: center;
-      padding: 50px 20px;
-      color: #6b7280;
-    }
-    .welcomeIcon {
-      font-size: 44px;
-      margin-bottom: 14px;
-      opacity: 0.6;
-    }
-    .welcomeTitle {
-      font-size: 17px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 6px;
-    }
-  </style>
-<base target="_blank">
+#mainScreen{display:none}
+.header{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(10,10,10,0.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:100}
+.hBtn{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.2s;background:rgba(255,255,255,0.05);border:none;color:#fff}
+.hBtn:active{transform:scale(0.93);background:rgba(255,107,53,0.15)}
+.hTitle{font-size:15px;font-weight:700;color:#f7931e}
+.hRegresar{background:#ef4444!important;color:#fff!important;padding:0 14px!important;width:auto!important;font-size:13px;font-weight:600}
+.content{padding:70px 16px 20px;min-height:100vh}
+.welcome{text-align:center;padding:50px 20px;color:#6b7280}
+.welcomeIcon{font-size:44px;margin-bottom:14px;opacity:0.6}
+.welcomeTitle{font-size:17px;font-weight:700;color:#fff;margin-bottom:6px}
+</style>
 </head>
 <body>
 
-  <!-- Loading Overlay -->
-  <div id="load">
-    <div class="spin"></div>
-    <div style="color:#9ca3af;font-size:13px">Cargando...</div>
-  </div>
+<div id="load"><div class="spin"></div><div style="color:#9ca3af;font-size:13px">Cargando...</div></div>
+<div id="toast"></div>
 
-  <!-- Toast Notification -->
-  <div id="toast"></div>
+<div id="menuOverlay" onclick="closeMenu()"></div>
 
-  <!-- Menu Overlay -->
-  <div id="menuOverlay" onclick="closeMenu()"></div>
+<div id="menuPanel">
+<div class="menuHeader">
+<div class="menuLogo">&#127828;</div>
+<div>
+<div class="menuTitle">FastBurguer</div>
+<div class="menuStatus"><div class="dot"></div>Admin Panel</div>
+</div>
+</div>
 
-  <!-- Menu Panel -->
-  <div id="menuPanel">
-    <div class="menuHeader">
-      <div class="menuLogo">🍔</div>
-      <div>
-        <div class="menuTitle">FastBurguer</div>
-        <div class="menuStatus">
-          <div class="dot"></div>
-          Admin Panel
-        </div>
-      </div>
-    </div>
+<div style="padding:8px 0">
+<div class="menuItem" onclick="goTo('productos')">
+<svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+<span class="mLabel">Productos Menu</span>
+</div>
+<div class="menuItem" onclick="goTo('tasas')">
+<svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+<span class="mLabel">Tasas</span>
+</div>
+<div class="menuItem" onclick="goTo('servicios')">
+<svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+<span class="mLabel">Servicios</span>
+</div>
+<div class="menuItem" onclick="goTo('pagos')">
+<svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+<span class="mLabel">Formas de Pago</span>
+</div>
+<div class="menuItem" onclick="goTo('negocio')">
+<svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+<span class="mLabel">Negocio</span>
+</div>
+</div>
 
-    <div style="padding:8px 0">
-      <div class="menuItem" onclick="goTo('productos')">
-        <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-        </svg>
-        <span class="mLabel">Productos Menú</span>
-      </div>
+<div class="menuFooter">
+<button class="btnLogout" onclick="logout()">
+<svg style="width:16px;height:16px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+Cerrar Sesion
+</button>
+</div>
+</div>
 
-      <div class="menuItem" onclick="goTo('tasas')">
-        <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        <span class="mLabel">Tasas</span>
-      </div>
+<div id="loginScreen">
+<div class="loginCard">
+<div class="loginLogo">&#127828;</div>
+<div class="loginTitle">FastBurguer</div>
+<div class="loginSub">Panel de Control</div>
 
-      <div class="menuItem" onclick="goTo('servicios')">
-        <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"/>
-        </svg>
-        <span class="mLabel">Servicios</span>
-      </div>
+<div class="fieldLabel">Usuario</div>
+<input type="text" id="loginUser" class="fieldInput" placeholder="Nombre de usuario" autocomplete="off">
 
-      <div class="menuItem" onclick="goTo('pagos')">
-        <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-        </svg>
-        <span class="mLabel">Formas de Pago</span>
-      </div>
+<div style="margin-top:16px">
+<div class="fieldLabel">Contrasena</div>
+<input type="password" id="loginPass" class="fieldInput" placeholder="******" autocomplete="off">
+</div>
 
-      <div class="menuItem" onclick="goTo('negocio')">
-        <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-        </svg>
-        <span class="mLabel">Negocio</span>
-      </div>
-    </div>
+<div id="loginError" class="loginError"></div>
 
-    <div class="menuFooter">
-      <button class="btnLogout" onclick="logout()">
-        <svg style="width:16px;height:16px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-        </svg>
-        Cerrar Sesión
-      </button>
-    </div>
-  </div>
+<button id="loginBtn" class="btnLogin" onclick="doLogin()">
+<span id="btnText">Ingresar</span>
+</button>
 
-  <!-- Login Screen -->
-  <div id="loginScreen">
-    <div class="loginCard">
-      <div class="loginLogo">🍔</div>
-      <div class="loginTitle">FastBurguer</div>
-      <div class="loginSub">Panel de Control</div>
+<button class="btnBack" onclick="location.href='index.html'">
+<svg style="width:16px;height:16px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+Volver al menu
+</button>
+</div>
+<div class="version">FastBurguer Admin v9.1</div>
+</div>
 
-      <div class="fieldLabel">Usuario</div>
-      <input type="text" id="loginUser" class="fieldInput" placeholder="Nombre de usuario" autocomplete="off">
+<div id="mainScreen">
+<div class="header">
+<button class="hBtn" onclick="openMenu()">
+<svg style="width:20px;height:20px;color:#f7931e" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+</button>
+<div class="hTitle">Panel</div>
+<button class="hBtn hRegresar" onclick="location.href='index.html'">Regresar</button>
+</div>
 
-      <div style="margin-top:16px">
-        <div class="fieldLabel">Contraseña</div>
-        <input type="password" id="loginPass" class="fieldInput" placeholder="••••••" autocomplete="off">
-      </div>
+<div class="content">
+<div class="welcome">
+<div class="welcomeIcon">&#128202;</div>
+<div class="welcomeTitle">Bienvenido</div>
+<div>Seleccione una opcion del menu &#9776;</div>
+</div>
+</div>
+</div>
 
-      <div id="loginError" class="loginError"></div>
+<script>
+var API="https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9FoXBkMYwPD4xkK1llpxakpExC6DspQvnOI6Vmw/exec";
+var TOKEN="";
 
-      <button id="loginBtn" class="btnLogin" onclick="doLogin()">
-        <span id="btnText">Ingresar</span>
-      </button>
+function showLoad(){document.getElementById("load").className="show"}
+function hideLoad(){document.getElementById("load").className=""}
+function toast(m,ok){var t=document.getElementById("toast");t.textContent=m;t.className=ok?"ok":"err";t.style.display="block";setTimeout(function(){t.style.display="none"},3000)}
 
-      <button class="btnBack" onclick="location.href='index.html'">
-        <svg style="width:16px;height:16px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-        </svg>
-        Volver al menú
-      </button>
-    </div>
-    <div class="version">FastBurguer Admin v8.2</div>
-  </div>
+function xorBase64(s){var k="FB2025Secret",r="";for(var i=0;i<s.length;i++){r+=String.fromCharCode(s.charCodeAt(i)^k.charCodeAt(i%k.length))}return btoa(r)}
 
-  <!-- Main Screen -->
-  <div id="mainScreen">
-    <div class="header">
-      <button class="hBtn" onclick="openMenu()">
-        <svg style="width:20px;height:20px;color:#f7931e" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-        </svg>
-      </button>
-      <div class="hTitle">Panel</div>
-      <button class="hBtn hRegresar" onclick="location.href='index.html'">Regresar</button>
-    </div>
+function apiPost(d){return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)}).then(function(r){return r.json()})}
 
-    <div class="content">
-      <div class="welcome">
-        <div class="welcomeIcon">📊</div>
-        <div class="welcomeTitle">Bienvenido</div>
-        <div>Seleccione una opción del menú ☰</div>
-      </div>
-    </div>
-  </div>
+function openMenu(){document.getElementById("menuPanel").className="open";document.getElementById("menuOverlay").className="show"}
+function closeMenu(){document.getElementById("menuPanel").className="";document.getElementById("menuOverlay").className=""}
 
-  <script>
-    var API = "https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9FoXBkMYwPD4xkK1llpxakpExC6DspQvnOI6Vmw/exec";
-    var TOKEN = "";
+// FIX: Ensure token is passed to both sessionStorage AND localStorage
+function goTo(page){
+  var t=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";
+  console.log("goTo called:", page, "token:", t ? t.substring(0,20)+"..." : "EMPTY");
+  if(t){
+    var url=page+".html?t="+encodeURIComponent(t);
+    console.log("Navigating to:", url);
+    alert("DEBUG: Navigating to "+url);
+    window.location.href=url;
+  }else{
+    toast("Inicie sesion primero",false);
+    alert("DEBUG: No token found!");
+  }
+}
 
-    function showLoad() {
-      document.getElementById("load").className = "show";
-    }
-    function hideLoad() {
-      document.getElementById("load").className = "";
-    }
-    function toast(m, ok) {
-      var t = document.getElementById("toast");
-      t.textContent = m;
-      t.className = ok ? "ok" : "err";
-      t.style.display = "block";
-      setTimeout(function() { t.style.display = "none"; }, 3000);
-    }
+function logout(){localStorage.removeItem("fb_token");sessionStorage.clear();location.reload()}
 
-    function xorBase64(s) {
-      var k = "FB2025Secret", r = "";
-      for (var i = 0; i < s.length; i++) {
-        r += String.fromCharCode(s.charCodeAt(i) ^ k.charCodeAt(i % k.length));
-      }
-      return btoa(r);
-    }
+function doLogin(){var u=document.getElementById("loginUser").value.trim();var p=document.getElementById("loginPass").value;var err=document.getElementById("loginError");var btn=document.getElementById("btnText");err.textContent="";if(!u||!p){err.textContent="Complete todos los campos";return}btn.innerHTML='<div class="spin" style="width:18px;height:18px;border-width:2px"></div>';apiPost({action:"login",usuario:u,clave:xorBase64(p)}).then(function(r){if(r.success&&r.token){localStorage.setItem("fb_token",r.token);sessionStorage.setItem("fb_token",r.token);showMain()}else{err.textContent=r.error||"Credenciales invalidas";btn.textContent="Ingresar"}}).catch(function(e){err.textContent="Error de red. Intente de nuevo.";btn.textContent="Ingresar"})}
 
-    function apiPost(d) {
-      return fetch(API, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain" },
-        body: JSON.stringify(d)
-      }).then(function(r) { return r.json(); });
-    }
+function showMain(){document.getElementById("loginScreen").className="hidden";document.getElementById("mainScreen").style.display="block"}
 
-    function openMenu() {
-      document.getElementById("menuPanel").className = "open";
-      document.getElementById("menuOverlay").className = "show";
-    }
-    function closeMenu() {
-      document.getElementById("menuPanel").className = "";
-      document.getElementById("menuOverlay").className = "";
-    }
+function init(){TOKEN=localStorage.getItem("fb_token");if(!TOKEN){document.getElementById("loginScreen").style.display="flex";return}showLoad();apiPost({action:"validateToken",token:TOKEN}).then(function(r){hideLoad();if(r.success){showMain()}else{localStorage.removeItem("fb_token");document.getElementById("loginScreen").style.display="flex";document.getElementById("loginError").textContent="Sesion expirada"}}).catch(function(e){hideLoad();document.getElementById("loginScreen").style.display="flex";document.getElementById("loginError").textContent="Error de red. Intente de nuevo."})}
 
-    function goTo(page) {
-      var t = localStorage.getItem("fb_token");
-      if (t) {
-        sessionStorage.setItem("fb_token", t);
-        location.href = page + ".html";
-      }
-    }
+document.getElementById("loginPass").addEventListener("keypress",function(e){if(e.key==="Enter")doLogin()});
 
-    function logout() {
-      localStorage.removeItem("fb_token");
-      sessionStorage.clear();
-      location.reload();
-    }
+init();
+</script>
 
-    function doLogin() {
-      var u = document.getElementById("loginUser").value.trim();
-      var p = document.getElementById("loginPass").value;
-      var err = document.getElementById("loginError");
-      var btn = document.getElementById("btnText");
-      err.textContent = "";
-
-      if (!u || !p) {
-        err.textContent = "Complete todos los campos";
-        return;
-      }
-
-      btn.innerHTML = '<div class="spin" style="width:18px;height:18px;border-width:2px"></div>';
-
-      apiPost({ action: "login", usuario: u, clave: xorBase64(p) })
-        .then(function(r) {
-          if (r.success && r.token) {
-            localStorage.setItem("fb_token", r.token);
-            showMain();
-          } else {
-            err.textContent = r.error || "Credenciales inválidas";
-            btn.textContent = "Ingresar";
-          }
-        })
-        .catch(function(e) {
-          err.textContent = "Error de red. Intente de nuevo.";
-          btn.textContent = "Ingresar";
-        });
-    }
-
-    function showMain() {
-      document.getElementById("loginScreen").className = "hidden";
-      document.getElementById("mainScreen").style.display = "block";
-    }
-
-    function init() {
-      TOKEN = localStorage.getItem("fb_token");
-      if (!TOKEN) {
-        document.getElementById("loginScreen").style.display = "flex";
-        return;
-      }
-      showLoad();
-      apiPost({ action: "validateToken", token: TOKEN })
-        .then(function(r) {
-          hideLoad();
-          if (r.success) {
-            showMain();
-          } else {
-            localStorage.removeItem("fb_token");
-            document.getElementById("loginScreen").style.display = "flex";
-            document.getElementById("loginError").textContent = "Sesión expirada";
-          }
-        })
-        .catch(function(e) {
-          hideLoad();
-          document.getElementById("loginScreen").style.display = "flex";
-          document.getElementById("loginError").textContent = "Error de red. Intente de nuevo.";
-        });
-    }
-
-    document.getElementById("loginPass").addEventListener("keypress", function(e) {
-      if (e.key === "Enter") doLogin();
-    });
-
-    init();
-  </script>
-
+<!--
+FastBurguer Admin v9.1
+Modulo: admin.html
+Version: 1.1
+Fecha: 2026-05-31
+Asistencia: Generado con IA
+Proyecto: Ing. Jesus Linares
+Contacto: 0412-0639340
+-->
 </body>
 </html>
