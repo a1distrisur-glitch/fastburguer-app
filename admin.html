@@ -68,6 +68,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .welcome{text-align:center;padding:50px 20px;color:#6b7280}
 .welcomeIcon{font-size:44px;margin-bottom:14px;opacity:0.6}
 .welcomeTitle{font-size:17px;font-weight:700;color:#fff;margin-bottom:6px}
+.submenu{padding-left:52px;background:rgba(255,255,255,0.02);max-height:0;overflow:hidden;transition:max-height 0.3s ease}
+.submenu.open{max-height:120px}
+.submenuItem{padding:10px 20px;font-size:13px;color:#9ca3af;cursor:pointer;transition:0.2s;display:flex;align-items:center;gap:8px}
+.submenuItem:hover{color:#ff6b35;background:rgba(255,107,53,0.04)}
+.submenuItem::before{content:"";width:4px;height:4px;border-radius:50%;background:#6b7280;margin-right:4px}
+.submenuItem:hover::before{background:#ff6b35}
+.hasSubmenu{justify-content:space-between!important}
+.submenuArrow{width:16px;height:16px;transition:0.3s;color:#6b7280;flex-shrink:0}
+.submenuArrow.open{transform:rotate(180deg);color:#ff6b35}
 </style>
 </head>
 <body>
@@ -87,9 +96,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <div style="padding:8px 0">
-<div class="menuItem" onclick="goTo('productos')">
+<div class="menuItem hasSubmenu" onclick="toggleSubmenu(this)">
 <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
 <span class="mLabel">Productos Menu</span>
+<svg class="submenuArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+</div>
+<div class="submenu" id="submenuProductos">
+<div class="submenuItem" onclick="goTo('categorias')">Categorias</div>
+<div class="submenuItem" onclick="goTo('productos')">Productos</div>
 </div>
 <div class="menuItem" onclick="goTo('tasas')">
 <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -142,7 +156,7 @@ Cerrar Sesion
 Volver al menu
 </button>
 </div>
-<div class="version">FastBurguer Admin v9.1</div>
+<div class="version">FastBurguer Admin v9.6</div>
 </div>
 
 <div id="mainScreen">
@@ -178,6 +192,13 @@ function apiPost(d){return fetch(API,{method:"POST",headers:{"Content-Type":"tex
 function openMenu(){document.getElementById("menuPanel").className="open";document.getElementById("menuOverlay").className="show"}
 function closeMenu(){document.getElementById("menuPanel").className="";document.getElementById("menuOverlay").className=""}
 
+function toggleSubmenu(el){
+var arrow=el.querySelector(".submenuArrow");
+var sub=document.getElementById("submenuProductos");
+if(sub.className==="submenu open"){sub.className="submenu";arrow.className="submenuArrow";}
+else{sub.className="submenu open";arrow.className="submenuArrow open";}
+}
+
 // FIX: Ensure token is passed to both sessionStorage AND localStorage
 function goTo(page){
   var t=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";
@@ -205,9 +226,9 @@ init();
 </script>
 
 <!--
-FastBurguer Admin v9.1
+FastBurguer Admin v9.6
 Modulo: admin.html
-Version: 1.1
+Version: 9.6
 Fecha: 2026-05-31
 Asistencia: Generado con IA
 Proyecto: Ing. Jesus Linares
