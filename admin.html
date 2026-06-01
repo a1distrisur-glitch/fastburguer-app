@@ -21,7 +21,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 #menuOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:998;opacity:0;transition:opacity 0.3s;pointer-events:none}
 #menuOverlay.show{opacity:1;pointer-events:auto}
 
-#menuPanel{position:fixed;left:0;top:0;width:260px;height:100vh;background:#111;z-index:999;border-right:1px solid rgba(255,255,255,0.06);transform:translateX(-100%);transition:transform 0.3s ease;padding:20px 0;overflow-y:auto}
+#menuPanel{position:fixed;left:0;top:0;width:260px;height:100vh;background:#111;z-index:999;border-right:1px solid rgba(255,255,255,0.06);transform:translateX(-100%);transition:transform 0.3s ease;padding:20px 0 80px;overflow-y:auto}
 #menuPanel.open{transform:translateX(0)}
 
 .menuHeader{padding:0 20px 16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:12px}
@@ -37,7 +37,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .mIcon{width:20px;height:20px;color:#6b7280;transition:0.2s}
 .mLabel{font-size:14px;font-weight:500;color:#d1d5db}
 
-.menuFooter{position:absolute;bottom:0;left:0;right:0;padding:16px 20px;border-top:1px solid rgba(255,255,255,0.06)}
+.menuFooter{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.06)}
 .btnLogout{width:100%;padding:11px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#9ca3af;border-radius:12px;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;transition:0.2s}
 .btnLogout:hover{background:rgba(239,68,68,0.1);color:#ef4444;border-color:rgba(239,68,68,0.3)}
 
@@ -69,7 +69,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .welcomeIcon{font-size:44px;margin-bottom:14px;opacity:0.6}
 .welcomeTitle{font-size:17px;font-weight:700;color:#fff;margin-bottom:6px}
 .submenu{padding-left:52px;background:rgba(255,255,255,0.02);max-height:0;overflow:hidden;transition:max-height 0.3s ease}
-.submenu.open{max-height:120px}
+.submenu.open{max-height:200px}
 .submenuItem{padding:10px 20px;font-size:13px;color:#9ca3af;cursor:pointer;transition:0.2s;display:flex;align-items:center;gap:8px}
 .submenuItem:hover{color:#ff6b35;background:rgba(255,107,53,0.04)}
 .submenuItem::before{content:"";width:4px;height:4px;border-radius:50%;background:#6b7280;margin-right:4px}
@@ -96,6 +96,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <div style="padding:8px 0">
+<div class="menuItem" onclick="goTo('tasas')">
+<svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+<span class="mLabel">Tasas de Cambio</span>
+</div>
+
 <div class="menuItem hasSubmenu" onclick="toggleSubmenu(this)">
 <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
 <span class="mLabel">Productos Menu</span>
@@ -105,21 +110,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="submenuItem" onclick="goTo('categorias')">Categorias</div>
 <div class="submenuItem" onclick="goTo('productos')">Productos</div>
 </div>
-<div class="menuItem" onclick="goTo('tasas')">
-<svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-<span class="mLabel">Tasas</span>
-</div>
-<div class="menuItem" onclick="goTo('servicios')">
-<svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-<span class="mLabel">Servicios</span>
-</div>
-<div class="menuItem" onclick="goTo('pagos')">
-<svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-<span class="mLabel">Formas de Pago</span>
-</div>
-<div class="menuItem" onclick="goTo('negocio')">
+
+<div class="menuItem hasSubmenu" onclick="toggleSubmenu(this)">
 <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
 <span class="mLabel">Negocio</span>
+<svg class="submenuArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+</div>
+<div class="submenu" id="submenuNegocio">
+<div class="submenuItem" onclick="goTo('negocio')">Configuracion</div>
+<div class="submenuItem" onclick="goTo('pagos')">Formas de Pago</div>
+<div class="submenuItem" onclick="goTo('mesas')">Mesas</div>
+<div class="submenuItem" onclick="goTo('usuarios')">Usuarios</div>
+</div>
+
+<div class="menuItem hasSubmenu" onclick="toggleSubmenu(this)">
+<svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+<span class="mLabel">Servicios</span>
+<svg class="submenuArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+</div>
+<div class="submenu" id="submenuServicios">
+<div class="submenuItem" onclick="goTo('servicios')">Servidores</div>
+<div class="submenuItem" onclick="goTo('zonas')">Zonas Delivery</div>
 </div>
 </div>
 
@@ -156,7 +167,7 @@ Cerrar Sesion
 Volver al menu
 </button>
 </div>
-<div class="version">FastBurguer Admin v9.6</div>
+<div class="version">FastBurguer Admin v9.9</div>
 </div>
 
 <div id="mainScreen">
@@ -194,7 +205,8 @@ function closeMenu(){document.getElementById("menuPanel").className="";document.
 
 function toggleSubmenu(el){
 var arrow=el.querySelector(".submenuArrow");
-var sub=document.getElementById("submenuProductos");
+var subId=el.nextElementSibling.id;
+var sub=document.getElementById(subId);
 if(sub.className==="submenu open"){sub.className="submenu";arrow.className="submenuArrow";}
 else{sub.className="submenu open";arrow.className="submenuArrow open";}
 }
@@ -226,9 +238,9 @@ init();
 </script>
 
 <!--
-FastBurguer Admin v9.6
+FastBurguer Admin v9.9
 Modulo: admin.html
-Version: 9.6
+Version: 9.9
 Fecha: 2026-05-31
 Asistencia: Generado con IA
 Proyecto: Ing. Jesus Linares
