@@ -133,6 +133,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .bottomAdd:active{transform:translateY(-12px) scale(0.9)}
 .emptyDash{text-align:center;padding:30px 20px;color:#6b7280}
 .emptyDashIcon{font-size:36px;margin-bottom:8px;opacity:0.5}
+.emptyDash small{display:block;margin-top:6px;font-size:11px;color:#4b5563}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(255,107,53,0.3);border-radius:4px}
@@ -186,7 +187,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <button id="loginBtn" class="btnLogin" onclick="doLogin()"><span id="btnText">Ingresar</span></button>
 <button class="btnBack" onclick="location.href='index.html'"><svg style="width:16px;height:16px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>Volver al menu</button>
 </div>
-<div class="version">FastBurguer Admin v10.1</div>
+<div class="version">FastBurguer Admin v10.2</div>
 </div>
 <div id="mainScreen">
 <div class="header">
@@ -213,7 +214,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 <div class="sectionCard">
 <div class="sectionHeader"><div class="sectionTitle">&#9889; Pedidos Pendientes</div><div class="sectionAction" onclick="comingSoon('Ver todos')">Ver todos</div></div>
-<div class="orderList" id="orderList"><div class="emptyDash"><div class="emptyDashIcon">&#128230;</div><div>No hay pedidos pendientes</div></div></div>
+<div class="orderList" id="orderList"><div class="emptyDash"><div class="emptyDashIcon">&#128230;</div><div>No hay pedidos pendientes</div><small>Conecta el backend Fase 3 para activar</small></div></div>
 </div>
 </div>
 <div class="bottomNav">
@@ -229,6 +230,7 @@ var API="https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9
 var TOKEN="";
 var CONFIG={};
 var PEDIDOS=[];
+var DASH_READY={config:false,pedidos:false};
 function showLoad(){document.getElementById("load").className="show"}
 function hideLoad(){document.getElementById("load").className=""}
 function toast(m,ok){var t=document.getElementById("toast");t.textContent=m;t.className=ok?"ok":"err";t.style.display="block";setTimeout(function(){t.style.display="none"},3000)}
@@ -244,15 +246,111 @@ function logout(){localStorage.removeItem("fb_token");sessionStorage.clear();loc
 function doLogin(){var u=document.getElementById("loginUser").value.trim();var p=document.getElementById("loginPass").value;var err=document.getElementById("loginError");var btn=document.getElementById("btnText");err.textContent="";if(!u||!p){err.textContent="Complete todos los campos";return}btn.innerHTML='<div class="spin" style="width:18px;height:18px;border-width:2px"></div>';apiPost({action:"login",usuario:u,clave:xorBase64(p)}).then(function(r){if(r.success&&r.token){localStorage.setItem("fb_token",r.token);sessionStorage.setItem("fb_token",r.token);showMain()}else{err.textContent=r.error||"Credenciales invalidas";btn.textContent="Ingresar"}}).catch(function(e){err.textContent="Error de red. Intente de nuevo.";btn.textContent="Ingresar"});}
 function showMain(){var ls=document.getElementById("loginScreen");ls.classList.remove("hidden");ls.style.display="none";document.getElementById("mainScreen").style.display="block";loadDashboard();}
 function showDashboard(){window.scrollTo({top:0,behavior:'smooth'});}
-function refreshDashboard(){showLoad();loadDashboard();}
-function loadDashboard(){showLoad();var token=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";var done=function(){hideLoad();};apiPost({action:"getConfigAdmin",token:token}).then(function(r){if(r.success&&r.config){CONFIG=r.config;renderStoreStatus();}}).catch(function(e){}).finally(done);apiGet("adminData",{sheetName:"RegistroPedidos",token:token}).then(function(r){if(r.success&&r.data){PEDIDOS=r.data||[];var hoy=new Date().toISOString().split('T')[0];var pedidosHoy=PEDIDOS.filter(function(p){return p.FechaPedido===hoy;});var pendientes=PEDIDOS.filter(function(p){return String(p.Estado).trim()==="Pendiente";});var totalVentas=pedidosHoy.reduce(function(s,p){return s+(parseFloat(p.TotalPedido)||0);},0);var clientesUnicos={};pedidosHoy.forEach(function(p){clientesUnicos[p.CodCliente||p.Cliente]=true;});document.getElementById("kpiPedidos").textContent=pedidosHoy.length;document.getElementById("kpiVentas").textContent="$"+totalVentas.toFixed(0);document.getElementById("kpiClientes").textContent=Object.keys(clientesUnicos).length;document.getElementById("menuBadgePedidos").textContent=pendientes.length;renderOrders(pendientes);}else{document.getElementById("kpiPedidos").textContent="0";document.getElementById("kpiVentas").textContent="$0";document.getElementById("kpiClientes").textContent="0";renderOrders([]);}}).catch(function(e){document.getElementById("kpiPedidos").textContent="0";document.getElementById("kpiVentas").textContent="$0";document.getElementById("kpiClientes").textContent="0";renderOrders([]);}).finally(done);}
-function renderStoreStatus(){var estado=CONFIG.EstadoTienda||"Cerrado";var abierto=estado==="Abierto";document.getElementById("storeStatusText").textContent=abierto?"Abierto":"Cerrado";document.getElementById("storeStatusText").style.color=abierto?"#22c55e":"#ef4444";var sw=document.getElementById("storeToggleSwitch");var knob=document.getElementById("storeToggleKnob");if(abierto){sw.className="toggleSwitch on";knob.style.left="24px";}else{sw.className="toggleSwitch";knob.style.left="2px";}document.getElementById("storeHours").textContent="Horario: "+(CONFIG.HorarioApertura||"--:--")+" - "+(CONFIG.HorarioCierre||"--:--");}
-function toggleStoreStatus(){if(!CONFIG.EstadoTienda){toast("No hay configuracion",false);return;}var nuevo=CONFIG.EstadoTienda==="Abierto"?"Cerrado":"Abierto";showLoad();var token=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";apiPost({action:"config",method:"PUT",token:token,estadoTienda:nuevo}).then(function(r){hideLoad();if(r.success){CONFIG.EstadoTienda=nuevo;renderStoreStatus();toast("Tienda "+nuevo,true);}else{toast(r.error||"Error",false);}}).catch(function(e){hideLoad();toast("Error de red",false);});}
-function renderOrders(orders){var list=document.getElementById("orderList");if(!orders||orders.length===0){list.innerHTML='<div class="emptyDash"><div class="emptyDashIcon">&#128230;</div><div>No hay pedidos pendientes</div></div>';return;}var html="";for(var i=0;i<Math.min(orders.length,5);i++){var o=orders[i];var st=String(o.Estado||"").trim().toLowerCase();var stClass=st==="pendiente"?"pendiente":st==="en proceso"?"proceso":"listo";html+='<div class="orderItem" onclick="comingSoon(\'Pedido '+o.NroPedido+'\')">';html+='<div class="orderStatus '+stClass+'"></div>';html+='<div class="orderInfo"><div class="orderId">'+(o.NroPedido||"")+'</div><div class="orderClient">'+(o.Cliente||"Cliente")+" - "+(o.TipoServicio||"")+'</div></div>';html+='<div class="orderRight"><div class="orderTotal">$'+(parseFloat(o.TotalPedido)||0)+'</div><div class="orderTime">'+((o.HoraPedido||"").substring(0,5))+'</div></div>';html+='</div>';}if(orders.length>5){html+='<div style="text-align:center;padding:10px;color:#6b7280;font-size:12px">+'+(orders.length-5)+' mas...</div>';}list.innerHTML=html;}
-function init(){var m=location.href.match(/[?&]t=([^&]+)/);if(m){var t=decodeURIComponent(m[1]);localStorage.setItem("fb_token",t);sessionStorage.setItem("fb_token",t);}TOKEN=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";var ls=document.getElementById("loginScreen");ls.classList.remove("hidden");if(!TOKEN){ls.style.display="flex";return;}showLoad();apiPost({action:"validateToken",token:TOKEN}).then(function(r){hideLoad();if(r.success){showMain();}else{localStorage.removeItem("fb_token");ls.style.display="flex";document.getElementById("loginError").textContent="Sesion expirada";}}).catch(function(e){hideLoad();ls.style.display="flex";document.getElementById("loginError").textContent="Error de red. Intente de nuevo.";});}
+function refreshDashboard(){showLoad();DASH_READY={config:false,pedidos:false};loadDashboard();}
+function checkDone(){if(DASH_READY.config&&DASH_READY.pedidos){hideLoad();}}
+function loadDashboard(){showLoad();var token=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";loadConfig(token);loadPedidos(token);}
+function loadConfig(token){
+  apiPost({action:"config",method:"GET",token:token}).then(function(r){
+    if(r.success&&r.config){CONFIG=r.config;renderStoreStatus();}
+    else{throw new Error("fallback");}
+  }).catch(function(e){
+    return apiPost({action:"get",sheetName:"Control",token:token});
+  }).then(function(r){
+    if(r&&r.success&&r.data&&r.data.length>0){CONFIG=r.data[0];renderStoreStatus();}
+    else if(!CONFIG.EstadoTienda){CONFIG={EstadoTienda:"Cerrado",HorarioApertura:"--:--",HorarioCierre:"--:--"};renderStoreStatus();}
+  }).catch(function(e){
+    CONFIG={EstadoTienda:"Cerrado",HorarioApertura:"--:--",HorarioCierre:"--:--"};renderStoreStatus();
+  }).finally(function(){DASH_READY.config=true;checkDone();});
+}
+function loadPedidos(token){
+  apiGet("get",{sheetName:"RegistroPedidos",token:token}).then(function(r){
+    if(r.success&&r.data){PEDIDOS=r.data||[];calcKPIs(PEDIDOS);}
+    else{showPedidosPlaceholder("Conecta el backend Fase 3 para activar");}
+  }).catch(function(e){
+    showPedidosPlaceholder("Conecta el backend Fase 3 para activar");
+  }).finally(function(){DASH_READY.pedidos=true;checkDone();});
+}
+function calcKPIs(pedidos){
+  var hoy=new Date().toISOString().split('T')[0];
+  var pedidosHoy=pedidos.filter(function(p){return p.FechaPedido===hoy;});
+  var pendientes=pedidos.filter(function(p){return String(p.Estado||"").trim()==="Pendiente";}).sort(function(a,b){return (a.HoraPedido||"").localeCompare(b.HoraPedido||"");});
+  var totalVentas=pedidosHoy.reduce(function(s,p){return s+(parseFloat(p.TotalPedido)||0);},0);
+  var clientesUnicos={};pedidosHoy.forEach(function(p){clientesUnicos[p.CodCliente||p.Cliente||"anon"]=true;});
+  document.getElementById("kpiPedidos").textContent=pedidosHoy.length;
+  document.getElementById("kpiVentas").textContent="$"+totalVentas.toFixed(0);
+  document.getElementById("kpiClientes").textContent=Object.keys(clientesUnicos).length;
+  document.getElementById("menuBadgePedidos").textContent=pendientes.length;
+  renderOrders(pendientes);
+}
+function showPedidosPlaceholder(sub){
+  document.getElementById("kpiPedidos").textContent="0";
+  document.getElementById("kpiVentas").textContent="$0";
+  document.getElementById("kpiClientes").textContent="0";
+  document.getElementById("menuBadgePedidos").textContent="0";
+  var html='<div class="emptyDash"><div class="emptyDashIcon">&#128230;</div><div>No hay pedidos pendientes</div>';
+  if(sub)html+='<small>'+sub+'</small>';
+  html+='</div>';
+  document.getElementById("orderList").innerHTML=html;
+}
+function renderStoreStatus(){
+  var estado=CONFIG.EstadoTienda||"Cerrado";
+  var abierto=estado==="Abierto";
+  document.getElementById("storeStatusText").textContent=abierto?"Abierto":"Cerrado";
+  document.getElementById("storeStatusText").style.color=abierto?"#22c55e":"#ef4444";
+  var sw=document.getElementById("storeToggleSwitch");
+  var knob=document.getElementById("storeToggleKnob");
+  if(abierto){sw.className="toggleSwitch on";knob.style.left="24px";}
+  else{sw.className="toggleSwitch";knob.style.left="2px";}
+  document.getElementById("storeHours").textContent="Horario: "+(CONFIG.HorarioApertura||"--:--")+" - "+(CONFIG.HorarioCierre||"--:--");
+}
+function toggleStoreStatus(){
+  if(!CONFIG.EstadoTienda){toast("No hay configuracion",false);return;}
+  var nuevo=CONFIG.EstadoTienda==="Abierto"?"Cerrado":"Abierto";
+  showLoad();
+  var token=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";
+  apiPost({action:"config",method:"PUT",token:token,estadoTienda:nuevo}).then(function(r){
+    hideLoad();
+    if(r.success){CONFIG.EstadoTienda=nuevo;renderStoreStatus();toast("Tienda "+nuevo,true);}
+    else{toast(r.error||"Error",false);}
+  }).catch(function(e){hideLoad();toast("Error de red",false);});
+}
+function renderOrders(orders){
+  var list=document.getElementById("orderList");
+  if(!orders||orders.length===0){
+    list.innerHTML='<div class="emptyDash"><div class="emptyDashIcon">&#128230;</div><div>No hay pedidos pendientes</div></div>';
+    return;
+  }
+  var html="";
+  for(var i=0;i<Math.min(orders.length,5);i++){
+    var o=orders[i];
+    var st=String(o.Estado||"").trim().toLowerCase();
+    var stClass=st==="pendiente"?"pendiente":st==="en proceso"?"proceso":"listo";
+    html+='<div class="orderItem" onclick="comingSoon(\'Pedido '+o.NroPedido+'\')">';
+    html+='<div class="orderStatus '+stClass+'"></div>';
+    html+='<div class="orderInfo"><div class="orderId">'+(o.NroPedido||"#")+'</div><div class="orderClient">'+(o.Cliente||"Cliente")+" - "+(o.TipoServicio||"")+'</div></div>';
+    html+='<div class="orderRight"><div class="orderTotal">$'+(parseFloat(o.TotalPedido)||0)+'</div><div class="orderTime">'+((o.HoraPedido||"").substring(0,5))+'</div></div>';
+    html+='</div>';
+  }
+  if(orders.length>5){html+='<div style="text-align:center;padding:10px;color:#6b7280;font-size:12px">+'+(orders.length-5)+' mas...</div>';}
+  list.innerHTML=html;
+}
+function init(){
+  var m=location.href.match(/[?&]t=([^&]+)/);
+  if(m){var t=decodeURIComponent(m[1]);localStorage.setItem("fb_token",t);sessionStorage.setItem("fb_token",t);}
+  TOKEN=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";
+  var ls=document.getElementById("loginScreen");
+  ls.classList.remove("hidden");
+  if(!TOKEN){ls.style.display="flex";return;}
+  showLoad();
+  apiPost({action:"validateToken",token:TOKEN}).then(function(r){
+    hideLoad();
+    if(r.success){showMain();}
+    else{localStorage.removeItem("fb_token");ls.style.display="flex";document.getElementById("loginError").textContent="Sesion expirada";}
+  }).catch(function(e){hideLoad();ls.style.display="flex";document.getElementById("loginError").textContent="Error de red. Intente de nuevo.";});
+}
 document.getElementById("loginPass").addEventListener("keypress",function(e){if(e.key==="Enter")doLogin()});
 init();
 </script>
-<!--FastBurguer Admin v10.1 Modulo: admin.html Fecha: 2026-06-02 Asistencia: Generado con IA Proyecto: Ing. Jesus Linares Contacto: 0412-0639340-->
+<!--FastBurguer Admin v10.2 Modulo: admin.html Fecha: 2026-06-02 Asistencia: Generado con IA Proyecto: Ing. Jesus Linares Contacto: 0412-0639340-->
 </body>
 </html>
