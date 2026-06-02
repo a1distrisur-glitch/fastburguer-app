@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Servidores - FastBurguer</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+
+#load{position:fixed;inset:0;background:rgba(10,10,10,0.9);display:none;justify-content:center;align-items:center;z-index:9999;flex-direction:column;gap:12px}
+#load.show{display:flex}
+.spin{width:36px;height:36px;border:3px solid rgba(255,255,255,0.1);border-top-color:#f7931e;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+#toast{position:fixed;top:16px;right:16px;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;display:none;backdrop-filter:blur(10px)}
+#toast.ok{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#22c55e}
+#toast.err{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444}
+
+#menuOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:998;opacity:0;transition:opacity 0.3s;pointer-events:none}
+#menuOverlay.show{opacity:1;pointer-events:auto}
+#menuPanel{position:fixed;left:0;top:0;width:260px;height:100vh;background:#111;z-index:999;border-right:1px solid rgba(255,107,53,0.3);transform:translateX(-100%);transition:transform 0.3s ease;padding:20px 0 80px;overflow-y:auto}
+#menuPanel.open{transform:translateX(0)}
+
+.menuHeader{padding:0 20px 16px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.menuTitle{font-size:18px;font-weight:900;background:linear-gradient(135deg,#ff6b35,#f7931e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px}
+.menuCloseBtn{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.2s;background:transparent;border:none;color:#f7931e}
+.menuCloseBtn:hover{background:rgba(255,107,53,0.1);color:#ff6b35}
+.menuCloseBtn:active{transform:scale(0.93)}
+.menuSubtitle{font-size:12px;color:#22c55e;font-weight:600;margin-top:2px}
+
+.menuItem{padding:13px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:0.2s;border-radius:0}
+.menuItem:hover{background:rgba(255,255,255,0.03)}
+.menuItem:hover .mIcon{color:#ff6b35}
+.menuItem:hover .mLabel{color:#fff}
+.mIcon{width:20px;height:20px;color:#6b7280;transition:0.2s;flex-shrink:0}
+.mLabel{font-size:14px;font-weight:500;color:#d1d5db;transition:0.2s}
+
+.menuFooter{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.05);margin-top:8px}
+.btnLogout{width:100%;padding:13px 20px;background:transparent;border:none;color:#ef4444;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;gap:12px;transition:0.2s}
+.btnLogout:hover{background:rgba(239,68,68,0.08)}
+.btnLogout:hover .mIcon{color:#ef4444}
+.btnLogout .mIcon{color:#ef4444;width:20px;height:20px;flex-shrink:0}
+
+.header{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(10,10,10,0.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:100}
+.hBtn{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.2s;background:rgba(255,255,255,0.05);border:none;color:#fff}
+.hBtn:active{transform:scale(0.93);background:rgba(255,107,53,0.15)}
+.hTitle{font-size:15px;font-weight:700;color:#f7931e}
+.hRegresar{background:#ef4444!important;color:#fff!important;padding:0 14px!important;width:auto!important;font-size:13px;font-weight:600}
+
+.searchBar{position:fixed;top:54px;left:0;right:0;padding:10px 12px;background:rgba(10,10,10,0.95);border-bottom:1px solid rgba(255,255,255,0.06);z-index:99;display:flex;align-items:center;gap:8px}
+.searchIcon{color:#6b7280;width:18px;height:18px;flex-shrink:0}
+.searchInput{flex:1;background:rgba(26,26,26,0.8);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;padding:10px 12px;font-size:14px;outline:none;transition:0.3s}
+.searchInput:focus{border-color:#ff6b35}
+.searchInput::placeholder{color:#4b5563}
+.searchClear{color:#6b7280;font-size:12px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:0.2s}
+.searchClear:hover{color:#ef4444}
+.filterSelect{background:rgba(26,26,26,0.8);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;padding:10px 8px;font-size:13px;outline:none;transition:0.3s;flex-shrink:0}
+.filterSelect:focus{border-color:#ff6b35}
+
+.cardsArea{padding:120px 12px 90px}
+.tableWrap{background:#111;border:1.5px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden}
+.tableHeader{display:flex;background:linear-gradient(135deg,rgba(255,107,53,0.2),rgba(247,147,30,0.1));border-bottom:1.5px solid rgba(255,107,53,0.3);padding:12px 14px;font-size:11px;font-weight:700;color:#f7931e;text-transform:uppercase;letter-spacing:0.5px}
+.th{flex:1;padding:0 4px}
+.th:first-child{flex:0.7}
+.th:last-child{flex:0.5;text-align:right}
+.thCheck{flex:0;width:30px;padding:0;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.tableRow{display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:0.2s;position:relative}
+.tableRow:last-child{border-bottom:none}
+.tableRow:hover{background:rgba(255,107,53,0.03)}
+.tableRow.sel{background:rgba(255,107,53,0.08)}
+.tableRow.sel::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#ff6b35}
+.rowCheck{width:20px;height:20px;border:2px solid rgba(255,255,255,0.2);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:0.2s;margin-right:10px}
+.tableRow.sel .rowCheck{border-color:#ff6b35;background:#ff6b35}
+.rowCheck svg{width:12px;height:12px;color:#fff;display:none}
+.tableRow.sel .rowCheck svg{display:block}
+.td{flex:1;padding:0 4px;font-size:14px;color:#fff}
+.td:first-child{flex:0.7;font-family:monospace;font-size:13px;color:#9ca3af}
+.td:last-child{flex:0.5;text-align:right;color:#f7931e;font-weight:700}
+.rowToggle{width:36px;height:20px;background:#ef4444;border-radius:10px;position:relative;cursor:pointer;transition:0.3s;flex-shrink:0;margin-left:8px}
+.rowToggle.on{background:#22c55e}
+.rowToggle::after{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:2px;left:2px;transition:0.3s;box-shadow:0 2px 6px rgba(0,0,0,0.3)}
+.rowToggle.on::after{left:18px}
+.actionBar{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.06);padding:12px 16px;display:flex;gap:10px;z-index:97}
+.actionBtn{flex:1;padding:12px;border:none;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;transition:0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.actionBtn:disabled{opacity:0.4;cursor:not-allowed}
+.btnAdd{background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff}
+.btnAdd:active{transform:scale(0.97)}
+.btnEdit{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff}
+.btnEdit:active{transform:scale(0.97)}
+.btnDel{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444}
+.btnDel:active{transform:scale(0.97)}
+
+#modalOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;display:none;justify-content:center;align-items:center;padding:16px}
+#modalOverlay.show{display:flex}
+.modalCard{background:#1a1a1a;border:1px solid rgba(255,255,255,0.08);border-radius:20px;width:100%;max-width:400px;max-height:85vh;overflow-y:auto;animation:modalIn 0.3s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+.modalHeader{padding:20px 20px 0;display:flex;justify-content:space-between;align-items:center}
+.modalTitle{font-size:18px;font-weight:800;color:#f7931e}
+.modalClose{width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,0.05);border:none;color:#9ca3af;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:0.2s}
+.modalClose:hover{background:rgba(255,255,255,0.1);color:#fff}
+.modalBody{padding:16px 20px 20px}
+.fLabel{display:block;font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;margin-top:14px}
+.fLabel:first-child{margin-top:0}
+.fInput{width:100%;background:rgba(17,17,17,0.9);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;padding:12px 14px;font-size:14px;outline:none;transition:0.3s}
+.fInput:focus{border-color:#ff6b35;box-shadow:0 0 0 3px rgba(255,107,53,0.12)}
+.fInput::placeholder{color:#4b5563}
+.fInput:disabled{background:rgba(10,10,10,0.6);color:#6b7280;cursor:not-allowed}
+.fInput.invalid{border-color:#ef4444!important}
+.modalToggleWrap{display:flex;align-items:center;gap:10px;margin-top:4px}
+.modalToggle{width:48px;height:26px;background:#ef4444;border-radius:13px;position:relative;cursor:pointer;transition:0.3s}
+.modalToggle.on{background:#22c55e}
+.modalToggle::after{content:'';position:absolute;width:22px;height:22px;background:#fff;border-radius:50%;top:2px;left:2px;transition:0.3s;box-shadow:0 2px 6px rgba(0,0,0,0.3)}
+.modalToggle.on::after{left:24px}
+.modalToggleTxt{font-size:13px;font-weight:500}
+.modalBtns{display:flex;gap:10px;margin-top:20px}
+.modalBtns button{flex:1;padding:12px;border:none;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;transition:0.2s}
+.btnSave{background:#22c55e;color:#fff}
+.btnSave:active{transform:scale(0.97)}
+.btnCan{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#9ca3af}
+.btnCan:active{transform:scale(0.97)}
+.modalToggle.disabled{cursor:not-allowed;opacity:0.5}
+.rowToggle.noclick{cursor:default;pointer-events:none}
+.emptyState{text-align:center;padding:60px 20px;color:#6b7280}
+.emptyStateIcon{font-size:48px;margin-bottom:12px;opacity:0.5}
+.errorState{text-align:center;padding:40px 20px;color:#ef4444}
+.errorStateIcon{font-size:40px;margin-bottom:12px}
+.retryBtn{margin-top:16px;padding:10px 20px;background:rgba(255,107,53,0.15);border:1px solid rgba(255,107,53,0.3);color:#ff6b35;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600}
+#confirmOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:300;display:none;justify-content:center;align-items:center;padding:16px;backdrop-filter:blur(8px)}
+#confirmOverlay.show{display:flex}
+.confirmCard{background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;width:100%;max-width:340px;padding:24px;text-align:center;animation:modalIn 0.3s ease}
+.confirmTitle{font-size:18px;font-weight:800;color:#f7931e;margin-bottom:12px}
+.confirmMsg{font-size:14px;color:#d1d5db;margin-bottom:24px;line-height:1.5}
+.confirmBtns{display:flex;gap:12px}
+.btnConfirmCan{flex:1;padding:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#9ca3af;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;transition:0.2s}
+.btnConfirmCan:hover{background:rgba(255,255,255,0.1);color:#fff}
+.btnConfirmDel{flex:1;padding:12px;background:linear-gradient(135deg,#ef4444,#dc2626);border:none;color:#fff;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;transition:0.2s}
+.btnConfirmDel:active{transform:scale(0.97)}
+</style>
+</head>
+<body>
+
+<div id="load"><div class="spin"></div><div style="color:#9ca3af;font-size:13px">Cargando...</div></div>
+<div id="toast"></div>
+
+<div id="menuOverlay" onclick="closeMenu()"></div>
+<div id="menuPanel">
+  <div class="menuHeader">
+    <div>
+      <div class="menuTitle">FastBurger</div>
+      <div class="menuSubtitle">Servidores</div>
+    </div>
+    <button class="menuCloseBtn" onclick="closeMenu()">
+      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+  </div>
+  <div style="padding:8px 0">
+    <div class="menuItem" onclick="doAdd()">
+      <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      <span class="mLabel">Agregar</span>
+    </div>
+    <div class="menuItem" onclick="doEdit()">
+      <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+      <span class="mLabel">Editar</span>
+    </div>
+    <div class="menuItem" onclick="doDel()">
+      <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+      <span class="mLabel">Borrar</span>
+    </div>
+    <div class="menuItem" style="border-top:1px solid rgba(255,255,255,0.05);margin-top:8px" onclick="toggleViewInactivos()">
+      <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+      <span class="mLabel">Ver Inactivos</span>
+      <div class="modalToggle" id="menuToggle" style="pointer-events:none;margin-left:auto"></div>
+    </div>
+  </div>
+  <div class="menuFooter">
+    <button class="btnLogout" onclick="logout()">
+      <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      <span class="mLabel">Cerrar Sesion</span>
+    </button>
+  </div>
+</div>
+
+<div class="header">
+  <button class="hBtn" onclick="openMenu()">
+    <svg style="width:20px;height:20px;color:#f7931e" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+  </button>
+  <div class="hTitle">Servidores</div>
+  <button class="hBtn hRegresar" onclick="location.href='admin.html'">Regresar</button>
+</div>
+
+<div class="searchBar">
+  <svg class="searchIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+  </svg>
+  <input type="text" id="searchInput" class="searchInput" placeholder="Buscar..." autocomplete="off">
+  <span class="searchClear" id="searchClear" onclick="clearSearch()">X</span>
+  <select id="filterField" class="filterSelect" onchange="render()">
+    <option value="all">Todo</option>
+    <option value="CodServidor">Codigo</option>
+    <option value="NombreServidor">Nombre</option>
+  </select>
+</div>
+
+<div class="cardsArea" id="main"></div>
+
+<div class="actionBar">
+  <button class="actionBtn btnAdd" id="btnAdd" onclick="openAddModal()">Agregar</button>
+  <button class="actionBtn btnEdit" id="btnEdit" onclick="openEditModal()" disabled>Editar</button>
+  <button class="actionBtn btnDel" id="btnDel" onclick="doDel()" disabled>Borrar</button>
+</div>
+
+<div id="modalOverlay" onclick="closeModal(event)">
+  <div class="modalCard" onclick="event.stopPropagation()">
+    <div class="modalHeader">
+      <div class="modalTitle" id="modalTitle">Nuevo Servidor</div>
+      <button class="modalClose" onclick="closeModal()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modalBody">
+      <div class="fLabel">Codigo</div>
+      <input type="text" id="fCod" class="fInput" disabled>
+
+      <div class="fLabel">Nombre del Servidor</div>
+      <input type="text" id="fNom" class="fInput" placeholder="Ej: Juan Perez">
+
+      <div class="fLabel">Servicio Mesero</div>
+      <select id="fMesero" class="fInput">
+        <option value="SI">SI</option>
+        <option value="No">No</option>
+      </select>
+
+      <div class="fLabel">Servicio Delivery</div>
+      <select id="fDelivery" class="fInput">
+        <option value="SI">SI</option>
+        <option value="No">No</option>
+      </select>
+
+      <div class="fLabel">Moneda</div>
+      <select id="fMoneda" class="fInput"><option value="">Seleccione...</option></select>
+      <input type="hidden" id="fMonedaDes">
+
+      <div class="fLabel">Comision Sugerida</div>
+      <input type="number" id="fComision" class="fInput" step="0.01" placeholder="0.00">
+
+      <div class="fLabel">Telefonos</div>
+      <input type="text" id="fTlf" class="fInput" placeholder="Ej: 0414-1234567, 0412-7654321">
+
+      <div class="fLabel">Estado</div>
+      <div class="modalToggleWrap">
+        <div class="modalToggle on" id="fToggle" onclick="toggleFormState()"></div>
+        <span class="modalToggleTxt" id="fToggleTxt">Activo</span>
+      </div>
+
+      <div class="modalBtns">
+        <button class="btnSave" onclick="save()">Guardar</button>
+        <button class="btnCan" onclick="closeModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="confirmOverlay" onclick="closeConfirm(event)">
+  <div class="confirmCard" onclick="event.stopPropagation()">
+    <div class="confirmTitle">&#9888; Confirmar eliminacion</div>
+    <div class="confirmMsg" id="confirmMsg">Desea eliminar este registro?</div>
+    <div class="confirmBtns">
+      <button class="btnConfirmCan" onclick="closeConfirm()">Cancelar</button>
+      <button class="btnConfirmDel" onclick="confirmDel()">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var API="https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9FoXBkMYwPD4xkK1llpxakpExC6DspQvnOI6Vmw/exec";
+var urlToken="";var href=window.location.href;var match=href.match(/[?&]t=([^&]+)/);if(match){urlToken=decodeURIComponent(match[1])}
+var TOKEN=urlToken||sessionStorage.getItem("fb_token")||localStorage.getItem("fb_token")||"";
+var ROWS=[];var SEL=null;var FORM_STATE=true;var MODAL_MODE="add";var SHOW_INACTIVOS=false;var TASAS=[];
+
+function showLoad(){document.getElementById("load").className="show"}
+function hideLoad(){document.getElementById("load").className=""}
+function toast(m,ok){var t=document.getElementById("toast");t.textContent=m;t.className=ok?"ok":"err";t.style.display="block";setTimeout(function(){t.style.display="none"},3000)}
+
+function apiGet(action,params){var url=API+"?action="+action+"&_cb="+Date.now();if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);return fetch(url).then(function(r){return r.json()})}
+
+function loadTasas(){
+return apiGet("adminData",{method:"GET",sheetName:"Tasas",token:TOKEN})
+.then(function(r){
+ if(r.success){
+  TASAS=r.data||[];
+  var sel=document.getElementById("fMoneda");
+  sel.innerHTML='<option value="">Seleccione...</option>';
+  for(var i=0;i<TASAS.length;i++){
+   var t=TASAS[i];
+   if(t.Estado==="Activo"){
+    var opt=document.createElement("option");
+    opt.value=t.CodTasa||"";
+    opt.textContent=(t.CodTasa||"")+" - "+(t.DesTasa||"");
+    sel.appendChild(opt);
+   }
+  }
+ }
+});
+}
+function onMonedaChange(){
+var cod=document.getElementById("fMoneda").value;
+var des="";
+for(var i=0;i<TASAS.length;i++){
+ if(TASAS[i].CodTasa===cod){des=TASAS[i].DesTasa||"";break;}
+}
+document.getElementById("fMonedaDes").value=des;
+}
+
+function apiPost(d){return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.text();}).then(function(t){try{return JSON.parse(t);}catch(e){throw new Error("Respuesta no es JSON: "+t.substring(0,200));}})}
+
+function normalize(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
+
+function openMenu(){document.getElementById("menuPanel").className="open";document.getElementById("menuOverlay").className="show"}
+function closeMenu(){document.getElementById("menuPanel").className="";document.getElementById("menuOverlay").className=""}
+function logout(){localStorage.removeItem("fb_token");sessionStorage.clear();location.href="admin.html"}
+
+function init(){
+if(!TOKEN){location.href="admin.html";return}
+if(urlToken){sessionStorage.setItem("fb_token",TOKEN);localStorage.setItem("fb_token",TOKEN)}
+showLoad();
+apiPost({action:"validateToken",token:TOKEN})
+.then(function(r){
+ if(!r.success){sessionStorage.removeItem("fb_token");localStorage.removeItem("fb_token");location.href="admin.html";return}
+ return loadTasas().then(function(){loadData();});
+})
+.catch(function(e){hideLoad();toast("Error de red",false)});
+}
+
+function loadData(){
+showLoad();
+apiGet("adminData",{method:"GET",sheetName:"Servidores",token:TOKEN})
+.then(function(r){
+ hideLoad();
+ if(r.success){ROWS=r.data||[];render()}
+ else{showError(r.error||"Error al cargar datos")}
+})
+.catch(function(e){hideLoad();showError("Error de red al cargar servidores")});
+}
+
+function showError(msg){
+var m=document.getElementById("main");
+m.innerHTML='<div class="errorState"><div class="errorStateIcon">&#9888;</div><div>'+msg+'</div><button class="retryBtn" onclick="loadData()">Reintentar</button></div>';
+}
+
+function render(){
+var m=document.getElementById("main");
+m.innerHTML="";
+var filtered=getVisibleRows();
+if(filtered.length===0){
+ m.innerHTML='<div class="emptyState"><div class="emptyStateIcon">&#128202;</div>No se encontraron servidores</div>';
+ return;
+}
+var wrap=document.createElement("div");wrap.className="tableWrap";
+var header=document.createElement("div");header.className="tableHeader";
+header.innerHTML='<div class="th thCheck">&#128203;</div><div class="th">Codigo</div><div class="th">Nombre</div><div class="th">Mesero</div><div class="th">Delivery</div><div class="th">Estado</div>';
+wrap.appendChild(header);
+for(var i=0;i<filtered.length;i++){
+var r=filtered[i];
+var st=r.Estado==="Activo";
+var isSel=SEL&&SEL.CodServidor===r.CodServidor;
+var row=document.createElement("div");
+row.className="tableRow"+(isSel?" sel":"")+(st?"":" inact");
+row.onclick=function(idx){return function(){selectCard(idx)}}(i);
+row.innerHTML='<div class="rowCheck"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div><div class="td">'+(r.CodServidor||"")+'</div><div class="td">'+(r.NombreServidor||"")+'</div><div class="td">'+(r.MeseroServidor||"")+'</div><div class="td">'+(r.DeliveryServidor||"")+'</div><div class="rowToggle '+(st?"on":"")+' noclick"></div>';
+wrap.appendChild(row);
+}
+m.appendChild(wrap);
+updateActionButtons();
+}
+
+function getVisibleRows(){
+var q=normalize(document.getElementById("searchInput").value);
+var field=document.getElementById("filterField").value;
+var out=ROWS;
+if(!SHOW_INACTIVOS){
+ out=out.filter(function(r){return r.Estado==="Activo";});
+}else{
+ out=out.filter(function(r){return r.Estado==="Inactivo";});
+}
+if(!q)return out;
+return out.filter(function(r){
+if(field==="all"){return normalize(r.CodServidor).indexOf(q)!==-1||normalize(r.NombreServidor).indexOf(q)!==-1}
+if(field==="CodServidor")return normalize(r.CodServidor).indexOf(q)!==-1;
+if(field==="NombreServidor")return normalize(r.NombreServidor).indexOf(q)!==-1;
+return false;
+});
+}
+
+function selectCard(i){
+var filtered=getVisibleRows();
+var clicked=filtered[i];
+if(SEL&&SEL.CodServidor===clicked.CodServidor){SEL=null}else{SEL=clicked}
+render();
+}
+
+function updateActionButtons(){
+var btnAdd=document.getElementById("btnAdd");
+var btnEdit=document.getElementById("btnEdit");
+var btnDel=document.getElementById("btnDel");
+if(SHOW_INACTIVOS){btnAdd.disabled=true;}else{btnAdd.disabled=false;}
+if(SEL){btnEdit.disabled=false;btnDel.disabled=SEL.Estado==="Inactivo";}else{btnEdit.disabled=true;btnDel.disabled=true;}
+}
+
+function openAddModal(){
+MODAL_MODE="add";FORM_STATE=true;
+document.getElementById("modalTitle").textContent="Nuevo Servidor";
+document.getElementById("fCod").value="Auto";
+document.getElementById("fNom").value="";
+document.getElementById("fMesero").value="SI";
+document.getElementById("fDelivery").value="No";
+document.getElementById("fMoneda").value="T002";
+document.getElementById("fMonedaDes").value="Dolar";
+document.getElementById("fComision").value="";
+document.getElementById("fTlf").value="";
+document.getElementById("fToggle").className="modalToggle on";
+document.getElementById("fToggleTxt").textContent="Activo";
+document.getElementById("modalOverlay").className="show";
+closeMenu();
+}
+
+function openEditModal(){
+if(!SEL){toast("Seleccione un servidor",false);return}
+MODAL_MODE="edit";FORM_STATE=SEL.Estado==="Activo";
+document.getElementById("modalTitle").textContent="Editar Servidor";
+document.getElementById("fCod").value=SEL.CodServidor||"";
+document.getElementById("fNom").value=SEL.NombreServidor||"";
+document.getElementById("fMesero").value=SEL.MeseroServidor||"SI";
+document.getElementById("fDelivery").value=SEL.DeliveryServidor||"No";
+document.getElementById("fMoneda").value=SEL.CodTasa||"";
+document.getElementById("fMonedaDes").value=SEL.DesTasa||"";
+document.getElementById("fComision").value=SEL.CostoServidor||"";
+document.getElementById("fTlf").value=SEL.TelefonoServidor||"";
+var ft=document.getElementById("fToggle");
+if(FORM_STATE){
+ft.className="modalToggle on disabled";
+ft.onclick=null;
+document.getElementById("fToggleTxt").textContent="Activo (bloqueado)";
+}else{
+ft.className="modalToggle";
+ft.onclick=toggleFormState;
+document.getElementById("fToggleTxt").textContent="Inactivo (puede activar)";
+}
+document.getElementById("modalOverlay").className="show";
+closeMenu();
+}
+
+function closeModal(e){
+if(e&&e.target!==document.getElementById("modalOverlay"))return;
+document.getElementById("modalOverlay").className="";
+}
+
+function toggleFormState(){
+if(MODAL_MODE==="edit"&&SEL&&SEL.Estado==="Activo")return;
+FORM_STATE=!FORM_STATE;
+var t=document.getElementById("fToggle");
+var txt=document.getElementById("fToggleTxt");
+if(FORM_STATE){t.className="modalToggle on";txt.textContent="Activo";}else{t.className="modalToggle";txt.textContent="Inactivo";}
+}
+
+function doAdd(){openAddModal()}
+function doEdit(){openEditModal()}
+
+var PENDING_DEL=null;
+
+function doDel(){
+if(!SEL){toast("Seleccione un servidor",false);closeMenu();return}
+PENDING_DEL=SEL;
+document.getElementById("confirmMsg").textContent='Desea eliminar "'+(SEL.CodServidor||"")+" - "+(SEL.NombreServidor||"")+'"? ';
+document.getElementById("confirmOverlay").className="show";
+closeMenu();
+}
+
+function closeConfirm(e){
+if(e&&e.target!==document.getElementById("confirmOverlay"))return;
+document.getElementById("confirmOverlay").className="";
+PENDING_DEL=null;
+}
+
+function confirmDel(){
+if(!PENDING_DEL){closeConfirm();return}
+var delItem=PENDING_DEL;
+closeConfirm();
+showLoad();
+apiPost({action:"adminData",method:"DELETE",sheetName:"Servidores",token:TOKEN,data:{CodServidor:delItem.CodServidor}})
+.then(function(r){
+ hideLoad();
+ if(r.success){toast("Eliminado",true);SEL=null;loadData();}
+ else{toast(r.error||"Error",false);}
+})
+.catch(function(e){hideLoad();toast("Error de red",false);});
+}
+
+function doToggle(e,i){
+e.stopPropagation();
+var filtered=getVisibleRows();
+var r=filtered[i];
+var nst=r.Estado==="Activo"?"Inactivo":"Activo";
+showLoad();
+apiPost({action:"adminData",method:"PUT",sheetName:"Servidores",token:TOKEN,data:{CodServidor:r.CodServidor,Estado:nst}})
+.then(function(res){
+ hideLoad();
+ if(res.success){toast("Estado actualizado",true);loadData();}
+ else{toast(res.error||"Error",false);}
+})
+.catch(function(e){hideLoad();toast("Error de red",false);});
+}
+
+function save(){
+var d={
+NombreServidor:document.getElementById("fNom").value.trim(),
+MeseroServidor:document.getElementById("fMesero").value,
+DeliveryServidor:document.getElementById("fDelivery").value,
+CodTasa:document.getElementById("fMoneda").value.trim(),
+DesTasa:document.getElementById("fMonedaDes").value.trim(),
+CostoServidor:parseFloat(document.getElementById("fComision").value)||0,
+TelefonoServidor:document.getElementById("fTlf").value.trim(),
+Estado:FORM_STATE?"Activo":"Inactivo"
+};
+if(!d.NombreServidor){toast("Nombre del Servidor requerido",false);return;}
+if(!d.CodTasa){toast("Seleccione una moneda",false);return;}
+showLoad();
+if(MODAL_MODE==="edit"&&SEL){
+d.CodServidor=SEL.CodServidor;
+apiPost({action:"adminData",method:"PUT",sheetName:"Servidores",token:TOKEN,data:d})
+.then(function(r){
+ hideLoad();
+ if(r.success){toast("Guardado",true);SEL=null;closeModal();loadData();}
+ else{toast(r.error||"Error",false);}
+})
+.catch(function(e){hideLoad();toast("Error de red",false);});
+}else{
+apiPost({action:"adminData",method:"POST",sheetName:"Servidores",token:TOKEN,data:d})
+.then(function(r){
+ hideLoad();
+ if(r.success){toast("Creado: "+r.code,true);SEL=null;closeModal();loadData();}
+ else{toast(r.error||"Error",false);}
+})
+.catch(function(e){hideLoad();toast("Error de red",false);});
+}
+}
+
+function toggleViewInactivos(){
+SHOW_INACTIVOS=!SHOW_INACTIVOS;
+var t=document.getElementById("menuToggle");
+if(SHOW_INACTIVOS){t.className="modalToggle on";}else{t.className="modalToggle";}
+closeMenu();
+SEL=null;
+render();
+}
+
+function clearSearch(){document.getElementById("searchInput").value="";render();}
+
+document.getElementById("searchInput").addEventListener("input",render);
+
+document.addEventListener("keydown",function(e){
+if(e.key==="Escape"){closeMenu();closeModal();}
+});
+
+init();
+</script>
+
+<!--
+FastBurguer Admin v9.12
+Modulo: servicios.html
+Version: 9.12
+Fecha: 2026-06-01
+Asistencia: Generado con IA
+Proyecto: Ing. Jesus Linares
+Contacto: 0412-0639340
+-->
+</body>
+</html>
