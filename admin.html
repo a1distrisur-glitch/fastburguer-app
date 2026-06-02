@@ -21,25 +21,37 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 #menuOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:998;opacity:0;transition:opacity 0.3s;pointer-events:none}
 #menuOverlay.show{opacity:1;pointer-events:auto}
 
-#menuPanel{position:fixed;left:0;top:0;width:260px;height:100vh;background:#111;z-index:999;border-right:1px solid rgba(255,255,255,0.06);transform:translateX(-100%);transition:transform 0.3s ease;padding:20px 0 80px;overflow-y:auto}
+#menuPanel{position:fixed;left:0;top:0;width:260px;height:100vh;background:#111;z-index:999;border-right:1px solid rgba(255,107,53,0.3);transform:translateX(-100%);transition:transform 0.3s ease;padding:20px 0 80px;overflow-y:auto}
 #menuPanel.open{transform:translateX(0)}
 
-.menuHeader{padding:0 20px 16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:12px}
-.menuLogo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#ff6b35,#f7931e);display:flex;align-items:center;justify-content:center;font-size:20px}
-.menuTitle{font-size:14px;font-weight:700}
-.menuStatus{font-size:11px;color:#6b7280;display:flex;align-items:center;gap:6px}
-.dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px rgba(34,197,94,0.4)}
+.menuHeader{padding:0 20px 16px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.menuTitle{font-size:18px;font-weight:900;background:linear-gradient(135deg,#ff6b35,#f7931e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px}
+.menuCloseBtn{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.2s;background:transparent;border:none;color:#f7931e}
+.menuCloseBtn:hover{background:rgba(255,107,53,0.1);color:#ff6b35}
+.menuCloseBtn:active{transform:scale(0.93)}
 
-.menuItem{padding:13px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:0.2s}
-.menuItem:hover{background:rgba(255,107,53,0.08)}
+.menuItem{padding:13px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:0.2s;border-radius:0}
+.menuItem:hover{background:rgba(255,255,255,0.03)}
 .menuItem:hover .mIcon{color:#ff6b35}
 .menuItem:hover .mLabel{color:#fff}
-.mIcon{width:20px;height:20px;color:#6b7280;transition:0.2s}
-.mLabel{font-size:14px;font-weight:500;color:#d1d5db}
+.mIcon{width:20px;height:20px;color:#6b7280;transition:0.2s;flex-shrink:0}
+.mLabel{font-size:14px;font-weight:500;color:#d1d5db;transition:0.2s}
 
-.menuFooter{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.06)}
-.btnLogout{width:100%;padding:11px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#9ca3af;border-radius:12px;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;transition:0.2s}
-.btnLogout:hover{background:rgba(239,68,68,0.1);color:#ef4444;border-color:rgba(239,68,68,0.3)}
+.menuFooter{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.05);margin-top:8px}
+.btnLogout{width:100%;padding:13px 20px;background:transparent;border:none;color:#ef4444;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;gap:12px;transition:0.2s}
+.btnLogout:hover{background:rgba(239,68,68,0.08)}
+.btnLogout:hover .mIcon{color:#ef4444}
+.btnLogout .mIcon{color:#ef4444;width:20px;height:20px;flex-shrink:0}
+
+.submenu{padding-left:52px;background:rgba(255,255,255,0.02);max-height:0;overflow:hidden;transition:max-height 0.3s ease}
+.submenu.open{max-height:300px}
+.submenuItem{padding:10px 20px;font-size:13px;color:#9ca3af;cursor:pointer;transition:0.2s;display:flex;align-items:center;gap:8px;border-radius:0}
+.submenuItem:hover{color:#ff6b35;background:rgba(255,107,53,0.04)}
+.submenuItem::before{content:"";width:4px;height:4px;border-radius:50%;background:#6b7280;margin-right:4px;transition:0.2s}
+.submenuItem:hover::before{background:#ff6b35}
+.hasSubmenu{justify-content:space-between!important}
+.submenuArrow{width:16px;height:16px;transition:0.3s;color:#6b7280;flex-shrink:0}
+.submenuArrow.open{transform:rotate(180deg);color:#ff6b35}
 
 #loginScreen{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px;position:relative}
 #loginScreen::before{content:'';position:absolute;top:0;left:0;right:0;height:250px;background:linear-gradient(180deg,rgba(255,107,53,0.06),transparent);pointer-events:none}
@@ -68,15 +80,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .welcome{text-align:center;padding:50px 20px;color:#6b7280}
 .welcomeIcon{font-size:44px;margin-bottom:14px;opacity:0.6}
 .welcomeTitle{font-size:17px;font-weight:700;color:#fff;margin-bottom:6px}
-.submenu{padding-left:52px;background:rgba(255,255,255,0.02);max-height:0;overflow:hidden;transition:max-height 0.3s ease}
-.submenu.open{max-height:200px}
-.submenuItem{padding:10px 20px;font-size:13px;color:#9ca3af;cursor:pointer;transition:0.2s;display:flex;align-items:center;gap:8px}
-.submenuItem:hover{color:#ff6b35;background:rgba(255,107,53,0.04)}
-.submenuItem::before{content:"";width:4px;height:4px;border-radius:50%;background:#6b7280;margin-right:4px}
-.submenuItem:hover::before{background:#ff6b35}
-.hasSubmenu{justify-content:space-between!important}
-.submenuArrow{width:16px;height:16px;transition:0.3s;color:#6b7280;flex-shrink:0}
-.submenuArrow.open{transform:rotate(180deg);color:#ff6b35}
 </style>
 </head>
 <body>
@@ -88,11 +91,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <div id="menuPanel">
 <div class="menuHeader">
-<div class="menuLogo">&#127828;</div>
-<div>
-<div class="menuTitle">FastBurguer</div>
-<div class="menuStatus"><div class="dot"></div>Admin Panel</div>
-</div>
+<div class="menuTitle">FastBurger</div>
+<button class="menuCloseBtn" onclick="closeMenu()">
+<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+</button>
 </div>
 
 <div style="padding:8px 0">
@@ -119,6 +121,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="submenu" id="submenuNegocio">
 <div class="submenuItem" onclick="goTo('negocio')">Configuracion</div>
 <div class="submenuItem" onclick="goTo('pagos')">Formas de Pago</div>
+<div class="submenuItem" onclick="goTo('clientes')">Clientes</div>
 <div class="submenuItem" onclick="goTo('mesas')">Mesas</div>
 <div class="submenuItem" onclick="goTo('usuarios')">Usuarios</div>
 </div>
@@ -136,8 +139,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <div class="menuFooter">
 <button class="btnLogout" onclick="logout()">
-<svg style="width:16px;height:16px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-Cerrar Sesion
+<svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+<span class="mLabel">Cerrar Sesion</span>
 </button>
 </div>
 </div>
@@ -167,7 +170,7 @@ Cerrar Sesion
 Volver al menu
 </button>
 </div>
-<div class="version">FastBurguer Admin v9.9</div>
+<div class="version">FastBurguer Admin v9.10</div>
 </div>
 
 <div id="mainScreen">
@@ -211,13 +214,10 @@ if(sub.className==="submenu open"){sub.className="submenu";arrow.className="subm
 else{sub.className="submenu open";arrow.className="submenuArrow open";}
 }
 
-// FIX: Ensure token is passed to both sessionStorage AND localStorage
 function goTo(page){
   var t=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";
-  console.log("goTo called:", page, "token:", t ? t.substring(0,20)+"..." : "EMPTY");
   if(t){
     var url=page+".html?t="+encodeURIComponent(t);
-    console.log("Navigating to:", url);
     window.location.href=url;
   }else{
     toast("Inicie sesion primero",false);
@@ -238,10 +238,10 @@ init();
 </script>
 
 <!--
-FastBurguer Admin v9.9
+FastBurguer Admin v9.10
 Modulo: admin.html
-Version: 9.9
-Fecha: 2026-05-31
+Version: 9.10
+Fecha: 2026-06-02
 Asistencia: Generado con IA
 Proyecto: Ing. Jesus Linares
 Contacto: 0412-0639340
