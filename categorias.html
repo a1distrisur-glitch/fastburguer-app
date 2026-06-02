@@ -19,10 +19,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 #menuOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:998;opacity:0;transition:opacity 0.3s;pointer-events:none}
 #menuOverlay.show{opacity:1;pointer-events:auto}
-#menuPanel{position:fixed;left:0;top:0;width:220px;height:100vh;background:#111;z-index:999;border-right:1px solid rgba(255,255,255,0.06);transform:translateX(-100%);transition:transform 0.3s ease;padding:20px 0}
+#menuPanel{position:fixed;left:0;top:0;width:260px;height:100vh;background:#111;z-index:999;border-right:1px solid rgba(255,107,53,0.3);transform:translateX(-100%);transition:transform 0.3s ease;padding:20px 0 80px;overflow-y:auto}
 #menuPanel.open{transform:translateX(0)}
-.menuItem{padding:14px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:0.2s;font-size:14px;font-weight:500;color:#d1d5db}
-.menuItem:hover{background:rgba(255,107,53,0.08);color:#fff}
+
+.menuHeader{padding:0 20px 16px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.menuTitle{font-size:18px;font-weight:900;background:linear-gradient(135deg,#ff6b35,#f7931e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px}
+.menuCloseBtn{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.2s;background:transparent;border:none;color:#f7931e}
+.menuCloseBtn:hover{background:rgba(255,107,53,0.1);color:#ff6b35}
+.menuCloseBtn:active{transform:scale(0.93)}
+.menuSubtitle{font-size:12px;color:#22c55e;font-weight:600;margin-top:2px}
+
+.menuItem{padding:13px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:0.2s;border-radius:0}
+.menuItem:hover{background:rgba(255,255,255,0.03)}
+.menuItem:hover .mIcon{color:#ff6b35}
+.menuItem:hover .mLabel{color:#fff}
+.mIcon{width:20px;height:20px;color:#6b7280;transition:0.2s;flex-shrink:0}
+.mLabel{font-size:14px;font-weight:500;color:#d1d5db;transition:0.2s}
+
+.menuFooter{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.05);margin-top:8px}
+.btnLogout{width:100%;padding:13px 20px;background:transparent;border:none;color:#ef4444;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;gap:12px;transition:0.2s}
+.btnLogout:hover{background:rgba(239,68,68,0.08)}
+.btnLogout:hover .mIcon{color:#ef4444}
+.btnLogout .mIcon{color:#ef4444;width:20px;height:20px;flex-shrink:0}
 
 .header{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(10,10,10,0.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:100}
 .hBtn{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.2s;background:rgba(255,255,255,0.05);border:none;color:#fff}
@@ -47,27 +65,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .th:first-child{flex:0.7}
 .th:last-child{flex:0.5;text-align:right}
 .thCheck{flex:0;width:30px;padding:0;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-
 .tableRow{display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:0.2s;position:relative}
 .tableRow:last-child{border-bottom:none}
 .tableRow:hover{background:rgba(255,107,53,0.03)}
 .tableRow.sel{background:rgba(255,107,53,0.08)}
 .tableRow.sel::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#ff6b35}
-
 .rowCheck{width:20px;height:20px;border:2px solid rgba(255,255,255,0.2);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:0.2s;margin-right:10px}
 .tableRow.sel .rowCheck{border-color:#ff6b35;background:#ff6b35}
 .rowCheck svg{width:12px;height:12px;color:#fff;display:none}
 .tableRow.sel .rowCheck svg{display:block}
-
 .td{flex:1;padding:0 4px;font-size:14px;color:#fff}
 .td:first-child{flex:0.7;font-family:monospace;font-size:13px;color:#9ca3af}
 .td:last-child{flex:0.5;text-align:right;color:#f7931e;font-weight:700}
-
 .rowToggle{width:36px;height:20px;background:#ef4444;border-radius:10px;position:relative;cursor:pointer;transition:0.3s;flex-shrink:0;margin-left:8px}
 .rowToggle.on{background:#22c55e}
 .rowToggle::after{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:2px;left:2px;transition:0.3s;box-shadow:0 2px 6px rgba(0,0,0,0.3)}
 .rowToggle.on::after{left:18px}
-
 .actionBar{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.06);padding:12px 16px;display:flex;gap:10px;z-index:97}
 .actionBtn{flex:1;padding:12px;border:none;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;transition:0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
 .actionBtn:disabled{opacity:0.4;cursor:not-allowed}
@@ -80,7 +93,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 #modalOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;display:none;justify-content:center;align-items:center;padding:16px}
 #modalOverlay.show{display:flex}
-.modalCard{background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;width:100%;max-width:400px;max-height:85vh;overflow-y:auto;animation:modalIn 0.3s ease}
+.modalCard{background:#1a1a1a;border:1px solid rgba(255,255,255,0.08);border-radius:20px;width:100%;max-width:400px;max-height:85vh;overflow-y:auto;animation:modalIn 0.3s ease}
 @keyframes modalIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
 .modalHeader{padding:20px 20px 0;display:flex;justify-content:space-between;align-items:center}
 .modalTitle{font-size:18px;font-weight:800;color:#f7931e}
@@ -88,7 +101,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .modalClose:hover{background:rgba(255,255,255,0.1);color:#fff}
 .modalBody{padding:16px 20px 20px}
 .fLabel{display:block;font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;margin-top:14px}
-.fInput{width:100%;background:rgba(26,26,26,0.8);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;padding:12px 14px;font-size:14px;outline:none;transition:0.3s}
+.fInput{width:100%;background:rgba(17,17,17,0.9);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;padding:12px 14px;font-size:14px;outline:none;transition:0.3s}
 .fInput:focus{border-color:#ff6b35;box-shadow:0 0 0 3px rgba(255,107,53,0.12)}
 .fInput::placeholder{color:#4b5563}
 .fInput:disabled{background:rgba(10,10,10,0.6);color:#6b7280;cursor:not-allowed}
@@ -107,7 +120,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .btnCan:active{transform:scale(0.97)}
 .modalToggle.disabled{cursor:not-allowed;opacity:0.5}
 .rowToggle.noclick{cursor:default;pointer-events:none}
-
 .emptyState{text-align:center;padding:60px 20px;color:#6b7280}
 .emptyStateIcon{font-size:48px;margin-bottom:12px;opacity:0.5}
 .errorState{text-align:center;padding:40px 20px;color:#ef4444}
@@ -132,107 +144,174 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <div id="menuOverlay" onclick="closeMenu()"></div>
 <div id="menuPanel">
-<div style="padding:0 20px 16px;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:8px">
-<div style="font-weight:700;font-size:15px">FastBurguer</div>
-<div style="font-size:12px;color:#6b7280">Categorias</div>
-</div>
-<div class="menuItem" onclick="doAdd()">Agregar</div>
-<div class="menuItem" onclick="doEdit()">Editar</div>
-<div class="menuItem" onclick="doDel()">Borrar</div>
-<div class="menuItem" style="border-top:1px solid rgba(255,255,255,0.06);margin-top:8px" onclick="toggleViewInactivos()">
-<span style="flex:1;font-size:14px;font-weight:500;color:#d1d5db">Ver Inactivos</span>
-<div class="modalToggle" id="menuToggle" style="pointer-events:none"></div>
-</div>
+  <div class="menuHeader">
+    <div>
+      <div class="menuTitle">FastBurger</div>
+      <div class="menuSubtitle">Categorias</div>
+    </div>
+    <button class="menuCloseBtn" onclick="closeMenu()">
+      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+  </div>
+  <div style="padding:8px 0">
+    <div class="menuItem" onclick="doAdd()">
+      <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      <span class="mLabel">Agregar</span>
+    </div>
+    <div class="menuItem" onclick="doEdit()">
+      <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+      <span class="mLabel">Editar</span>
+    </div>
+    <div class="menuItem" onclick="doDel()">
+      <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+      <span class="mLabel">Borrar</span>
+    </div>
+    <div class="menuItem" style="border-top:1px solid rgba(255,255,255,0.05);margin-top:8px" onclick="toggleViewInactivos()">
+      <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+      <span class="mLabel">Ver Inactivos</span>
+      <div class="modalToggle" id="menuToggle" style="pointer-events:none;margin-left:auto"></div>
+    </div>
+  </div>
+  <div class="menuFooter">
+    <button class="btnLogout" onclick="logout()">
+      <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      <span class="mLabel">Cerrar Sesion</span>
+    </button>
+  </div>
 </div>
 
 <div class="header">
-<button class="hBtn" onclick="openMenu()">
-<svg style="width:20px;height:20px;color:#f7931e" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-</svg>
-</button>
-<div class="hTitle">Categorias</div>
-<button class="hBtn hRegresar" onclick="location.href='admin.html'">Regresar</button>
+  <button class="hBtn" onclick="openMenu()">
+    <svg style="width:20px;height:20px;color:#f7931e" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+  </button>
+  <div class="hTitle">Categorias</div>
+  <button class="hBtn hRegresar" onclick="location.href='admin.html'">Regresar</button>
 </div>
 
 <div class="searchBar">
-<svg class="searchIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-</svg>
-<input type="text" id="searchInput" class="searchInput" placeholder="Buscar..." autocomplete="off">
-<span class="searchClear" id="searchClear" onclick="clearSearch()">X</span>
-<select id="filterField" class="filterSelect" onchange="render()">
-<option value="all">Todo</option>
-<option value="CodCategoria">Codigo</option>
-<option value="DesCategoria">Nombre</option>
-</select>
+  <svg class="searchIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+  </svg>
+  <input type="text" id="searchInput" class="searchInput" placeholder="Buscar..." autocomplete="off">
+  <span class="searchClear" id="searchClear" onclick="clearSearch()">X</span>
+  <select id="filterField" class="filterSelect" onchange="render()">
+    <option value="all">Todo</option>
+    <option value="CodCategoria">Codigo</option>
+    <option value="DesCategoria">Nombre</option>
+  </select>
 </div>
 
 <div class="cardsArea" id="main"></div>
 
 <div class="actionBar">
-<button class="actionBtn btnAdd" id="btnAdd" onclick="openAddModal()">Agregar</button>
-<button class="actionBtn btnEdit" id="btnEdit" onclick="openEditModal()" disabled>Editar</button>
-<button class="actionBtn btnDel" id="btnDel" onclick="doDel()" disabled>Borrar</button>
+  <button class="actionBtn btnAdd" id="btnAdd" onclick="openAddModal()">Agregar</button>
+  <button class="actionBtn btnEdit" id="btnEdit" onclick="openEditModal()" disabled>Editar</button>
+  <button class="actionBtn btnDel" id="btnDel" onclick="doDel()" disabled>Borrar</button>
 </div>
 
 <div id="modalOverlay" onclick="closeModal(event)">
-<div class="modalCard" onclick="event.stopPropagation()">
-<div class="modalHeader">
-<div class="modalTitle" id="modalTitle">Nueva Categoria</div>
-<button class="modalClose" onclick="closeModal()">
-<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-</svg>
-</button>
+  <div class="modalCard" onclick="event.stopPropagation()">
+    <div class="modalHeader">
+      <div class="modalTitle" id="modalTitle">Nueva Categoria</div>
+      <button class="modalClose" onclick="closeModal()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modalBody">
+      <div class="fLabel">Codigo</div>
+      <input type="text" id="fCod" class="fInput" disabled>
+
+      <div class="fLabel">Descripcion</div>
+      <input type="text" id="fDesc" class="fInput" placeholder="Ej: Hamburguesas">
+
+      <div class="fLabel">Detalle</div>
+      <input type="text" id="fDet" class="fInput" placeholder="Ej: Especialidades de la casa">
+
+      <div class="fLabel">Orden</div>
+      <input type="number" id="fOrd" class="fInput" placeholder="0">
+
+      <div class="fLabel">Cod Tasa</div>
+      <select id="fTasa" class="fInput"><option value="">Seleccione...</option></select>
+
+      <div class="fLabel">Estado</div>
+      <div class="modalToggleWrap">
+        <div class="modalToggle on" id="fToggle" onclick="toggleFormState()"></div>
+        <span class="modalToggleTxt" id="fToggleTxt">Activo</span>
+      </div>
+
+      <div class="modalBtns">
+        <button class="btnSave" onclick="save()">Guardar</button>
+        <button class="btnCan" onclick="closeModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
 </div>
-<div class="modalBody">
-<div class="fLabel">Codigo</div>
-<input type="text" id="fCod" class="fInput" disabled>
 
-<div class="fLabel">Descripcion</div>
-<input type="text" id="fDesc" class="fInput" placeholder="Ej: Hamburguesas">
-
-<div class="fLabel">Detalle</div>
-<input type="text" id="fDet" class="fInput" placeholder="Ej: Especialidades de la casa">
-
-<div class="fLabel">Orden</div>
-<input type="number" id="fOrd" class="fInput" placeholder="0">
-
-<div class="fLabel">Cod Tasa</div>
-<input type="text" id="fTasa" class="fInput" placeholder="Ej: T001">
-
-<div class="fLabel">Estado</div>
-<div class="modalToggleWrap">
-<div class="modalToggle on" id="fToggle" onclick="toggleFormState()"></div>
-<span class="modalToggleTxt" id="fToggleTxt">Activo</span>
-</div>
-
-<div class="modalBtns">
-<button class="btnSave" onclick="save()">Guardar</button>
-<button class="btnCan" onclick="closeModal()">Cancelar</button>
-</div>
-</div>
-</div>
+<div id="confirmOverlay" onclick="closeConfirm(event)">
+  <div class="confirmCard" onclick="event.stopPropagation()">
+    <div class="confirmTitle">&#9888; Confirmar eliminacion</div>
+    <div class="confirmMsg" id="confirmMsg">Desea eliminar este registro?</div>
+    <div class="confirmBtns">
+      <button class="btnConfirmCan" onclick="closeConfirm()">Cancelar</button>
+      <button class="btnConfirmDel" onclick="confirmDel()">Eliminar</button>
+    </div>
+  </div>
 </div>
 
 <script>
 var API="https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9FoXBkMYwPD4xkK1llpxakpExC6DspQvnOI6Vmw/exec";
 var urlToken="";var href=window.location.href;var match=href.match(/[?&]t=([^&]+)/);if(match){urlToken=decodeURIComponent(match[1])}
 var TOKEN=urlToken||sessionStorage.getItem("fb_token")||localStorage.getItem("fb_token")||"";
-var ROWS=[];var SEL=null;var FORM_STATE=true;var MODAL_MODE="add";var SHOW_INACTIVOS=false;
+var ROWS=[];var SEL=null;var FORM_STATE=true;var MODAL_MODE="add";var SHOW_INACTIVOS=false;var TASAS=[];
 
 function showLoad(){document.getElementById("load").className="show"}
 function hideLoad(){document.getElementById("load").className=""}
 function toast(m,ok){var t=document.getElementById("toast");t.textContent=m;t.className=ok?"ok":"err";t.style.display="block";setTimeout(function(){t.style.display="none"},3000)}
 
 function apiGet(action,params){var url=API+"?action="+action+"&_cb="+Date.now();if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);return fetch(url).then(function(r){return r.json()})}
+
+function loadTasas(){
+return apiGet("adminData",{method:"GET",sheetName:"Tasas",token:TOKEN})
+.then(function(r){
+ if(r.success){
+  TASAS=r.data||[];
+  var sel=document.getElementById("fTasa");
+  sel.innerHTML='<option value="">Seleccione...</option>';
+  for(var i=0;i<TASAS.length;i++){
+   var t=TASAS[i];
+   if(t.Estado==="Activo"){
+    var opt=document.createElement("option");
+    opt.value=t.CodTasa||"";
+    opt.textContent=(t.CodTasa||"")+" - "+(t.DesTasa||"");
+    sel.appendChild(opt);
+   }
+  }
+ }
+});
+}
+
+function getNextOrden(){
+if(!ROWS||ROWS.length===0)return 1;
+var max=0;
+for(var i=0;i<ROWS.length;i++){
+ var o=parseInt(ROWS[i].OrdenCategoria)||0;
+ if(o>max)max=o;
+}
+return max+1;
+}
+
 function apiPost(d){return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.text();}).then(function(t){try{return JSON.parse(t);}catch(e){throw new Error("Respuesta no es JSON: "+t.substring(0,200));}})}
 
-function normalize(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
+function normalize(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
 
 function openMenu(){document.getElementById("menuPanel").className="open";document.getElementById("menuOverlay").className="show"}
 function closeMenu(){document.getElementById("menuPanel").className="";document.getElementById("menuOverlay").className=""}
+
+function logout(){localStorage.removeItem("fb_token");sessionStorage.clear();location.href="admin.html"}
 
 function init(){
 if(!TOKEN){location.href="admin.html";return}
@@ -241,7 +320,7 @@ showLoad();
 apiPost({action:"validateToken",token:TOKEN})
 .then(function(r){
  if(!r.success){sessionStorage.removeItem("fb_token");localStorage.removeItem("fb_token");location.href="admin.html";return}
- loadData();
+ return loadTasas().then(function(){loadData();});
 })
 .catch(function(e){hideLoad();toast("Error de red",false)});
 }
@@ -272,7 +351,7 @@ if(filtered.length===0){
 }
 var wrap=document.createElement("div");wrap.className="tableWrap";
 var header=document.createElement("div");header.className="tableHeader";
-header.innerHTML='<div class="th">Codigo</div><div class="th">Descripcion</div><div class="th">Orden</div><div class="th">Estado</div>';
+header.innerHTML='<div class="th thCheck">&#128203;</div><div class="th">Codigo</div><div class="th">Descripcion</div><div class="th">Orden</div><div class="th">Estado</div>';
 wrap.appendChild(header);
 for(var i=0;i<filtered.length;i++){
 var r=filtered[i];
@@ -317,17 +396,8 @@ function updateActionButtons(){
 var btnAdd=document.getElementById("btnAdd");
 var btnEdit=document.getElementById("btnEdit");
 var btnDel=document.getElementById("btnDel");
-if(SHOW_INACTIVOS){
- btnAdd.disabled=true;
-}else{
- btnAdd.disabled=false;
-}
-if(SEL){
- btnEdit.disabled=false;
- btnDel.disabled=SEL.Estado==="Inactivo";
-}else{
- btnEdit.disabled=true;btnDel.disabled=true;
-}
+if(SHOW_INACTIVOS){btnAdd.disabled=true;}else{btnAdd.disabled=false;}
+if(SEL){btnEdit.disabled=false;btnDel.disabled=SEL.Estado==="Inactivo";}else{btnEdit.disabled=true;btnDel.disabled=true;}
 }
 
 function openAddModal(){
@@ -336,11 +406,10 @@ document.getElementById("modalTitle").textContent="Nueva Categoria";
 document.getElementById("fCod").value="Auto";
 document.getElementById("fDesc").value="";
 document.getElementById("fDet").value="";
-document.getElementById("fOrd").value="0";
+document.getElementById("fOrd").value=getNextOrden();
 document.getElementById("fTasa").value="";
 document.getElementById("fToggle").className="modalToggle on";
 document.getElementById("fToggleTxt").textContent="Activo";
-
 document.getElementById("modalOverlay").className="show";
 closeMenu();
 }
@@ -364,7 +433,6 @@ ft.className="modalToggle";
 ft.onclick=toggleFormState;
 document.getElementById("fToggleTxt").textContent="Inactivo (puede activar)";
 }
-
 document.getElementById("modalOverlay").className="show";
 closeMenu();
 }
@@ -417,7 +485,7 @@ apiPost({action:"adminData",method:"DELETE",sheetName:"Categorias",token:TOKEN,d
 
 function doToggle(e,i){
 e.stopPropagation();
-var filtered=filterRows();
+var filtered=getVisibleRows();
 var r=filtered[i];
 var nst=r.Estado==="Activo"?"Inactivo":"Activo";
 showLoad();
@@ -430,10 +498,7 @@ apiPost({action:"adminData",method:"PUT",sheetName:"Categorias",token:TOKEN,data
 .catch(function(e){hideLoad();toast("Error de red",false);});
 }
 
-
-
 function save(){
-
 var d={
 DesCategoria:document.getElementById("fDesc").value.trim(),
 DetalleCategoria:document.getElementById("fDet").value.trim(),
@@ -442,6 +507,7 @@ CodTasa:document.getElementById("fTasa").value.trim(),
 Estado:FORM_STATE?"Activo":"Inactivo"
 };
 if(!d.DesCategoria){toast("Descripcion requerida",false);return;}
+if(!d.CodTasa){toast("Seleccione una tasa",false);return;}
 showLoad();
 if(MODAL_MODE==="edit"&&SEL){
 d.CodCategoria=SEL.CodCategoria;
@@ -466,12 +532,7 @@ apiPost({action:"adminData",method:"POST",sheetName:"Categorias",token:TOKEN,dat
 function toggleViewInactivos(){
 SHOW_INACTIVOS=!SHOW_INACTIVOS;
 var t=document.getElementById("menuToggle");
-var txt=document.getElementById("menuToggleTxt");
-if(SHOW_INACTIVOS){
- t.className="modalToggle on";
-}else{
- t.className="modalToggle";
-}
+if(SHOW_INACTIVOS){t.className="modalToggle on";}else{t.className="modalToggle";}
 closeMenu();
 SEL=null;
 render();
@@ -489,23 +550,13 @@ init();
 </script>
 
 <!--
-FastBurguer Admin v9.10
+FastBurguer Admin v9.12
 Modulo: categorias.html
-Version: 9.10
-Fecha: 2026-05-31
+Version: 9.12
+Fecha: 2026-06-01
 Asistencia: Generado con IA
 Proyecto: Ing. Jesus Linares
 Contacto: 0412-0639340
 -->
-<div id="confirmOverlay" onclick="closeConfirm(event)">
-<div class="confirmCard" onclick="event.stopPropagation()">
-<div class="confirmTitle">&#9888; Confirmar eliminacion</div>
-<div class="confirmMsg" id="confirmMsg">Desea eliminar este registro?</div>
-<div class="confirmBtns">
-<button class="btnConfirmCan" onclick="closeConfirm()">Cancelar</button>
-<button class="btnConfirmDel" onclick="confirmDel()">Eliminar</button>
-</div>
-</div>
-</div>
 </body>
 </html>
