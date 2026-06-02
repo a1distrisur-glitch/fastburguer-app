@@ -2,249 +2,257 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>FastBurguer - Admin</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>FastBurguer - Admin Dashboard</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 .hidden{display:none!important}
-
-#load{position:fixed;inset:0;background:rgba(10,10,10,0.9);display:none;justify-content:center;align-items:center;z-index:9999;flex-direction:column;gap:12px}
+#load{position:fixed;inset:0;background:rgba(10,10,10,0.95);display:none;justify-content:center;align-items:center;z-index:9999;flex-direction:column;gap:12px}
 #load.show{display:flex}
-.spin{width:36px;height:36px;border:3px solid rgba(255,255,255,0.1);border-top-color:#f7931e;border-radius:50%;animation:spin 1s linear infinite}
+.spin{width:40px;height:40px;border:3px solid rgba(255,255,255,0.08);border-top-color:#f7931e;border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-#toast{position:fixed;top:16px;right:16px;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;display:none;backdrop-filter:blur(10px)}
+#toast{position:fixed;top:16px;right:16px;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:600;z-index:9999;display:none;backdrop-filter:blur(10px);max-width:300px}
 #toast.ok{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#22c55e}
 #toast.err{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444}
-
-#menuOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:998;opacity:0;transition:opacity 0.3s;pointer-events:none}
+#menuOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:998;opacity:0;transition:opacity 0.3s;pointer-events:none;backdrop-filter:blur(4px)}
 #menuOverlay.show{opacity:1;pointer-events:auto}
-
-#menuPanel{position:fixed;left:0;top:0;width:260px;height:100vh;background:#111;z-index:999;border-right:1px solid rgba(255,107,53,0.3);transform:translateX(-100%);transition:transform 0.3s ease;padding:20px 0 80px;overflow-y:auto}
+#menuPanel{position:fixed;left:0;top:0;width:280px;height:100vh;background:linear-gradient(180deg,#111 0%,#0a0a0a 100%);z-index:999;border-right:1px solid rgba(255,107,53,0.25);transform:translateX(-100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);padding:20px 0 100px;overflow-y:auto}
 #menuPanel.open{transform:translateX(0)}
-
-.menuHeader{padding:0 20px 16px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.menuTitle{font-size:18px;font-weight:900;background:linear-gradient(135deg,#ff6b35,#f7931e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px}
-.menuCloseBtn{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.2s;background:transparent;border:none;color:#f7931e}
-.menuCloseBtn:hover{background:rgba(255,107,53,0.1);color:#ff6b35}
-.menuCloseBtn:active{transform:scale(0.93)}
-
-.menuItem{padding:13px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:0.2s;border-radius:0}
+.menuHeader{padding:0 20px 18px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.menuTitle{font-size:20px;font-weight:900;background:linear-gradient(135deg,#ff6b35,#f7931e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px}
+.menuCloseBtn{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.2s;background:rgba(255,255,255,0.05);border:none;color:#f7931e}
+.menuCloseBtn:hover{background:rgba(255,107,53,0.15);color:#ff6b35}
+.menuSubtitle{font-size:11px;color:#22c55e;font-weight:600;margin-top:3px;letter-spacing:0.5px}
+.menuSection{padding:6px 0}
+.menuSectionTitle{padding:8px 20px;font-size:10px;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:1.2px;display:flex;align-items:center;gap:8px}
+.menuSectionTitle::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.06)}
+.menuItem{padding:11px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:0.2s;border-radius:0;position:relative}
 .menuItem:hover{background:rgba(255,255,255,0.03)}
 .menuItem:hover .mIcon{color:#ff6b35}
 .menuItem:hover .mLabel{color:#fff}
+.menuItem.active{background:rgba(255,107,53,0.08)}
+.menuItem.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#ff6b35}
 .mIcon{width:20px;height:20px;color:#6b7280;transition:0.2s;flex-shrink:0}
 .mLabel{font-size:14px;font-weight:500;color:#d1d5db;transition:0.2s}
-
-.menuFooter{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.05);margin-top:8px}
+.menuBadge{margin-left:auto;font-size:10px;font-weight:700;color:#ff6b35;background:rgba(255,107,53,0.12);padding:2px 8px;border-radius:20px}
+.menuFooter{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.06);margin-top:8px}
 .btnLogout{width:100%;padding:13px 20px;background:transparent;border:none;color:#ef4444;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;gap:12px;transition:0.2s}
 .btnLogout:hover{background:rgba(239,68,68,0.08)}
 .btnLogout:hover .mIcon{color:#ef4444}
 .btnLogout .mIcon{color:#ef4444;width:20px;height:20px;flex-shrink:0}
-
 .submenu{padding-left:52px;background:rgba(255,255,255,0.02);max-height:0;overflow:hidden;transition:max-height 0.3s ease}
-.submenu.open{max-height:300px}
-.submenuItem{padding:10px 20px;font-size:13px;color:#9ca3af;cursor:pointer;transition:0.2s;display:flex;align-items:center;gap:8px;border-radius:0}
+.submenu.open{max-height:200px}
+.submenuItem{padding:9px 20px;font-size:13px;color:#9ca3af;cursor:pointer;transition:0.2s;display:flex;align-items:center;gap:8px;border-radius:0}
 .submenuItem:hover{color:#ff6b35;background:rgba(255,107,53,0.04)}
 .submenuItem::before{content:"";width:4px;height:4px;border-radius:50%;background:#6b7280;margin-right:4px;transition:0.2s}
 .submenuItem:hover::before{background:#ff6b35}
 .hasSubmenu{justify-content:space-between!important}
 .submenuArrow{width:16px;height:16px;transition:0.3s;color:#6b7280;flex-shrink:0}
 .submenuArrow.open{transform:rotate(180deg);color:#ff6b35}
-
 #loginScreen{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px;position:relative}
-#loginScreen::before{content:'';position:absolute;top:0;left:0;right:0;height:250px;background:linear-gradient(180deg,rgba(255,107,53,0.06),transparent);pointer-events:none}
-.loginCard{width:100%;max-width:340px;background:rgba(17,17,17,0.9);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:28px;position:relative;z-index:1;backdrop-filter:blur(12px)}
-.loginLogo{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#ff6b35,#f7931e);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px;box-shadow:0 16px 32px rgba(255,107,53,0.25)}
-.loginTitle{text-align:center;font-size:26px;font-weight:800;margin-bottom:2px;background:linear-gradient(135deg,#ff6b35,#f7931e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.loginSub{text-align:center;color:#6b7280;font-size:13px;margin-bottom:24px}
+#loginScreen::before{content:'';position:absolute;top:0;left:0;right:0;height:300px;background:linear-gradient(180deg,rgba(255,107,53,0.08),transparent);pointer-events:none}
+.loginCard{width:100%;max-width:360px;background:rgba(17,17,17,0.95);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:32px;position:relative;z-index:1;backdrop-filter:blur(16px);box-shadow:0 24px 48px rgba(0,0,0,0.4)}
+.loginLogo{width:80px;height:80px;border-radius:22px;background:linear-gradient(135deg,#ff6b35,#f7931e);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px;box-shadow:0 16px 40px rgba(255,107,53,0.3);animation:logoIn 0.6s ease}
+@keyframes logoIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}
+.loginTitle{text-align:center;font-size:28px;font-weight:800;margin-bottom:4px;background:linear-gradient(135deg,#ff6b35,#f7931e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.loginSub{text-align:center;color:#6b7280;font-size:14px;margin-bottom:28px}
 .fieldLabel{font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
-.fieldInput{width:100%;background:rgba(26,26,26,0.8);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:12px;padding:13px 14px;font-size:15px;outline:none;transition:0.3s}
-.fieldInput:focus{border-color:#ff6b35;box-shadow:0 0 0 3px rgba(255,107,53,0.12)}
+.fieldInput{width:100%;background:rgba(26,26,26,0.8);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:14px;padding:14px 16px;font-size:15px;outline:none;transition:0.3s}
+.fieldInput:focus{border-color:#ff6b35;box-shadow:0 0 0 4px rgba(255,107,53,0.1)}
 .fieldInput::placeholder{color:#4b5563}
-.loginError{color:#ef4444;font-size:13px;margin:10px 0;min-height:18px}
-.btnLogin{width:100%;padding:13px;background:linear-gradient(135deg,#ff6b35,#f7931e);border:none;color:#fff;border-radius:14px;cursor:pointer;font-size:15px;font-weight:700;transition:0.3s;display:flex;align-items:center;justify-content:center;gap:8px}
+.loginError{color:#ef4444;font-size:13px;margin:12px 0;min-height:18px;text-align:center}
+.btnLogin{width:100%;padding:14px;background:linear-gradient(135deg,#ff6b35,#f7931e);border:none;color:#fff;border-radius:14px;cursor:pointer;font-size:15px;font-weight:700;transition:0.3s;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 24px rgba(255,107,53,0.25)}
+.btnLogin:hover{transform:translateY(-1px);box-shadow:0 12px 32px rgba(255,107,53,0.35)}
 .btnLogin:active{transform:scale(0.97)}
-.btnBack{width:100%;padding:11px;margin-top:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#9ca3af;border-radius:14px;cursor:pointer;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:8px;transition:0.2s}
-.btnBack:hover{background:rgba(255,255,255,0.08)}
-.version{text-align:center;color:#374151;font-size:11px;margin-top:20px}
-
+.btnBack{width:100%;padding:12px;margin-top:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#9ca3af;border-radius:14px;cursor:pointer;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:8px;transition:0.2s}
+.btnBack:hover{background:rgba(255,255,255,0.08);color:#fff}
+.version{text-align:center;color:#374151;font-size:11px;margin-top:24px}
 #mainScreen{display:none}
-.header{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(10,10,10,0.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:100}
-.hBtn{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.2s;background:rgba(255,255,255,0.05);border:none;color:#fff}
+.header{position:fixed;top:0;left:0;right:0;height:56px;background:rgba(10,10,10,0.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:100}
+.hBtn{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.2s;background:rgba(255,255,255,0.05);border:none;color:#fff}
 .hBtn:active{transform:scale(0.93);background:rgba(255,107,53,0.15)}
-.hTitle{font-size:15px;font-weight:700;color:#f7931e}
-.hRegresar{background:#ef4444!important;color:#fff!important;padding:0 14px!important;width:auto!important;font-size:13px;font-weight:600}
-.content{padding:70px 16px 20px;min-height:100vh}
-.welcome{text-align:center;padding:50px 20px;color:#6b7280}
-.welcomeIcon{font-size:44px;margin-bottom:14px;opacity:0.6}
-.welcomeTitle{font-size:17px;font-weight:700;color:#fff;margin-bottom:6px}
+.hTitle{font-size:16px;font-weight:700;color:#f7931e}
+.content{padding:70px 14px 90px;min-height:100vh}
+.kpiGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.kpiCard{background:linear-gradient(135deg,rgba(255,107,53,0.08),rgba(247,147,30,0.04));border:1px solid rgba(255,107,53,0.15);border-radius:16px;padding:16px 12px;text-align:center;backdrop-filter:blur(10px);position:relative;overflow:hidden;animation:kpiIn 0.5s ease both}
+.kpiCard:nth-child(1){animation-delay:0.1s}
+.kpiCard:nth-child(2){animation-delay:0.2s}
+.kpiCard:nth-child(3){animation-delay:0.3s}
+@keyframes kpiIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.kpiCard::before{content:'';position:absolute;top:-50%;right:-50%;width:100%;height:100%;background:radial-gradient(circle,rgba(255,107,53,0.1),transparent 70%);pointer-events:none}
+.kpiIcon{font-size:24px;margin-bottom:8px;display:block}
+.kpiValue{font-size:22px;font-weight:800;color:#fff;line-height:1}
+.kpiLabel{font-size:11px;color:#9ca3af;margin-top:4px;font-weight:500}
+.kpiChange{font-size:10px;color:#22c55e;margin-top:2px;font-weight:600}
+.sectionCard{background:rgba(17,17,17,0.8);border:1px solid rgba(255,255,255,0.06);border-radius:16px;margin-bottom:14px;overflow:hidden;backdrop-filter:blur(10px);animation:cardIn 0.5s ease both}
+.sectionCard:nth-child(2){animation-delay:0.15s}
+.sectionCard:nth-child(3){animation-delay:0.25s}
+@keyframes cardIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.sectionHeader{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.04)}
+.sectionTitle{font-size:14px;font-weight:700;color:#f7931e;display:flex;align-items:center;gap:8px}
+.sectionAction{font-size:12px;color:#ff6b35;font-weight:600;cursor:pointer;padding:4px 10px;border-radius:8px;background:rgba(255,107,53,0.08);transition:0.2s}
+.sectionAction:hover{background:rgba(255,107,53,0.15)}
+.orderList{padding:4px 0}
+.orderItem{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:0.2s}
+.orderItem:last-child{border-bottom:none}
+.orderItem:hover{background:rgba(255,107,53,0.03)}
+.orderStatus{width:3px;height:36px;border-radius:3px;margin-right:12px;flex-shrink:0}
+.orderStatus.pendiente{background:#f7931e}
+.orderStatus.proceso{background:#3b82f6}
+.orderStatus.listo{background:#22c55e}
+.orderInfo{flex:1;min-width:0}
+.orderId{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.orderClient{font-size:12px;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.orderRight{text-align:right;flex-shrink:0;margin-left:8px}
+.orderTotal{font-size:14px;font-weight:700;color:#f7931e}
+.orderTime{font-size:11px;color:#6b7280;margin-top:2px}
+.storeStatus{display:flex;align-items:center;gap:12px;padding:14px 16px}
+.storeToggleWrap{flex:1}
+.storeToggle{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(255,255,255,0.03);border-radius:12px;border:1px solid rgba(255,255,255,0.06)}
+.storeToggleLabel{font-size:13px;font-weight:600;color:#fff}
+.storeToggleLabel span{color:#9ca3af;font-weight:500;font-size:12px}
+.toggleSwitch{width:48px;height:26px;background:#ef4444;border-radius:13px;position:relative;cursor:pointer;transition:0.3s;flex-shrink:0}
+.toggleSwitch.on{background:#22c55e}
+.toggleSwitch::after{content:'';position:absolute;width:22px;height:22px;background:#fff;border-radius:50%;top:2px;left:2px;transition:0.3s;box-shadow:0 2px 6px rgba(0,0,0,0.3)}
+.toggleSwitch.on::after{left:24px}
+.storeHours{font-size:12px;color:#9ca3af;padding:0 16px 14px}
+.quickGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.quickBtn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:14px;cursor:pointer;transition:0.2s}
+.quickBtn:hover{background:rgba(255,107,53,0.08);border-color:rgba(255,107,53,0.2);transform:translateY(-2px)}
+.quickBtn:active{transform:scale(0.95)}
+.quickIcon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(255,107,53,0.1);color:#f7931e}
+.quickLabel{font-size:11px;color:#9ca3af;font-weight:500}
+.bottomNav{position:fixed;bottom:0;left:0;right:0;height:64px;background:rgba(10,10,10,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-around;align-items:center;z-index:96;padding-bottom:env(safe-area-inset-bottom,0)}
+.bottomItem{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 12px;cursor:pointer;transition:0.2s;border:none;background:transparent;color:#6b7280}
+.bottomItem.active{color:#f7931e}
+.bottomItem.active .bottomIcon{color:#f7931e}
+.bottomIcon{width:22px;height:22px;transition:0.2s}
+.bottomLabel{font-size:10px;font-weight:600}
+.bottomAdd{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#ff6b35,#f7931e);display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(255,107,53,0.4);transform:translateY(-12px);transition:0.2s}
+.bottomAdd:active{transform:translateY(-12px) scale(0.9)}
+.emptyDash{text-align:center;padding:30px 20px;color:#6b7280}
+.emptyDashIcon{font-size:36px;margin-bottom:8px;opacity:0.5}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,107,53,0.3);border-radius:4px}
+@media(min-width:768px){
+ .kpiGrid{grid-template-columns:repeat(3,1fr);max-width:600px;margin-left:auto;margin-right:auto}
+ .content{max-width:800px;margin:0 auto}
+ .bottomNav{display:none}
+ .content{padding-bottom:20px}
+}
 </style>
 </head>
 <body>
-
 <div id="load"><div class="spin"></div><div style="color:#9ca3af;font-size:13px">Cargando...</div></div>
 <div id="toast"></div>
-
 <div id="menuOverlay" onclick="closeMenu()"></div>
-
 <div id="menuPanel">
-<div class="menuHeader">
-<div class="menuTitle">FastBurger</div>
-<button class="menuCloseBtn" onclick="closeMenu()">
-<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
-</button>
+<div class="menuHeader"><div><div class="menuTitle">FastBurger</div><div class="menuSubtitle">Panel Administrativo</div></div><button class="menuCloseBtn" onclick="closeMenu()"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg></button></div>
+<div class="menuSection"><div class="menuSectionTitle">&#128202; Operaciones</div>
+<div class="menuItem" onclick="comingSoon('Pedidos')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg><span class="mLabel">Pedidos</span><span class="menuBadge" id="menuBadgePedidos">0</span></div>
+<div class="menuItem" onclick="comingSoon('Delivery')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg><span class="mLabel">Delivery</span></div>
+<div class="menuItem" onclick="comingSoon('Pagos')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg><span class="mLabel">Pagos / Caja</span></div>
+<div class="menuItem" onclick="comingSoon('Propinas')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg><span class="mLabel">Propinas</span></div>
 </div>
-
-<div style="padding:8px 0">
-<div class="menuItem" onclick="goTo('tasas')">
-<svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-<span class="mLabel">Tasas de Cambio</span>
+<div class="menuSection"><div class="menuSectionTitle">&#128230; Catalogo</div>
+<div class="menuItem" onclick="goTo('tasas')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="mLabel">Tasas de Cambio</span></div>
+<div class="menuItem hasSubmenu" onclick="toggleSubmenu(this)"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg><span class="mLabel">Productos Menu</span><svg class="submenuArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div>
+<div class="submenu" id="submenuProductos"><div class="submenuItem" onclick="goTo('categorias')">Categorias</div><div class="submenuItem" onclick="goTo('productos')">Productos</div></div>
 </div>
-
-<div class="menuItem hasSubmenu" onclick="toggleSubmenu(this)">
-<svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-<span class="mLabel">Productos Menu</span>
-<svg class="submenuArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+<div class="menuSection"><div class="menuSectionTitle">&#9881; Configuracion</div>
+<div class="menuItem hasSubmenu" onclick="toggleSubmenu(this)"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg><span class="mLabel">Negocio</span><svg class="submenuArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div>
+<div class="submenu" id="submenuNegocio"><div class="submenuItem" onclick="goTo('negocio')">Configuracion</div><div class="submenuItem" onclick="goTo('pagos')">Formas de Pago</div><div class="submenuItem" onclick="goTo('clientes')">Clientes</div><div class="submenuItem" onclick="goTo('mesas')">Mesas</div><div class="submenuItem" onclick="goTo('usuarios')">Usuarios</div></div>
+<div class="menuItem hasSubmenu" onclick="toggleSubmenu(this)"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"/></svg><span class="mLabel">Servicios</span><svg class="submenuArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div>
+<div class="submenu" id="submenuServicios"><div class="submenuItem" onclick="goTo('servicios')">Servidores</div><div class="submenuItem" onclick="goTo('zonas')">Zonas Delivery</div></div>
 </div>
-<div class="submenu" id="submenuProductos">
-<div class="submenuItem" onclick="goTo('categorias')">Categorias</div>
-<div class="submenuItem" onclick="goTo('productos')">Productos</div>
+<div class="menuSection"><div class="menuSectionTitle">&#128200; Informes</div>
+<div class="menuItem" onclick="comingSoon('Ventas')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg><span class="mLabel">Ventas</span></div>
+<div class="menuItem" onclick="comingSoon('Historico')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="mLabel">Historico Tasas</span></div>
+<div class="menuItem" onclick="comingSoon('Cierre')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg><span class="mLabel">Cierre de Caja</span></div>
 </div>
-
-<div class="menuItem hasSubmenu" onclick="toggleSubmenu(this)">
-<svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-<span class="mLabel">Negocio</span>
-<svg class="submenuArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+<div class="menuFooter"><button class="btnLogout" onclick="logout()"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg><span class="mLabel">Cerrar Sesion</span></button></div>
 </div>
-<div class="submenu" id="submenuNegocio">
-<div class="submenuItem" onclick="goTo('negocio')">Configuracion</div>
-<div class="submenuItem" onclick="goTo('pagos')">Formas de Pago</div>
-<div class="submenuItem" onclick="goTo('clientes')">Clientes</div>
-<div class="submenuItem" onclick="goTo('mesas')">Mesas</div>
-<div class="submenuItem" onclick="goTo('usuarios')">Usuarios</div>
-</div>
-
-<div class="menuItem hasSubmenu" onclick="toggleSubmenu(this)">
-<svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-<span class="mLabel">Servicios</span>
-<svg class="submenuArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-</div>
-<div class="submenu" id="submenuServicios">
-<div class="submenuItem" onclick="goTo('servicios')">Servidores</div>
-<div class="submenuItem" onclick="goTo('zonas')">Zonas Delivery</div>
-</div>
-</div>
-
-<div class="menuFooter">
-<button class="btnLogout" onclick="logout()">
-<svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-<span class="mLabel">Cerrar Sesion</span>
-</button>
-</div>
-</div>
-
 <div id="loginScreen">
 <div class="loginCard">
 <div class="loginLogo">&#127828;</div>
 <div class="loginTitle">FastBurguer</div>
 <div class="loginSub">Panel de Control</div>
-
 <div class="fieldLabel">Usuario</div>
 <input type="text" id="loginUser" class="fieldInput" placeholder="Nombre de usuario" autocomplete="off">
-
-<div style="margin-top:16px">
-<div class="fieldLabel">Contrasena</div>
-<input type="password" id="loginPass" class="fieldInput" placeholder="******" autocomplete="off">
-</div>
-
+<div style="margin-top:16px"><div class="fieldLabel">Contrasena</div><input type="password" id="loginPass" class="fieldInput" placeholder="******" autocomplete="off"></div>
 <div id="loginError" class="loginError"></div>
-
-<button id="loginBtn" class="btnLogin" onclick="doLogin()">
-<span id="btnText">Ingresar</span>
-</button>
-
-<button class="btnBack" onclick="location.href='index.html'">
-<svg style="width:16px;height:16px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-Volver al menu
-</button>
+<button id="loginBtn" class="btnLogin" onclick="doLogin()"><span id="btnText">Ingresar</span></button>
+<button class="btnBack" onclick="location.href='index.html'"><svg style="width:16px;height:16px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>Volver al menu</button>
 </div>
-<div class="version">FastBurguer Admin v9.10</div>
+<div class="version">FastBurguer Admin v10.1</div>
 </div>
-
 <div id="mainScreen">
 <div class="header">
-<button class="hBtn" onclick="openMenu()">
-<svg style="width:20px;height:20px;color:#f7931e" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-</button>
-<div class="hTitle">Panel</div>
-<button class="hBtn hRegresar" onclick="location.href='index.html'">Regresar</button>
+<button class="hBtn" onclick="openMenu()"><svg style="width:20px;height:20px;color:#f7931e" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+<div class="hTitle">Dashboard</div>
+<button class="hBtn" onclick="refreshDashboard()" style="position:relative"><svg style="width:20px;height:20px;color:#f7931e" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg></button>
 </div>
-
 <div class="content">
-<div class="welcome">
-<div class="welcomeIcon">&#128202;</div>
-<div class="welcomeTitle">Bienvenido</div>
-<div>Seleccione una opcion del menu &#9776;</div>
+<div class="kpiGrid">
+<div class="kpiCard"><span class="kpiIcon">&#128722;</span><div class="kpiValue" id="kpiPedidos">0</div><div class="kpiLabel">Pedidos Hoy</div><div class="kpiChange">&#9650; activos</div></div>
+<div class="kpiCard"><span class="kpiIcon">&#128176;</span><div class="kpiValue" id="kpiVentas">$0</div><div class="kpiLabel">Ventas Hoy</div><div class="kpiChange">en tiempo real</div></div>
+<div class="kpiCard"><span class="kpiIcon">&#128101;</span><div class="kpiValue" id="kpiClientes">0</div><div class="kpiLabel">Clientes Hoy</div><div class="kpiChange">&#11088; unicos</div></div>
+</div>
+<div class="quickGrid">
+<div class="quickBtn" onclick="comingSoon('Nuevo Pedido')"><div class="quickIcon">&#10133;</div><div class="quickLabel">Nuevo</div></div>
+<div class="quickBtn" onclick="goTo('productos')"><div class="quickIcon">&#127828;</div><div class="quickLabel">Productos</div></div>
+<div class="quickBtn" onclick="goTo('tasas')"><div class="quickIcon">&#128178;</div><div class="quickLabel">Tasas</div></div>
+<div class="quickBtn" onclick="goTo('clientes')"><div class="quickIcon">&#128100;</div><div class="quickLabel">Clientes</div></div>
+</div>
+<div class="sectionCard">
+<div class="sectionHeader"><div class="sectionTitle">&#127978; Estado Tienda</div></div>
+<div class="storeStatus"><div class="storeToggleWrap" style="flex:1"><div class="storeToggle" onclick="toggleStoreStatus()"><div class="storeToggleLabel">Tienda <span id="storeStatusText">Cargando...</span></div><div class="toggleSwitch" id="storeToggleSwitch"><div style="position:absolute;width:22px;height:22px;background:#fff;border-radius:50%;top:2px;left:2px;transition:0.3s;box-shadow:0 2px 6px rgba(0,0,0,0.3)" id="storeToggleKnob"></div></div></div></div></div>
+<div class="storeHours" id="storeHours">Horario: --:-- - --:--</div>
+</div>
+<div class="sectionCard">
+<div class="sectionHeader"><div class="sectionTitle">&#9889; Pedidos Pendientes</div><div class="sectionAction" onclick="comingSoon('Ver todos')">Ver todos</div></div>
+<div class="orderList" id="orderList"><div class="emptyDash"><div class="emptyDashIcon">&#128230;</div><div>No hay pedidos pendientes</div></div></div>
 </div>
 </div>
+<div class="bottomNav">
+<button class="bottomItem active" onclick="showDashboard()"><svg class="bottomIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg><span class="bottomLabel">Inicio</span></button>
+<button class="bottomItem" onclick="comingSoon('Pedidos')"><svg class="bottomIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg><span class="bottomLabel">Pedidos</span></button>
+<button class="bottomAdd" onclick="comingSoon('Nuevo Pedido')">+</button>
+<button class="bottomItem" onclick="comingSoon('Estadisticas')"><svg class="bottomIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg><span class="bottomLabel">Stats</span></button>
+<button class="bottomItem" onclick="openMenu()"><svg class="bottomIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg><span class="bottomLabel">Config</span></button>
 </div>
-
+</div>
 <script>
 var API="https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9FoXBkMYwPD4xkK1llpxakpExC6DspQvnOI6Vmw/exec";
 var TOKEN="";
-
+var CONFIG={};
+var PEDIDOS=[];
 function showLoad(){document.getElementById("load").className="show"}
 function hideLoad(){document.getElementById("load").className=""}
 function toast(m,ok){var t=document.getElementById("toast");t.textContent=m;t.className=ok?"ok":"err";t.style.display="block";setTimeout(function(){t.style.display="none"},3000)}
-
 function xorBase64(s){var k="FB2025Secret",r="";for(var i=0;i<s.length;i++){r+=String.fromCharCode(s.charCodeAt(i)^k.charCodeAt(i%k.length))}return btoa(r)}
-
 function apiPost(d){return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)}).then(function(r){return r.json()})}
-
+function apiGet(action,params){var url=API+"?action="+action+"&_cb="+Date.now();if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);return fetch(url).then(function(r){return r.json()})}
 function openMenu(){document.getElementById("menuPanel").className="open";document.getElementById("menuOverlay").className="show"}
 function closeMenu(){document.getElementById("menuPanel").className="";document.getElementById("menuOverlay").className=""}
-
-function toggleSubmenu(el){
-var arrow=el.querySelector(".submenuArrow");
-var subId=el.nextElementSibling.id;
-var sub=document.getElementById(subId);
-if(sub.className==="submenu open"){sub.className="submenu";arrow.className="submenuArrow";}
-else{sub.className="submenu open";arrow.className="submenuArrow open";}
-}
-
-function goTo(page){
-  var t=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";
-  if(t){
-    var url=page+".html?t="+encodeURIComponent(t);
-    window.location.href=url;
-  }else{
-    toast("Inicie sesion primero",false);
-  }
-}
-
+function toggleSubmenu(el){var arrow=el.querySelector(".submenuArrow");var subId=el.nextElementSibling.id;var sub=document.getElementById(subId);if(sub.className==="submenu open"){sub.className="submenu";arrow.className="submenuArrow";}else{sub.className="submenu open";arrow.className="submenuArrow open";}}
+function goTo(page){var t=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";if(t){window.location.href=page+".html?t="+encodeURIComponent(t);}else{toast("Inicie sesion primero",false);}}
+function comingSoon(modulo){toast(modulo+" - Fase 3",false);closeMenu();}
 function logout(){localStorage.removeItem("fb_token");sessionStorage.clear();location.reload()}
-
-function doLogin(){var u=document.getElementById("loginUser").value.trim();var p=document.getElementById("loginPass").value;var err=document.getElementById("loginError");var btn=document.getElementById("btnText");err.textContent="";if(!u||!p){err.textContent="Complete todos los campos";return}btn.innerHTML='<div class="spin" style="width:18px;height:18px;border-width:2px"></div>';apiPost({action:"login",usuario:u,clave:xorBase64(p)}).then(function(r){if(r.success&&r.token){localStorage.setItem("fb_token",r.token);sessionStorage.setItem("fb_token",r.token);showMain()}else{err.textContent=r.error||"Credenciales invalidas";btn.textContent="Ingresar"}}).catch(function(e){err.textContent="Error de red. Intente de nuevo.";btn.textContent="Ingresar"})}
-
-function showMain(){document.getElementById("loginScreen").className="hidden";document.getElementById("mainScreen").style.display="block"}
-
-function init(){TOKEN=localStorage.getItem("fb_token");if(!TOKEN){document.getElementById("loginScreen").style.display="flex";return}showLoad();apiPost({action:"validateToken",token:TOKEN}).then(function(r){hideLoad();if(r.success){showMain()}else{localStorage.removeItem("fb_token");document.getElementById("loginScreen").style.display="flex";document.getElementById("loginError").textContent="Sesion expirada"}}).catch(function(e){hideLoad();document.getElementById("loginScreen").style.display="flex";document.getElementById("loginError").textContent="Error de red. Intente de nuevo."})}
-
+function doLogin(){var u=document.getElementById("loginUser").value.trim();var p=document.getElementById("loginPass").value;var err=document.getElementById("loginError");var btn=document.getElementById("btnText");err.textContent="";if(!u||!p){err.textContent="Complete todos los campos";return}btn.innerHTML='<div class="spin" style="width:18px;height:18px;border-width:2px"></div>';apiPost({action:"login",usuario:u,clave:xorBase64(p)}).then(function(r){if(r.success&&r.token){localStorage.setItem("fb_token",r.token);sessionStorage.setItem("fb_token",r.token);showMain()}else{err.textContent=r.error||"Credenciales invalidas";btn.textContent="Ingresar"}}).catch(function(e){err.textContent="Error de red. Intente de nuevo.";btn.textContent="Ingresar"});}
+function showMain(){var ls=document.getElementById("loginScreen");ls.classList.remove("hidden");ls.style.display="none";document.getElementById("mainScreen").style.display="block";loadDashboard();}
+function showDashboard(){window.scrollTo({top:0,behavior:'smooth'});}
+function refreshDashboard(){showLoad();loadDashboard();}
+function loadDashboard(){showLoad();var token=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";var done=function(){hideLoad();};apiPost({action:"getConfigAdmin",token:token}).then(function(r){if(r.success&&r.config){CONFIG=r.config;renderStoreStatus();}}).catch(function(e){}).finally(done);apiGet("adminData",{sheetName:"RegistroPedidos",token:token}).then(function(r){if(r.success&&r.data){PEDIDOS=r.data||[];var hoy=new Date().toISOString().split('T')[0];var pedidosHoy=PEDIDOS.filter(function(p){return p.FechaPedido===hoy;});var pendientes=PEDIDOS.filter(function(p){return String(p.Estado).trim()==="Pendiente";});var totalVentas=pedidosHoy.reduce(function(s,p){return s+(parseFloat(p.TotalPedido)||0);},0);var clientesUnicos={};pedidosHoy.forEach(function(p){clientesUnicos[p.CodCliente||p.Cliente]=true;});document.getElementById("kpiPedidos").textContent=pedidosHoy.length;document.getElementById("kpiVentas").textContent="$"+totalVentas.toFixed(0);document.getElementById("kpiClientes").textContent=Object.keys(clientesUnicos).length;document.getElementById("menuBadgePedidos").textContent=pendientes.length;renderOrders(pendientes);}else{document.getElementById("kpiPedidos").textContent="0";document.getElementById("kpiVentas").textContent="$0";document.getElementById("kpiClientes").textContent="0";renderOrders([]);}}).catch(function(e){document.getElementById("kpiPedidos").textContent="0";document.getElementById("kpiVentas").textContent="$0";document.getElementById("kpiClientes").textContent="0";renderOrders([]);}).finally(done);}
+function renderStoreStatus(){var estado=CONFIG.EstadoTienda||"Cerrado";var abierto=estado==="Abierto";document.getElementById("storeStatusText").textContent=abierto?"Abierto":"Cerrado";document.getElementById("storeStatusText").style.color=abierto?"#22c55e":"#ef4444";var sw=document.getElementById("storeToggleSwitch");var knob=document.getElementById("storeToggleKnob");if(abierto){sw.className="toggleSwitch on";knob.style.left="24px";}else{sw.className="toggleSwitch";knob.style.left="2px";}document.getElementById("storeHours").textContent="Horario: "+(CONFIG.HorarioApertura||"--:--")+" - "+(CONFIG.HorarioCierre||"--:--");}
+function toggleStoreStatus(){if(!CONFIG.EstadoTienda){toast("No hay configuracion",false);return;}var nuevo=CONFIG.EstadoTienda==="Abierto"?"Cerrado":"Abierto";showLoad();var token=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";apiPost({action:"config",method:"PUT",token:token,estadoTienda:nuevo}).then(function(r){hideLoad();if(r.success){CONFIG.EstadoTienda=nuevo;renderStoreStatus();toast("Tienda "+nuevo,true);}else{toast(r.error||"Error",false);}}).catch(function(e){hideLoad();toast("Error de red",false);});}
+function renderOrders(orders){var list=document.getElementById("orderList");if(!orders||orders.length===0){list.innerHTML='<div class="emptyDash"><div class="emptyDashIcon">&#128230;</div><div>No hay pedidos pendientes</div></div>';return;}var html="";for(var i=0;i<Math.min(orders.length,5);i++){var o=orders[i];var st=String(o.Estado||"").trim().toLowerCase();var stClass=st==="pendiente"?"pendiente":st==="en proceso"?"proceso":"listo";html+='<div class="orderItem" onclick="comingSoon(\'Pedido '+o.NroPedido+'\')">';html+='<div class="orderStatus '+stClass+'"></div>';html+='<div class="orderInfo"><div class="orderId">'+(o.NroPedido||"")+'</div><div class="orderClient">'+(o.Cliente||"Cliente")+" - "+(o.TipoServicio||"")+'</div></div>';html+='<div class="orderRight"><div class="orderTotal">$'+(parseFloat(o.TotalPedido)||0)+'</div><div class="orderTime">'+((o.HoraPedido||"").substring(0,5))+'</div></div>';html+='</div>';}if(orders.length>5){html+='<div style="text-align:center;padding:10px;color:#6b7280;font-size:12px">+'+(orders.length-5)+' mas...</div>';}list.innerHTML=html;}
+function init(){var m=location.href.match(/[?&]t=([^&]+)/);if(m){var t=decodeURIComponent(m[1]);localStorage.setItem("fb_token",t);sessionStorage.setItem("fb_token",t);}TOKEN=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";var ls=document.getElementById("loginScreen");ls.classList.remove("hidden");if(!TOKEN){ls.style.display="flex";return;}showLoad();apiPost({action:"validateToken",token:TOKEN}).then(function(r){hideLoad();if(r.success){showMain();}else{localStorage.removeItem("fb_token");ls.style.display="flex";document.getElementById("loginError").textContent="Sesion expirada";}}).catch(function(e){hideLoad();ls.style.display="flex";document.getElementById("loginError").textContent="Error de red. Intente de nuevo.";});}
 document.getElementById("loginPass").addEventListener("keypress",function(e){if(e.key==="Enter")doLogin()});
-
 init();
 </script>
-
-<!--
-FastBurguer Admin v9.10
-Modulo: admin.html
-Version: 9.10
-Fecha: 2026-06-02
-Asistencia: Generado con IA
-Proyecto: Ing. Jesus Linares
-Contacto: 0412-0639340
--->
+<!--FastBurguer Admin v10.1 Modulo: admin.html Fecha: 2026-06-02 Asistencia: Generado con IA Proyecto: Ing. Jesus Linares Contacto: 0412-0639340-->
 </body>
 </html>
