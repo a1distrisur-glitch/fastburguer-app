@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>FastBurger - Checkout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+*{font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:#0a0a0a;color:#fff}
+.glass{background:rgba(255,255,255,0.05);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1)}
+.btn-primary{background:linear-gradient(135deg,#ff6b35 0%,#f7931e 100%)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(255,107,53,0.4)}
+.btn-success{background:linear-gradient(135deg,#22c55e 0%,#16a34a 100%)}
+.btn-success:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(34,197,94,0.4)}
+.step-active .step-num{background:linear-gradient(135deg,#ff6b35,#f7931e);border-color:transparent;color:#fff}
+.step-active .step-label{color:#ff6b35}
+.step-done .step-num{background:#22c55e;border-color:#22c55e;color:#fff}
+.step-done .step-label{color:#22c55e}
+.step-line-active{background:linear-gradient(90deg,#ff6b35,#f7931e)}
+.step-line-done{background:#22c55e}
+.fade-in{animation:fadeIn .4s cubic-bezier(.4,0,.2,1)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#ff6b35;box-shadow:0 0 0 3px rgba(255,107,53,0.15)}
+.svc-btn-active{border-color:#ff6b35 !important;background:rgba(255,107,53,0.1) !important;color:#ff6b35 !important}
+.pickup-info{background:rgba(255,107,53,0.05);border:1px solid rgba(255,107,53,0.2)}
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- HEADER -->
+<header class="fixed top-0 left-0 right-0 z-40 glass">
+  <div class="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
+    <button onclick="goBack()" class="p-2 hover:bg-white/5 rounded-xl transition text-gray-400 hover:text-white group">
+      <svg class="w-6 h-6 group-hover:-translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+    <h1 class="font-black text-lg tracking-tight">Finalizar Pedido</h1>
+    <div class="w-10"></div>
+  </div>
+
+  <!-- Steps Progress -->
+  <div class="max-w-lg mx-auto px-6 pb-4">
+    <div class="flex items-center justify-between">
+      <div class="flex flex-col items-center gap-1 step-active" id="stepInd1">
+        <div class="step-num w-8 h-8 rounded-full border-2 border-gray-600 flex items-center justify-center text-xs font-bold transition-all duration-500">1</div>
+        <span class="step-label text-[10px] font-semibold text-gray-500 transition-colors">Servicio</span>
+      </div>
+      <div class="flex-1 h-0.5 bg-gray-700 mx-2 rounded-full overflow-hidden">
+        <div id="line12" class="h-full w-0 transition-all duration-500"></div>
+      </div>
+      <div class="flex flex-col items-center gap-1" id="stepInd2">
+        <div class="step-num w-8 h-8 rounded-full border-2 border-gray-600 flex items-center justify-center text-xs font-bold text-gray-500 transition-all duration-500">2</div>
+        <span class="step-label text-[10px] font-semibold text-gray-500 transition-colors">Datos</span>
+      </div>
+      <div class="flex-1 h-0.5 bg-gray-700 mx-2 rounded-full overflow-hidden">
+        <div id="line23" class="h-full w-0 transition-all duration-500"></div>
+      </div>
+      <div class="flex flex-col items-center gap-1" id="stepInd3">
+        <div class="step-num w-8 h-8 rounded-full border-2 border-gray-600 flex items-center justify-center text-xs font-bold text-gray-500 transition-all duration-500">3</div>
+        <span class="step-label text-[10px] font-semibold text-gray-500 transition-colors">Pago</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-lg mx-auto px-4 pt-[100px] pb-32">
+
+<!-- RESUMEN CARRITO SIEMPRE VISIBLE -->
+<div class="mb-5 space-y-2">
+  <!-- Header del carrito -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+      <span class="text-sm font-semibold text-gray-300">Tu pedido (<span id="summaryCount">0</span>)</span>
+    </div>
+    <span id="summaryTotal" class="font-bold text-orange-400 text-sm"></span>
+  </div>
+  <!-- Items siempre visibles -->
+  <div id="summaryItems" class="space-y-1.5 max-h-40 overflow-y-auto scrollbar-hide"></div>
+  <!-- Totales compactos -->
+  <div class="flex items-center justify-between text-xs text-gray-400 pt-1 border-t border-white/10">
+    <span>Subtotal <span id="sumSubtotal" class="text-white font-semibold ml-1"></span></span>
+    <span>Delivery <span id="sumDelivery" class="text-gray-300 ml-1">Gratis</span></span>
+    <span id="sumPropinaLine" class="hidden">Propina <span id="sumPropina" class="text-gray-300 ml-1"></span></span>
+    <span class="font-bold text-orange-400">Total <span id="sumTotal" class="ml-1"></span></span>
+  </div>
+</div>
+
+<!-- PASO 1: SERVICIO -->
+<div id="step1" class="fade-in space-y-5">
+  <div class="flex items-center gap-2 mb-1">
+    <div class="w-1 h-6 bg-gradient-to-b from-orange-500 to-amber-400 rounded-full"></div>
+    <h2 class="font-bold text-lg">Tipo de servicio</h2>
+  </div>
+
+  <div class="grid grid-cols-3 gap-3">
+    <button onclick="setService('delivery')" class="svc-btn glass rounded-xl p-4 text-center transition hover:border-orange-500/50 border border-transparent" data-svc="delivery">
+      <div class="text-3xl mb-2">🛵</div>
+      <div class="text-xs font-bold">Delivery</div>
+    </button>
+    <button onclick="setService('pickup')" class="svc-btn glass rounded-xl p-4 text-center transition hover:border-orange-500/50 border border-transparent" data-svc="pickup">
+      <div class="text-3xl mb-2">🛍️</div>
+      <div class="text-xs font-bold">Pick Up</div>
+    </button>
+    <button onclick="setService('sitio')" class="svc-btn glass rounded-xl p-4 text-center transition hover:border-orange-500/50 border border-transparent" data-svc="sitio">
+      <div class="text-3xl mb-2">🍽️</div>
+      <div class="text-xs font-bold">En Sitio</div>
+    </button>
+  </div>
+
+  <!-- Delivery: Zona -->
+  <div id="zoneBox" class="hidden space-y-1.5">
+    <label class="block text-sm font-semibold text-gray-300">Zona de delivery <span class="text-orange-500">*</span></label>
+    <select id="zoneSelect" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3.5 text-sm focus:border-orange-500 transition" onchange="updateZone()">
+      <option value="">Selecciona zona</option>
+    </select>
+    <p id="zoneMsg" class="hidden text-xs text-gray-500">No hay zonas disponibles</p>
+  </div>
+
+  <!-- En Sitio: Mesa -->
+  <div id="mesaBox" class="hidden space-y-1.5">
+    <label class="block text-sm font-semibold text-gray-300">Mesa / Area <span class="text-orange-500">*</span></label>
+    <select id="mesaSelect" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3.5 text-sm focus:border-orange-500 transition" onchange="updateMesa()">
+      <option value="">Selecciona mesa</option>
+    </select>
+    <p id="mesaMsg" class="hidden text-xs text-gray-500">No hay mesas disponibles</p>
+  </div>
+
+  <!-- Pickup: Info especial -->
+  <div id="pickupInfoBox" class="hidden pickup-info rounded-xl p-4 space-y-2">
+    <div class="flex items-center gap-2">
+      <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <span class="font-bold text-white text-sm">Retirar en Tienda</span>
+    </div>
+    <p class="text-xs text-gray-400 pl-7">Solicitar en Caja</p>
+  </div>
+
+  <!-- Comentarios del pedido (en Paso 1) -->
+  <div class="space-y-1.5">
+    <label class="block text-sm font-semibold text-gray-300">Comentarios del pedido</label>
+    <textarea id="orderComments" rows="2" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 text-sm placeholder-gray-500 resize-none focus:border-orange-500 transition" placeholder="Ej: Sin salsa, sin cebolla..."></textarea>
+  </div>
+
+  <button onclick="goStep2()" class="w-full btn-primary py-4 rounded-xl font-bold text-white text-lg transition mt-2 hover:scale-[1.02] active:scale-[0.98]">
+    Continuar
+  </button>
+</div>
+
+<!-- PASO 2: DATOS CLIENTE -->
+<div id="step2" class="hidden fade-in space-y-5">
+  <div class="flex items-center gap-2 mb-1">
+    <div class="w-1 h-6 bg-gradient-to-b from-orange-500 to-amber-400 rounded-full"></div>
+    <h2 class="font-bold text-lg">Tus datos</h2>
+  </div>
+
+  <!-- Telefono -->
+  <div class="space-y-1.5">
+    <label class="block text-sm font-semibold text-gray-300">WhatsApp <span class="text-orange-500">*</span></label>
+    <div class="flex gap-2">
+      <select id="phonePrefix" class="bg-gray-800 border border-gray-700 text-white rounded-xl px-3 py-3.5 w-24 text-sm focus:border-orange-500 transition">
+        <option value="0412">0412</option><option value="0414">0414</option><option value="0416">0416</option>
+        <option value="0422">0422</option><option value="0424">0424</option><option value="0426">0426</option>
+      </select>
+      <div class="flex-1 relative">
+        <input type="tel" id="clientPhone" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3.5 text-sm placeholder-gray-500 focus:border-orange-500 transition" placeholder="1234567" maxlength="7">
+        <div id="phoneSearch" class="hidden absolute right-3 top-1/2 -translate-y-1/2">
+          <svg class="animate-spin h-4 w-4 text-orange-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+        </div>
+      </div>
+    </div>
+    <button id="changePhoneBtn" class="hidden text-xs text-orange-400 hover:text-orange-300 underline font-medium" onclick="resetPhone()">Cambiar numero</button>
+  </div>
+
+  <!-- Nombre -->
+  <div class="space-y-1.5">
+    <label class="block text-sm font-semibold text-gray-300">Nombre completo <span class="text-orange-500">*</span></label>
+    <input type="text" id="clientName" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3.5 text-sm placeholder-gray-500 focus:border-orange-500 transition" placeholder="Ej. Juan Perez">
+  </div>
+
+  <!-- Direccion (SOLO si Delivery) -->
+  <div id="deliveryAddressBox" class="hidden space-y-1.5">
+    <label class="block text-sm font-semibold text-gray-300">Direccion de entrega <span class="text-orange-500">*</span></label>
+    <textarea id="deliveryAddress" rows="2" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 text-sm placeholder-gray-500 resize-none focus:border-orange-500 transition" placeholder="Casa, calle, urbanizacion..."></textarea>
+  </div>
+
+  <!-- Cedula (opcional) -->
+  <div class="space-y-1.5">
+    <label class="flex items-center gap-2 cursor-pointer text-gray-300 text-sm font-semibold">
+      <input type="checkbox" id="checkCedula" class="w-4 h-4 accent-orange-500 rounded border-gray-600" onchange="toggleField('checkCedula','containerCedula')"> Cedula/RIF
+    </label>
+    <div id="containerCedula" class="hidden flex gap-2">
+      <select id="docPrefix" class="bg-gray-800 border border-gray-700 text-white rounded-xl px-3 py-3.5 w-20 text-sm">
+        <option value="V">V</option><option value="E">E</option><option value="J">J</option>
+        <option value="G">G</option><option value="P">P</option><option value="C">C</option>
+      </select>
+      <input type="text" id="clientCedula" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3.5 text-sm placeholder-gray-500 focus:border-orange-500 transition" placeholder="12345678" maxlength="9" oninput="this.value=this.value.replace(/\D/g,'').slice(0,9)">
+    </div>
+  </div>
+
+  <!-- Email (opcional) -->
+  <div class="space-y-1.5">
+    <label class="flex items-center gap-2 cursor-pointer text-gray-300 text-sm font-semibold">
+      <input type="checkbox" id="checkEmail" class="w-4 h-4 accent-orange-500 rounded border-gray-600" onchange="toggleField('checkEmail','containerEmail')"> Email
+    </label>
+    <div id="containerEmail" class="hidden">
+      <input type="email" id="clientEmail" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3.5 text-sm placeholder-gray-500 focus:border-orange-500 transition" placeholder="ejemplo@correo.com">
+    </div>
+  </div>
+
+  <div class="flex gap-3 mt-4">
+    <button onclick="backToStep1()" class="px-6 py-3.5 rounded-xl font-bold text-gray-400 bg-gray-800 border border-gray-700 transition hover:bg-gray-700">Atras</button>
+    <button onclick="goStep3()" class="flex-1 btn-primary py-3.5 rounded-xl font-bold text-white transition hover:scale-[1.02] active:scale-[0.98]">Continuar</button>
+  </div>
+</div>
+
+<!-- PASO 3: PAGO -->
+<div id="step3" class="hidden fade-in space-y-5">
+  <div class="flex items-center gap-2 mb-1">
+    <div class="w-1 h-6 bg-gradient-to-b from-orange-500 to-amber-400 rounded-full"></div>
+    <h2 class="font-bold text-lg">Pago</h2>
+  </div>
+
+  <div class="space-y-1.5">
+    <label class="block text-sm font-semibold text-gray-300">Forma de pago <span class="text-orange-500">*</span></label>
+    <select id="paymentSelect" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3.5 text-sm focus:border-orange-500 transition" onchange="updatePayment()">
+      <option value="">Selecciona forma de pago</option>
+    </select>
+  </div>
+
+  <!-- Info de pago seleccionado -->
+  <div id="paymentInfoBox" class="hidden glass rounded-xl p-4 border-l-4 border-orange-500">
+    <p id="paymentInfoTitle" class="font-bold text-white mb-1"></p>
+    <p id="paymentInfoData" class="text-sm text-orange-400 font-mono break-all"></p>
+  </div>
+
+  <!-- Propina (solo En Sitio) -->
+  <div id="propinaBox" class="hidden space-y-3">
+    <div class="flex items-center justify-between">
+      <label class="text-sm font-semibold text-gray-300">Propina</label>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" id="propinaToggle" class="sr-only propina-toggle" onchange="togglePropina()">
+        <div class="toggle-track w-11 h-6 bg-gray-700 rounded-full transition-all duration-300">
+          <div class="toggle-thumb absolute top-[2px] left-[2px] w-5 h-5 bg-white rounded-full transition-all duration-300 shadow"></div>
+        </div>
+      </label>
+    </div>
+    <input type="number" id="propinaInput" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3.5 text-sm focus:border-orange-500 transition disabled:opacity-50" value="0" min="0" step="0.01" disabled oninput="updateTotals()">
+  </div>
+
+  <!-- Totales -->
+  <div class="glass rounded-xl p-4 space-y-2">
+    <div class="flex justify-between text-sm text-gray-400"><span>Subtotal</span><span id="paySubtotal" class="text-white font-semibold"></span></div>
+    <div class="flex justify-between text-sm text-gray-400"><span>Delivery</span><span id="payDelivery" class="text-gray-300">Gratis</span></div>
+    <div id="payPropinaLine" class="hidden flex justify-between text-sm text-gray-400"><span>Propina</span><span id="payPropina" class="text-gray-300"></span></div>
+    <div class="flex justify-between text-lg font-black border-t border-white/10 pt-2"><span class="text-white">Total</span><span id="payTotal" class="text-orange-400"></span></div>
+  </div>
+
+  <div class="flex gap-3 mt-4">
+    <button onclick="backToStep2()" class="px-6 py-3.5 rounded-xl font-bold text-gray-400 bg-gray-800 border border-gray-700 transition hover:bg-gray-700">Atras</button>
+    <button onclick="confirmOrder()" id="confirmBtn" class="flex-1 btn-primary py-3.5 rounded-xl font-bold text-white transition hover:scale-[1.02] active:scale-[0.98]">
+      Confirmar Pedido
+    </button>
+  </div>
+</div>
+
+<!-- CONFIRMACION -->
+<div id="confirmation" class="hidden fade-in text-center py-8 space-y-5">
+  <div class="text-7xl mb-2 animate-bounce">🎉</div>
+  <h2 class="text-2xl font-black">¡Pedido Registrado!</h2>
+  <p class="text-gray-400 text-sm">Tu numero de pedido es:</p>
+  <div class="glass rounded-xl p-5 border border-orange-500/30 max-w-xs mx-auto">
+    <p id="confNro" class="text-4xl font-black text-orange-400 tracking-wider">PED00001</p>
+  </div>
+
+  <div id="confPaymentInfo" class="glass rounded-xl p-4 text-left space-y-2 text-sm max-w-xs mx-auto border-l-4 border-orange-500"></div>
+
+  <a id="waBtn" href="#" target="_blank" class="inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebd5a] text-white px-6 py-3.5 rounded-xl font-bold transition w-full max-w-xs shadow-lg hover:shadow-xl hover:shadow-green-500/20">
+    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    Avisar por WhatsApp
+  </a>
+  <button onclick="newOrder()" class="w-full max-w-xs py-3.5 rounded-xl font-bold text-gray-300 border border-gray-600 hover:bg-gray-800 transition">
+    Volver al menu
+  </button>
+</div>
+
+</main>
+
+<!-- ALERTA -->
+<div id="alertBox" class="fixed inset-0 z-[70] bg-black/80 flex items-center justify-center p-4 hidden">
+  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-sm p-6 border border-white/10 shadow-2xl text-center glass">
+    <div id="alertIcon" class="mx-auto w-14 h-14 rounded-full flex items-center justify-center mb-4 text-3xl"></div>
+    <h4 id="alertTitle" class="text-xl font-black text-white mb-2"></h4>
+    <p id="alertMsg" class="text-sm text-gray-400 mb-6"></p>
+    <button onclick="closeAlert()" class="w-full btn-primary py-3.5 rounded-xl font-bold text-white transition">Entendido</button>
+  </div>
+</div>
+
+<script>
+const API="https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9FoXBkMYwPD4xkK1llpxakpExC6DspQvnOI6Vmw/exec";
+let cart=[],products=[],zones=[],paymentMethods=[],enSitioAreas=[],config={};
+let currentCurrency="T002",tasas={},simbolos={},desTasas={};
+let selectedService="",selectedZone=null,selectedMesa=null,propinaVal=0,propinaOn=false;
+let savedClient=null;
+
+async function init(){
+  cart=JSON.parse(localStorage.getItem("fb_cart_v3")||"[]");
+  currentCurrency=localStorage.getItem("fb_currency_v3")||"T002";
+  if(cart.length===0){window.location.href="index.html";return;}
+  try{
+    const r=await fetch(API+"?action=init&_cb="+Date.now()).then(x=>x.json());
+    if(!r.success)throw new Error("Error");
+    config=r.data.config||{};
+    zones=r.data.zonas||[];
+    paymentMethods=r.data.formasPago||[];
+    enSitioAreas=r.data.enSitio||[];
+    let tasasArr=r.data.tasas||[];
+    tasasArr.forEach(t=>{tasas[t.CodTasa]=parseFloat(t.ValorTasa)||0;simbolos[t.CodTasa]=t.SimboloTasa||"";desTasas[t.CodTasa]=t.DesTasa||"";});    
+    products=(r.data.productos||[]).map(p=>({...p,PrecioConvertido:convert(p.Precio||0,p.CodTasa||"T002",currentCurrency)}));
+    recalcCart();
+    renderSummary();
+    updateTotals();
+    setupStep1();
+    setupStep3();
+  }catch(e){alerta("error","Error","No se pudo cargar. Reintentando...",()=>location.reload());}
+}
+
+function convert(m,from,to){if(!tasas[from]||!tasas[to])return m;return(m*tasas[from])/tasas[to];}
+function fmt(v,cod){v=parseFloat(v)||0;let s=simbolos[cod]||"";if(s==="USD"||s==="$")return"$ "+v.toFixed(2);if(s==="BS"||s==="Bs")return"Bs "+v.toFixed(2);if(s==="EUR"||s==="€")return"EUR "+v.toFixed(2);if(s==="BN")return"BN "+v.toFixed(2);return v.toFixed(2);}
+
+function recalcCart(){cart=cart.map(item=>{let p=products.find(x=>x.CodProducto===item.CodProducto);if(p){let np=convert(p.Precio||0,p.CodTasa||"T002",currentCurrency);return{...item,precioUnitario:np,subtotalItem:item.cantidad*np};}return item;});}
+
+function renderSummary(){
+  const count=cart.reduce((s,i)=>s+i.cantidad,0);
+  const subtotal=cart.reduce((s,i)=>s+i.subtotalItem,0);
+  document.getElementById("summaryCount").textContent=count;
+  document.getElementById("summaryTotal").textContent=fmt(subtotal,currentCurrency);
+  document.getElementById("summaryItems").innerHTML=cart.map(i=>`
+    <div class="flex items-center gap-3 bg-gray-800/50 rounded-lg p-2">
+      <div class="flex-1 min-w-0"><p class="text-sm font-semibold text-white truncate">${i.DesProducto}</p><p class="text-xs text-gray-400">${i.cantidad}x ${fmt(i.precioUnitario,currentCurrency)}</p></div>
+      <span class="text-sm font-bold text-orange-400">${fmt(i.subtotalItem,currentCurrency)}</span>
+    </div>`).join('');
+  updateTotals();
+}
+
+function updateTotals(){
+  const subtotal=cart.reduce((s,i)=>s+i.subtotalItem,0);
+  let delivery=0;
+  if(selectedService==="delivery"&&selectedZone){delivery=convert(selectedZone.TarifaZona||0,selectedZone.CodTasa||"T002",currentCurrency);}
+  let propina=0;
+  if(selectedService==="sitio"&&selectedMesa&&propinaOn){propina=parseFloat(document.getElementById("propinaInput").value)||0;}
+  const total=subtotal+delivery+propina;
+  document.getElementById("sumSubtotal").textContent=fmt(subtotal,currentCurrency);
+  document.getElementById("sumDelivery").textContent=delivery>0?fmt(delivery,currentCurrency):"Gratis";
+  document.getElementById("sumTotal").textContent=fmt(total,currentCurrency);
+  document.getElementById("paySubtotal").textContent=fmt(subtotal,currentCurrency);
+  document.getElementById("payDelivery").textContent=delivery>0?fmt(delivery,currentCurrency):"Gratis";
+  document.getElementById("payTotal").textContent=fmt(total,currentCurrency);
+  if(propina>0){document.getElementById("sumPropinaLine").classList.remove("hidden");document.getElementById("sumPropina").textContent=fmt(propina,currentCurrency);document.getElementById("payPropinaLine").classList.remove("hidden");document.getElementById("payPropina").textContent=fmt(propina,currentCurrency);}
+  else{document.getElementById("sumPropinaLine").classList.add("hidden");document.getElementById("payPropinaLine").classList.add("hidden");}
+}
+
+function toggleField(checkId,boxId){document.getElementById(boxId).classList.toggle("hidden",!document.getElementById(checkId).checked);}
+
+// Step 1: SERVICIO
+function setupStep1(){
+  const zSel=document.getElementById("zoneSelect");
+  if(zones.length===0){document.getElementById("zoneMsg").classList.remove("hidden");}
+  else{document.getElementById("zoneMsg").classList.add("hidden");zones.forEach(z=>{zSel.innerHTML+=`<option value="${z.CodZona}" data-name="${z.NombreZona}" data-tarifa="${z.TarifaZona||0}" data-codtasa="${z.CodTasa||'T002'}">${z.NombreZona} - ${fmt(convert(z.TarifaZona||0,z.CodTasa||"T002",currentCurrency),currentCurrency)}</option>`;});}
+  const mSel=document.getElementById("mesaSelect");
+  if(enSitioAreas.length===0){document.getElementById("mesaMsg").classList.remove("hidden");}
+  else{document.getElementById("mesaMsg").classList.add("hidden");enSitioAreas.forEach(e=>{mSel.innerHTML+=`<option value="${e.CodEnSitio}" data-propina="${e.PropinaEnSitio||0}" data-codtasa="${e.CodTasa||'T002'}">${e.DesEnSitio}${e.DetalleEnSitio?" - "+e.DetalleEnSitio:""}</option>`;});}
+}
+
+function setService(svc){
+  selectedService=svc;
+  document.querySelectorAll(".svc-btn").forEach(b=>b.classList.remove("svc-btn-active"));
+  document.querySelector(`[data-svc="${svc}"]`).classList.add("svc-btn-active");
+  document.getElementById("zoneBox").classList.toggle("hidden",svc!=="delivery");
+  document.getElementById("mesaBox").classList.toggle("hidden",svc!=="sitio");
+  document.getElementById("pickupInfoBox").classList.toggle("hidden",svc!=="pickup");
+  selectedZone=null;selectedMesa=null;
+  document.getElementById("zoneSelect").value="";document.getElementById("mesaSelect").value="";
+  updateTotals();
+}
+
+function updateZone(){
+  const opt=document.getElementById("zoneSelect").selectedOptions[0];
+  selectedZone=opt.value?{CodZona:opt.value,NombreZona:opt.dataset.name,TarifaZona:parseFloat(opt.dataset.tarifa)||0,CodTasa:opt.dataset.codtasa||"T002"}:null;
+  updateTotals();
+}
+
+function updateMesa(){
+  const opt=document.getElementById("mesaSelect").selectedOptions[0];
+  if(opt&&opt.value){
+    const propinaBase=parseFloat(opt.dataset.propina)||0;
+    const codTasaMesa=opt.dataset.codtasa||"T002";
+    selectedMesa={CodEnSitio:opt.value,DesEnSitio:opt.text,PropinaEnSitio:propinaBase,CodTasa:codTasaMesa};
+    if(propinaBase>0)document.getElementById("propinaInput").value=convert(propinaBase,codTasaMesa,currentCurrency).toFixed(2);
+  }else{selectedMesa=null;}
+  updateTotals();
+}
+
+function goStep2(){
+  if(!selectedService){alerta("error","Falta servicio","Selecciona tipo de servicio");return;}
+  if(selectedService==="delivery"){
+    if(zones.length>0&&!selectedZone){alerta("error","Falta zona","Selecciona zona");return;}
+  }
+  if(selectedService==="sitio"&&enSitioAreas.length>0&&!selectedMesa){alerta("error","Falta mesa","Selecciona una mesa");return;}
+  document.getElementById("step1").classList.add("hidden");
+  document.getElementById("step2").classList.remove("hidden");
+  document.getElementById("deliveryAddressBox").classList.toggle("hidden",selectedService!=="delivery");
+  updateStepIndicator(2);
+  // Recuperar telefono guardado
+  const savedPhone=localStorage.getItem("fb_client_phone");
+  if(savedPhone&&savedPhone.length>=10){
+    const prefix=savedPhone.substring(0,4);
+    const num=savedPhone.substring(4);
+    if(["0412","0414","0416","0422","0424","0426"].includes(prefix)){
+      document.getElementById("phonePrefix").value=prefix;
+      document.getElementById("clientPhone").value=num;
+      searchClient(prefix+num);
+    }
+  }
+}
+
+function backToStep1(){
+  document.getElementById("step2").classList.add("hidden");
+  document.getElementById("step1").classList.remove("hidden");
+  updateStepIndicator(1);
+}
+
+// Step 2: DATOS
+const phoneInput=document.getElementById("clientPhone");
+const prefixSelect=document.getElementById("phonePrefix");
+phoneInput.oninput=function(){let v=this.value.replace(/\D/g,"").slice(0,7);this.value=v;if(v.length===7)searchClient(prefixSelect.value+v);};
+prefixSelect.onchange=function(){if(phoneInput.value.length===7)searchClient(this.value+phoneInput.value);};
+
+async function searchClient(phone){
+  document.getElementById("phoneSearch").classList.remove("hidden");
+  document.getElementById("clientName").disabled=true;
+  try{
+    const r=await fetch(API+"?action=clientes&telefono="+phone+"&_cb="+Date.now()).then(x=>x.json());
+    if(r.success&&r.data.length>0){
+      const c=r.data[0];savedClient=c;
+      if(c.DesCliente)document.getElementById("clientName").value=c.DesCliente;
+      if(c.CedulaRifCliente){const m=String(c.CedulaRifCliente).match(/^([VEJGPC])[-]?(\d+)$/i);if(m){document.getElementById("docPrefix").value=m[1].toUpperCase();document.getElementById("clientCedula").value=m[2];}else{document.getElementById("clientCedula").value=c.CedulaRifCliente;}document.getElementById("checkCedula").checked=true;toggleField("checkCedula","containerCedula");}
+      if(c.EmailCliente){document.getElementById("clientEmail").value=c.EmailCliente;document.getElementById("checkEmail").checked=true;toggleField("checkEmail","containerEmail");}
+    }else{savedClient=null;}
+  }catch(e){savedClient=null;}
+  document.getElementById("phoneSearch").classList.add("hidden");
+  document.getElementById("clientName").disabled=false;
+  document.getElementById("changePhoneBtn").classList.remove("hidden");
+  localStorage.setItem("fb_client_phone",phone);
+  localStorage.setItem("fb_client_phone_v3",phone);
+}
+
+function resetPhone(){
+  phoneInput.value="";phoneInput.readOnly=false;prefixSelect.disabled=false;
+  document.getElementById("clientName").value="";document.getElementById("clientName").disabled=false;
+  document.getElementById("changePhoneBtn").classList.add("hidden");savedClient=null;
+  ["checkCedula","checkEmail"].forEach(id=>{document.getElementById(id).checked=false;toggleField(id,id.replace("check","container"));});
+  localStorage.removeItem("fb_client_phone");localStorage.removeItem("fb_client_phone_v3");
+}
+
+function goStep3(){
+  const phone=phoneInput.value.trim();const name=document.getElementById("clientName").value.trim();
+  if(phone.length!==7){alerta("error","Telefono invalido","Debe tener 7 digitos");return;}
+  if(!name){alerta("error","Falta nombre","Escribe tu nombre");return;}
+  if(selectedService==="delivery"){
+    const addr=document.getElementById("deliveryAddress").value.trim();
+    if(!addr){alerta("error","Falta direccion","Escribe direccion de entrega");return;}
+  }
+  const fullPhone=prefixSelect.value+phone;
+  localStorage.setItem("fb_client_phone",fullPhone);
+  localStorage.setItem("fb_client_phone_v3",fullPhone);
+  document.getElementById("step2").classList.add("hidden");
+  document.getElementById("step3").classList.remove("hidden");
+  document.getElementById("propinaBox").classList.toggle("hidden",selectedService!=="sitio"||!selectedMesa||!selectedMesa.PropinaEnSitio);
+  updateStepIndicator(3);
+  updateTotals();
+}
+
+function backToStep2(){
+  document.getElementById("step3").classList.add("hidden");
+  document.getElementById("step2").classList.remove("hidden");
+  updateStepIndicator(2);
+}
+
+function updateStepIndicator(step){
+  [1,2,3].forEach(s=>{
+    const el=document.getElementById("stepInd"+s);
+    const line=document.getElementById("line"+((s===1?"12":s===2?"23":"")));
+    el.classList.remove("step-active","step-done");
+    if(s<step){el.classList.add("step-done");if(line){line.classList.add("step-line-done");line.style.width="100%";}}
+    if(s===step)el.classList.add("step-active");
+    if(s>step&&line){line.classList.remove("step-line-done","step-line-active");line.style.width="0";}
+  });
+  if(step===2){document.getElementById("line12").classList.add("step-line-active");document.getElementById("line12").style.width="100%";}
+  if(step===3){document.getElementById("line23").classList.add("step-line-active");document.getElementById("line23").style.width="100%";}
+}
+
+// Step 3: PAGO
+function setupStep3(){
+  const pSel=document.getElementById("paymentSelect");
+  paymentMethods.forEach(pm=>{pSel.innerHTML+=`<option value="${pm.CodPago}" data-codtasa="${pm.CodTasa||''}" data-despago="${pm.DesPago}" data-datos="${pm.DatosTasa||''}">${pm.DesPago}</option>`;});
+}
+
+function updatePayment(){
+  const opt=document.getElementById("paymentSelect").selectedOptions[0];
+  const box=document.getElementById("paymentInfoBox");
+  if(opt&&opt.value&&opt.dataset.datos){
+    document.getElementById("paymentInfoTitle").textContent=opt.dataset.despago;
+    document.getElementById("paymentInfoData").textContent=opt.dataset.datos;
+    box.classList.remove("hidden");
+  }else{box.classList.add("hidden");}
+}
+
+function togglePropina(){
+  propinaOn=document.getElementById("propinaToggle").checked;
+  document.getElementById("propinaInput").disabled=!propinaOn;
+  updateTotals();
+}
+
+// Confirmar
+async function confirmOrder(){
+  const pSel=document.getElementById("paymentSelect");
+  if(!pSel.value){alerta("error","Falta pago","Selecciona forma de pago");return;}
+  const opt=pSel.selectedOptions[0];
+  const name=document.getElementById("clientName").value.trim();
+  const phone=prefixSelect.value+phoneInput.value.trim();
+  const codPago=opt.value;
+  const payLabel=opt.dataset.despago;
+  const payCodTasa=opt.dataset.codtasa||"T001";
+
+  let address="",obs="",orderComments="";
+  if(selectedService==="delivery"){address=document.getElementById("deliveryAddress").value.trim();}
+  else if(selectedService==="pickup"){obs="Retiro: Pick Up";}
+  else if(selectedService==="sitio"){obs=selectedMesa?"En Sitio: "+selectedMesa.DesEnSitio:"En Sitio";}
+  orderComments=document.getElementById("orderComments").value.trim();
+
+  const cedula=document.getElementById("checkCedula").checked?document.getElementById("docPrefix").value+document.getElementById("clientCedula").value.trim():"";
+  const email=document.getElementById("checkEmail").checked?document.getElementById("clientEmail").value.trim():"";
+
+  const subtotal=cart.reduce((s,i)=>s+i.subtotalItem,0);
+  let delivery=0;
+  if(selectedService==="delivery"&&selectedZone){delivery=convert(selectedZone.TarifaZona||0,selectedZone.CodTasa||"T002",currentCurrency);}
+  let propina=0;
+  if(selectedService==="sitio"&&selectedMesa&&propinaOn){propina=parseFloat(document.getElementById("propinaInput").value)||0;}
+  const total=subtotal+delivery+propina;
+
+  const orderData={
+    action:"pedido",
+    cliente:{nombre:name,telefono:phone,direccion:address,cedula:cedula,email:email},
+    tipoServicio:selectedService,
+    codZone:selectedZone?selectedZone.CodZona:"",
+    zona:selectedZone?selectedZone.NombreZona:"N/A",
+    codEnSitio:selectedMesa?selectedMesa.CodEnSitio:"",
+    desEnSitio:selectedMesa?selectedMesa.DesEnSitio:"",
+    codTasa:currentCurrency,
+    desTasa:desTasas[currentCurrency]||"",
+    codFormaPago:codPago,
+    desPago:payLabel+(opt.dataset.datos?": "+opt.dataset.datos:""),
+    items:cart,
+    subtotal:subtotal,
+    delivery:delivery,
+    propina:propina,
+    total:total,
+    observations:obs,
+    observationsCliente:orderComments
+  };
+
+  const btn=document.getElementById("confirmBtn");
+  const orig=btn.innerHTML;btn.innerHTML="Enviando...";btn.disabled=true;
+  try{
+    const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(orderData)}).then(x=>x.json());
+    btn.innerHTML=orig;btn.disabled=false;
+    if(r.success){
+      let mis=JSON.parse(localStorage.getItem("mis_pedidos_fb")||"[]");
+      if(!mis.includes(r.nroPedido))mis.push(r.nroPedido);
+      localStorage.setItem("mis_pedidos_fb",JSON.stringify(mis));
+      showConfirmation(r.nroPedido,payLabel,opt.dataset.datos||"",total,address,propina,payCodTasa);
+    }else{alerta("error","Error",r.error||"No se pudo registrar");}
+  }catch(e){btn.innerHTML=orig;btn.disabled=false;alerta("error","Error de red","Fallo la comunicacion");}
+}
+
+function showConfirmation(nro,label,datos,total,address,propina,payCodTasa){
+  document.getElementById("step3").classList.add("hidden");
+  document.getElementById("confirmation").classList.remove("hidden");
+  updateStepIndicator(4);
+  document.getElementById("confNro").textContent=nro;
+
+  const totalDisplay=convert(total,currentCurrency,payCodTasa);
+  let info=`<p class="font-bold text-white">${label}</p>`;
+  if(datos)info+=`<p class="text-sm text-orange-400 font-mono mt-1">${datos}</p>`;
+  info+=`<p class="font-bold text-orange-400 mt-2">Total a transferir: ${fmt(totalDisplay,payCodTasa)}</p>`;
+  document.getElementById("confPaymentInfo").innerHTML=info;
+
+  let itemsText=cart.map((item,idx)=>`${idx+1}. ${item.cantidad}x ${item.DesProducto} - ${fmt(item.subtotalItem,currentCurrency)}`).join("\n");
+  let msg=`¡Hola! Acabo de realizar el pedido *${nro}*.\n\n*Productos:*\n${itemsText}\n\n*Total:* ${fmt(totalDisplay,payCodTasa)}\n*Pago:* ${label}\n`;
+  if(selectedService==="delivery"&&address)msg+=`*Direccion:* ${address}\n`;
+  if(selectedService==="sitio"&&selectedMesa)msg+=`*Mesa:* ${selectedMesa.DesEnSitio}\n`;
+  if(propina>0)msg+=`*Propina:* ${fmt(propina,currentCurrency)}\n`;
+  const wa="58"+(config.WhatsAppNegocio||"").replace(/^0/,"");
+  document.getElementById("waBtn").href=`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`;
+
+  localStorage.removeItem("fb_cart_v3");
+}
+
+function newOrder(){window.location.href="index.html";}
+function goBack(){window.location.href="index.html";}
+
+// Alerta
+function alerta(tipo,titulo,msg,cb){
+  const m=document.getElementById("alertBox");
+  document.getElementById("alertTitle").textContent=titulo;
+  document.getElementById("alertMsg").textContent=msg;
+  const ic=document.getElementById("alertIcon");
+  if(tipo==="error"){ic.className="mx-auto w-14 h-14 rounded-full flex items-center justify-center mb-4 text-3xl bg-red-500/20 text-red-400";ic.textContent="⚠️";}
+  else{ic.className="mx-auto w-14 h-14 rounded-full flex items-center justify-center mb-4 text-3xl bg-green-500/20 text-green-400";ic.textContent="✅";}
+  m.classList.remove("hidden");window._alertCb=cb;
+}
+function closeAlert(){document.getElementById("alertBox").classList.add("hidden");if(window._alertCb){window._alertCb();window._alertCb=null;}}
+
+document.addEventListener("DOMContentLoaded",init);
+</script>
+</body>
+</html>
+<!-- CONTROL DE VERSION CHECKOUT
+var CHECKOUT_VERSION = "v1.2 - Carrito Siempre Visible"; -->
