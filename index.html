@@ -31,20 +31,16 @@
   .fade-in{animation:fadeIn 0.4s ease-out;}
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
   .content-auto{content-visibility:auto;contain-intrinsic-size:auto 350px;}
-  .step-hidden{display:none !important;}
-  #propinaInput:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background-color: #1f2937;
-  }
+  .drawer{transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);}
 </style>
 </head>
 <body class="min-h-screen">
 
+<!-- HEADER -->
 <header class="fixed top-0 left-0 right-0 z-50 glass flex flex-col">
   <div class="max-w-7xl w-full mx-auto px-4 py-3 flex items-center justify-between">
     <div class="flex items-center gap-3">
-      <button id="menuBtn" class="p-2 rounded-xl bg-gray-800 border border-gray-700 hover:bg-orange-500/20 text-orange-400 hover:text-orange-500 transition" aria-label="Abrir Menú">
+      <button id="menuBtn" class="p-2 rounded-xl bg-gray-800 border border-gray-700 hover:bg-orange-500/20 text-orange-400 hover:text-orange-500 transition" aria-label="Abrir Menu">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
       <div>
@@ -56,7 +52,7 @@
       <select id="currencySelector" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500">
         <option value="T002" selected>$ USD</option>
         <option value="T001">Bs</option>
-        <option value="T003">€ EUR</option>
+        <option value="T003">EUR</option>
         <option value="T004">BN</option>
       </select>
       <button id="cartBtn" class="relative p-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 transition border border-gray-700" aria-label="Ver Carrito">
@@ -72,15 +68,48 @@
   </div>
 </header>
 
+<!-- SIDE MENU (Drawer izquierdo) -->
+<div id="sideMenu" class="fixed inset-y-0 left-0 w-72 bg-[#111] z-[70] transform -translate-x-full drawer shadow-2xl border-r border-orange-500/30">
+  <div class="p-6">
+    <div class="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
+      <span class="font-black text-xl tracking-wide bg-gradient-to-r from-orange-500 to-amber-400 bg-clip-text text-transparent">FastBurger</span>
+      <button id="closeMenu" class="flex items-center gap-1 px-3 py-2 hover:bg-orange-500/10 rounded-xl text-orange-400 hover:text-orange-500 transition text-sm font-semibold">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+    </div>
+    <nav class="space-y-2">
+      <button id="myOrdersBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white font-semibold transition text-left border border-transparent">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        Mis Pedidos
+      </button>
+      <button id="opcionesBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white font-semibold transition text-left border border-transparent">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Opciones
+      </button>
+      <button id="sobreBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white font-semibold transition text-left border border-transparent">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Sobre FastBurguer
+      </button>
+      <div class="border-t border-white/5 my-2"></div>
+      <button id="salirBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/10 text-red-400 hover:text-red-500 font-semibold transition text-left border border-transparent">
+        <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Salir FastBurguer
+      </button>
+    </nav>
+  </div>
+</div>
+
+<!-- OVERLAY CERRADO -->
 <div id="closedOverlay" class="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center hidden">
   <div class="text-center p-8">
     <div class="text-6xl mb-4">🔒</div>
     <h2 class="text-3xl font-black mb-2 text-white">Cerrado Temporalmente</h2>
-    <p class="text-gray-400 mb-6">Vuelve durante nuestro horario de atención</p>
+    <p class="text-gray-400 mb-6">Vuelve durante nuestro horario de atencion</p>
     <p class="text-orange-400 font-bold text-xl" id="hoursText">10:00 - 22:00</p>
   </div>
 </div>
 
+<!-- MAIN PRODUCTOS -->
 <main class="pt-[130px] pb-32 px-4 max-w-7xl mx-auto">
   <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
     <div class="col-span-full flex items-center justify-center py-20">
@@ -89,6 +118,7 @@
   </div>
 </main>
 
+<!-- SIDEBAR CARRITO (derecha) -->
 <div id="cartSidebar" class="fixed inset-y-0 right-0 w-full sm:w-[420px] bg-[#111] z-[70] transform translate-x-full transition-transform duration-300 shadow-2xl border-l border-white/10 flex flex-col">
   <div class="p-4 border-b border-white/10 flex items-center justify-between">
     <h2 class="text-xl font-black text-white">Tu Pedido</h2>
@@ -98,7 +128,7 @@
     </button>
   </div>
   <div id="cartItems" class="flex-1 overflow-y-auto p-4 space-y-3">
-    <p class="text-center text-gray-500 py-10">Tu carrito está vacío</p>
+    <p class="text-center text-gray-500 py-10">Tu carrito esta vacio</p>
   </div>
   <div class="p-4 border-t border-white/10 space-y-3">
     <div class="flex justify-between text-sm text-gray-300"><span>Subtotal</span><span id="cartSubtotal" class="font-bold text-white">Bs 0.00</span></div>
@@ -112,199 +142,7 @@
   </div>
 </div>
 
-<div id="checkoutModal" class="fixed inset-0 z-[80] bg-black/80 flex items-center justify-center p-4 hidden">
-  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto relative border border-white/10 shadow-2xl">
-
-    <div class="p-6 sticky top-0 bg-[#1a1a1a] border-b border-white/5 z-10 flex items-center justify-between">
-      <h2 class="text-2xl font-black text-white">Confirmar Pedido</h2>
-      <button id="closeCheckout" class="flex items-center gap-1 px-3 py-2 hover:bg-white/10 rounded-lg transition text-sm font-semibold text-gray-300">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-      </button>
-    </div>
-
-    <div class="p-6">
-      <!-- PASO 1: DATOS DEL CLIENTE -->
-      <div id="checkoutStep1" class="space-y-5 fade-in">
-
-        <div>
-          <label class="block text-sm font-semibold mb-1 text-gray-300">WhatsApp <span class="text-orange-500">*</span></label>
-          <div class="flex gap-2">
-            <select id="phonePrefix" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-3 w-24 focus:outline-none focus:border-orange-500">
-              <option value="0412">0412</option><option value="0414">0414</option><option value="0416">0416</option>
-              <option value="0422">0422</option><option value="0424">0424</option><option value="0426">0426</option>
-            </select>
-            <div class="flex-1 relative">
-              <input type="tel" id="clientPhone" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500" placeholder="1234567" maxlength="7">
-            </div>
-          </div>
-          <div id="phoneSearchIndicator" class="hidden text-xs text-orange-400 mt-1.5 flex items-center gap-1.5">
-            <svg class="animate-spin h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-            Buscando cliente...
-          </div>
-          <button id="changePhoneBtn" class="hidden text-xs text-orange-400 hover:text-orange-300 underline mt-1.5 font-medium">Cambiar número</button>
-        </div>
-
-        <div>
-          <label class="block text-sm font-semibold mb-1 text-gray-300">Nombre completo <span class="text-orange-500">*</span></label>
-          <input type="text" id="clientName" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500" placeholder="Ej. Juan Pérez">
-        </div>
-
-        <div class="border-t border-white/5 pt-3">
-          <label class="flex items-center gap-2 cursor-pointer text-gray-300 text-sm font-semibold w-fit hover:text-white">
-            <input type="checkbox" id="checkObs" class="w-4 h-4 accent-orange-500 rounded border-gray-600"> Añadir Observaciones (Opcional)
-          </label>
-          <div id="containerObs" class="hidden mt-3 fade-in">
-            <textarea id="observations" rows="2" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 resize-none" placeholder="Ej: hamburguesa sin cebolla, salsa aparte..."></textarea>
-          </div>
-        </div>
-
-        <div class="border-t border-white/5 pt-3">
-          <label class="flex items-center gap-2 cursor-pointer text-gray-300 text-sm font-semibold w-fit hover:text-white">
-            <input type="checkbox" id="checkCedula" class="w-4 h-4 accent-orange-500 rounded border-gray-600"> Añadir Cédula/RIF (Opcional)
-          </label>
-          <div id="containerCedula" class="hidden mt-3 flex gap-2 fade-in">
-            <select id="docPrefix" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-3 w-20 focus:outline-none focus:border-orange-500">
-              <option value="V">V</option><option value="E">E</option><option value="J">J</option>
-              <option value="G">G</option><option value="P">P</option><option value="C">C</option>
-            </select>
-            <input type="text" id="clientCedula" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500" placeholder="12345678" maxlength="9">
-          </div>
-        </div>
-
-        <div class="border-t border-white/5 pt-3">
-          <label class="flex items-center gap-2 cursor-pointer text-gray-300 text-sm font-semibold w-fit hover:text-white">
-            <input type="checkbox" id="checkEmail" class="w-4 h-4 accent-orange-500 rounded border-gray-600"> Añadir Email (Opcional)
-          </label>
-          <div id="containerEmail" class="hidden mt-3 fade-in">
-            <input type="email" id="clientEmail" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500" placeholder="ejemplo@correo.com">
-          </div>
-        </div>
-
-        <div class="flex gap-2 mt-6">
-          <button id="backToCartBtn" class="px-5 py-3 rounded-xl font-bold text-gray-400 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition">
-            Atrás
-          </button>
-          <button id="nextStepBtn" class="flex-1 btn-primary py-3 rounded-xl font-bold text-lg text-white transition">
-            Siguiente
-          </button>
-        </div>
-      </div>
-
-      <!-- PASO 2: TIPO DE SERVICIO -->
-      <div id="checkoutStep2" class="space-y-5 hidden fade-in">
-
-        <div>
-          <label class="block text-sm font-semibold mb-2 text-gray-300">Tipo de servicio <span class="text-orange-500">*</span></label>
-          <div class="grid grid-cols-3 gap-2">
-            <button class="service-btn px-2 py-3 rounded-xl bg-gray-800 border border-gray-700 text-sm font-semibold text-gray-300 transition hover:border-orange-500" data-service="delivery">🛵 Delivery</button>
-            <button class="service-btn px-2 py-3 rounded-xl bg-gray-800 border border-gray-700 text-sm font-semibold text-gray-300 transition hover:border-orange-500" data-service="pickup">🛍️ Pick Up</button>
-            <button class="service-btn px-2 py-3 rounded-xl bg-gray-800 border border-gray-700 text-sm font-semibold text-gray-300 transition hover:border-orange-500" data-service="sitio">🍽️ En Sitio</button>
-          </div>
-        </div>
-
-        <div id="zoneSection" class="hidden fade-in">
-          <label class="block text-sm font-semibold mb-1 text-gray-300">Zona de delivery <span class="text-orange-500">*</span></label>
-          <select id="zoneSelect" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500">
-            <option value="">Selecciona una zona</option>
-          </select>
-          <p id="zoneDisabledMsg" class="hidden text-xs text-gray-500 mt-1">No hay zonas disponibles actualmente. El delivery no tiene costo.</p>
-        </div>
-
-        <div id="addressSection" class="hidden fade-in">
-          <label class="block text-sm font-semibold mb-1 text-gray-300">Dirección exacta <span class="text-orange-500">*</span></label>
-          <textarea id="clientAddress" rows="2" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 resize-none" placeholder="Casa, calle, urbanización..."></textarea>
-          <p id="deliveryWhatsAppMsg" class="hidden text-xs text-orange-400 mt-1">Puede enviar su Ubicación por WhatsApp</p>
-        </div>
-
-        <div id="pickupInfoSection" class="hidden fade-in">
-          <div class="bg-gray-800/60 border border-gray-700 rounded-xl p-4 text-sm text-gray-300">
-            <p class="font-semibold text-white mb-1">🛍️ Retiro en Tienda</p>
-            <p>Retirar el Pedido en Tienda</p>
-          </div>
-        </div>
-
-        <div id="enSitioSection" class="hidden fade-in">
-          <label class="block text-sm font-semibold mb-1 text-gray-300">Área / Mesa <span class="text-orange-500">*</span></label>
-          <select id="enSitioSelect" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500">
-            <option value="">Selecciona un área o mesa</option>
-          </select>
-          <p id="enSitioEmptyMsg" class="hidden text-xs text-gray-500 mt-1">No hay áreas disponibles actualmente.</p>
-        </div>
-
-        <div class="flex gap-2 mt-6">
-          <button id="backStep1Btn" class="px-5 py-3 rounded-xl font-bold text-gray-400 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition">
-            Atrás
-          </button>
-          <button id="nextStep2Btn" class="flex-1 btn-primary py-3 rounded-xl font-bold text-white transition">
-            Siguiente
-          </button>
-        </div>
-      </div>
-
-      <!-- PASO 3: DATOS DE PAGO Y TOTALES -->
-      <div id="checkoutStep3" class="space-y-5 hidden fade-in">
-
-        <div>
-          <label class="block text-sm font-semibold mb-2 text-gray-300">Datos de Pago <span class="text-orange-500">*</span></label>
-          <select id="paymentSelect" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500">
-            <option value="">Seleccione cómo pagará</option>
-          </select>
-          <div id="paymentSelectedInfo" class="hidden mt-3 bg-gray-800/60 border border-gray-700 rounded-xl p-4 text-sm text-gray-300 fade-in">
-          </div>
-        </div>
-
-        <div id="propinaSection" class="hidden fade-in">
-          <div class="flex items-center justify-between mb-2">
-            <label class="text-sm font-semibold text-gray-300">Propina sugerida</label>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" id="propinaToggle" class="sr-only peer">
-              <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-            </label>
-          </div>
-          <input type="number" id="propinaInput" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500" value="0" min="0" step="0.01" disabled>
-        </div>
-
-        <div class="bg-gray-800/50 rounded-xl p-4 space-y-2 border border-gray-700 mt-6">
-          <div class="flex justify-between text-sm text-gray-400"><span>Subtotal</span><span id="checkoutSubtotal" class="text-white font-semibold">Bs 0.00</span></div>
-          <div class="flex justify-between text-sm text-gray-400"><span>Delivery</span><span id="checkoutDelivery" class="text-gray-300">Bs 0.00</span></div>
-          <div id="checkoutPropinaLine" class="hidden flex justify-between text-sm text-gray-400">
-            <span>Propina</span>
-            <span id="checkoutPropina" class="text-gray-300">Bs 0.00</span>
-          </div>
-          <div class="flex justify-between text-lg font-black border-t border-white/10 pt-2 text-white">
-            <span>Total a pagar</span><span id="checkoutTotal" class="text-orange-400">Bs 0.00</span>
-          </div>
-        </div>
-
-        <div class="flex gap-2 mt-4">
-          <button id="backStep2Btn" class="px-5 py-3 rounded-xl font-bold text-gray-400 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition">
-            Atrás
-          </button>
-          <button id="confirmOrderBtn" class="flex-1 btn-primary py-3 rounded-xl font-bold text-white transition">
-            Confirmar y Enviar Pedido
-          </button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<div id="paymentInfoModal" class="fixed inset-0 z-[85] bg-black/80 flex items-center justify-center p-4 hidden">
-  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-md max-h-[85vh] overflow-y-auto">
-    <div class="p-6">
-      <div class="flex items-center justify-between mb-6 border-b border-white/5 pb-3">
-        <h2 class="text-2xl font-black text-white">Información de Pago</h2>
-        <button id="closePaymentInfo" class="flex items-center gap-1 px-3 py-2 hover:bg-white/10 rounded-lg transition text-sm font-semibold text-gray-300">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-          Regresar
-        </button>
-      </div>
-      <div id="paymentInfoContent" class="space-y-4"></div>
-    </div>
-  </div>
-</div>
-
+<!-- MODAL PEDIDOS -->
 <div id="ordersModal" class="fixed inset-0 z-[85] bg-black/80 flex items-center justify-center p-4 hidden">
   <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-md max-h-[85vh] overflow-y-auto flex flex-col">
     <div class="p-6 sticky top-0 bg-[#1a1a1a] border-b border-white/5 z-10 flex items-center justify-between">
@@ -330,11 +168,12 @@
   </div>
 </div>
 
+<!-- MODAL CONFIRMACION -->
 <div id="confirmationModal" class="fixed inset-0 z-[90] bg-black/90 flex items-center justify-center p-4 hidden">
   <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-md text-center p-8 fade-in border border-white/10 shadow-2xl">
     <div class="text-6xl mb-4">🎉</div>
     <h2 class="text-2xl font-black mb-2 text-white">¡Pedido Registrado!</h2>
-    <p class="text-gray-400 mb-4">Tu número de pedido es:</p>
+    <p class="text-gray-400 mb-4">Tu numero de pedido es:</p>
     <div class="bg-gray-800 rounded-xl p-4 mb-6 border border-gray-700">
       <p id="orderNumber" class="text-3xl font-black text-orange-400">PED00001</p>
     </div>
@@ -344,46 +183,15 @@
       Avisar por WhatsApp
     </a>
     <button id="newOrderBtn" class="block w-full py-3 rounded-xl font-bold text-gray-300 border border-gray-600 hover:bg-gray-800 transition">
-      Cerrar y volver al menú
+      Cerrar y volver al menu
     </button>
   </div>
 </div>
 
-<div id="sideMenu" class="fixed inset-y-0 left-0 w-72 bg-[#111] z-[70] transform -translate-x-full transition-transform duration-300 shadow-2xl border-r border-orange-500/30">
-  <div class="p-6">
-    <div class="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
-      <span class="font-black text-xl tracking-wide bg-gradient-to-r from-orange-500 to-amber-400 bg-clip-text text-transparent">FastBurger</span>
-      <button id="closeMenu" class="flex items-center gap-1 px-3 py-2 hover:bg-orange-500/10 rounded-xl text-orange-400 hover:text-orange-500 transition text-sm font-semibold">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-      </button>
-    </div>
-    <nav class="space-y-2">
-      <button id="myOrdersBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white font-semibold transition text-left border border-transparent">
-        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-        Mis Pedidos
-      </button>
-      <button id="paymentInfoBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white font-semibold transition text-left border border-transparent">
-        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-        Datos de Pagos
-      </button>
-      <button id="salirBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/10 text-red-400 hover:text-red-500 font-semibold transition text-left border border-transparent">
-        <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-        Salir FastBurguer
-      </button>
-      <button id="opcionesBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white font-semibold transition text-left border border-transparent">
-        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-        Opciones
-      </button>
-      <button id="sobreBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white font-semibold transition text-left border border-transparent">
-        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        Sobre FastBurguer
-      </button>
-    </nav>
-  </div>
-</div>
-
+<!-- OVERLAY GENERAL -->
 <div id="overlay" class="fixed inset-0 bg-black/50 z-[65] hidden"></div>
 
+<!-- ALERTA CUSTOM -->
 <div id="customAlertModal" class="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4 hidden">
   <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-sm text-center p-6 border border-white/10 shadow-2xl">
     <div id="alertIconContainer" class="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4"></div>
@@ -392,6 +200,38 @@
     <button id="alertActionBtn" class="w-full btn-primary py-3 rounded-xl font-bold text-white transition">
       Entendido
     </button>
+  </div>
+</div>
+
+<!-- MODAL SOBRE -->
+<div id="sobreModal" class="fixed inset-0 z-[85] bg-black/80 flex items-center justify-center p-4 hidden">
+  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-sm p-8 border border-white/10 shadow-2xl">
+    <div class="text-center mb-6">
+      <h3 class="text-2xl font-black text-white tracking-wide">FASTBURGUER</h3>
+      <div class="w-16 h-0.5 bg-orange-500/30 mx-auto mt-2 mb-2"></div>
+      <p class="text-sm text-gray-400 font-light">Sistema de Pedido</p>
+    </div>
+    <div class="space-y-4">
+      <div><p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Creado por</p><p class="text-sm font-semibold text-white">Ing Jesus Linares</p></div>
+      <div><p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Contacto</p><p class="text-sm font-semibold text-white">0412-0639340</p></div>
+      <div><p class="text-xs text-gray-500 uppercase tracking-wider mb-1">E-Mail</p><p class="text-sm font-semibold text-white">jesuslinaresp@gmail.com</p></div>
+    </div>
+    <button id="closeSobreModal" class="mt-8 w-full btn-primary py-3 rounded-xl font-bold text-white transition">
+      Cerrar
+    </button>
+  </div>
+</div>
+
+<!-- MODAL DESPEDIDA -->
+<div id="despedidaModal" class="fixed inset-0 z-[85] bg-black/90 flex items-center justify-center p-4 hidden">
+  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-sm text-center p-8 border border-white/10 shadow-2xl fade-in">
+    <div class="text-6xl mb-4">🍔</div>
+    <h3 class="text-2xl font-black text-white mb-2 tracking-tight">FastBurguer</h3>
+    <p class="text-lg text-gray-300 mb-8 font-medium">Sera una Delicia Verte de Nuevo</p>
+    <div class="flex gap-3">
+      <button id="salirConfirmBtn" class="flex-1 py-3 rounded-xl font-bold text-gray-400 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition">Salir</button>
+      <button id="regresarDespedidaBtn" class="flex-1 btn-primary py-3 rounded-xl font-bold text-white transition">Regresar</button>
+    </div>
   </div>
 </div>
 
@@ -405,29 +245,16 @@ const PLACEHOLDER_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000
 let products = [];
 let categories = [];
 let zones = [];
-let paymentMethods = [];
 let cart = [];
-let currentCurrency = ""; // Ahora es CodTasa (ej: "T002")
-let tasasPorCod = {};     // { T001: 1, T002: 550, ... }
-let simboloACod = {};     // { BS: 'T001', USD: 'T002', ... }
-let codASimbolo = {};     // { T001: 'BS', T002: 'USD', ... }
-let desTasaPorCod = {};   // { T001: 'Bolivar', T002: 'Dolar', ... }
+let currentCurrency = "";
+let tasasPorCod = {};
+let simboloACod = {};
+let codASimbolo = {};
+let desTasaPorCod = {};
 let config = {};
-let selectedService = "";
-let selectedZone = null;
 let currentClientPhone = localStorage.getItem("fb_client_phone") || "";
 let savedClientData = null;
 let enSitioAreas = [];
-let selectedEnSitio = null;
-let propinaAplicada = 0;
-let propinaToggle = false;
-
-const PAYMENT_CONFIG_MAP = {
-  'F001': { key: 'DatosPagoMovil', label: 'Pago Móvil' },
-  'F002': { key: 'DatosTransferencia', label: 'Transferencia' },
-  'F004': { key: 'CuentaZelle', label: 'Zelle' },
-  'F005': { key: 'CuentaBinance', label: 'Binance' }
-};
 
 document.addEventListener("DOMContentLoaded", init);
 
@@ -461,23 +288,20 @@ function mostrarAlerta(tipo, titulo, mensaje, callback = null, btnText = "Acepta
 }
 
 // ============================================
-// INICIALIZACIÓN Y CARGA
+// INICIALIZACION Y CARGA
 // ============================================
 async function init() {
   showLoading();
   try {
     const r = await apiGet("init");
-    if (!r.success) throw new Error("Respuesta inválida del servidor");
+    if (!r.success) throw new Error("Respuesta invalida del servidor");
 
     config = r.data.config || {};
     categories = r.data.categorias || [];
     zones = r.data.zonas || [];
-    paymentMethods = r.data.formasPago || [];
     enSitioAreas = r.data.enSitio || [];
 
-    // Construir indices por CodTasa
     let tasasArray = r.data.tasas || [];
-    // Ordenar por OrdenTasa ascendente
     tasasArray.sort((a, b) => (parseInt(a.OrdenTasa) || 0) - (parseInt(b.OrdenTasa) || 0));
 
     tasasPorCod = {};
@@ -499,10 +323,8 @@ async function init() {
       }
     });
 
-    // Moneda por defecto desde Control.CodTasa
     currentCurrency = config.CodTasa || "T002";
 
-    // Poblar selector de moneda con CodTasa como value, SimboloTasa como texto
     const currencySelector = document.getElementById("currencySelector");
     currencySelector.innerHTML = "";
     tasasArray.forEach(t => {
@@ -524,8 +346,9 @@ async function init() {
     renderProducts();
     updateStoreStatus();
     setupEventListeners();
+    loadCartFromStorage();
   } catch (err) {
-    mostrarAlerta("error", "Error de Red", "No se pudo cargar el menú. Verifica tu conexión.", () => window.location.reload(), "Reintentar");
+    mostrarAlerta("error", "Error de Red", "No se pudo cargar el menu. Verifica tu conexion.", () => window.location.reload(), "Reintentar");
   }
 }
 
@@ -551,7 +374,7 @@ function formatearPrecio(valor, codTasa) {
   const simbolo = codASimbolo[codTasa] || "BS";
   if (simbolo === "USD") return "$" + v.toFixed(2);
   if (simbolo === "BS") return "Bs " + v.toFixed(2);
-  if (simbolo === "EUR") return "€" + v.toFixed(2);
+  if (simbolo === "EUR") return "EUR " + v.toFixed(2);
   if (simbolo === "BN") return "BN " + v.toFixed(2);
   return v.toFixed(2);
 }
@@ -559,14 +382,8 @@ function formatearPrecio(valor, codTasa) {
 async function apiGet(action, params) {
   let url = API_URL + "?action=" + action;
   if (params) for (let key in params) url += "&" + key + "=" + encodeURIComponent(params[key]);
+  url += "&_cb=" + Date.now();
   const res = await fetch(url);
-  return res.json();
-}
-
-async function apiPost(data) {
-  const res = await fetch(API_URL, {
-    method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(data)
-  });
   return res.json();
 }
 
@@ -582,7 +399,7 @@ function updateStoreStatus() {
 }
 
 // ============================================
-// RENDERIZADO DEL MENÚ
+// RENDERIZADO DEL MENU
 // ============================================
 function renderCategories() {
   const container = document.getElementById("categoriesContainer");
@@ -614,7 +431,7 @@ function renderProducts() { renderProductGrid(products); }
 function renderProductGrid(list) {
   const grid = document.getElementById("productsGrid");
   if (list.length === 0) {
-    grid.innerHTML = `<div class="col-span-full text-center py-20 text-gray-500">No hay productos en esta categoría</div>`;
+    grid.innerHTML = `<div class="col-span-full text-center py-20 text-gray-500">No hay productos en esta categoria</div>`;
     return;
   }
 
@@ -671,7 +488,7 @@ function addToCart(code) {
   const product = products.find(p => p.CodProducto === code);
   if (!product) return;
   if (product.StockProducto !== "Disponible") {
-    mostrarAlerta("error", "Producto agotado", "Este producto no está disponible actualmente.");
+    mostrarAlerta("error", "Producto agotado", "Este producto no esta disponible actualmente.");
     return;
   }
   const existing = cart.find(item => item.CodProducto === code);
@@ -689,32 +506,30 @@ function addToCart(code) {
       CodTasaProducto: product.CodTasa
     });
   }
+  saveCartToStorage();
   updateCartUI();
   const badge = document.getElementById("cartCount");
   badge.classList.remove("cart-badge"); void badge.offsetWidth; badge.classList.add("cart-badge");
 }
 
-function removeFromCart(code) { cart = cart.filter(item => item.CodProducto !== code); updateCartUI(); }
+function removeFromCart(code) { cart = cart.filter(item => item.CodProducto !== code); saveCartToStorage(); updateCartUI(); }
 function updateQuantity(code, delta) {
   const item = cart.find(i => i.CodProducto === code);
   if (!item) return;
   item.cantidad += delta;
   if (item.cantidad <= 0) removeFromCart(code);
-  else { item.subtotalItem = item.cantidad * item.precioUnitario; updateCartUI(); }
+  else { item.subtotalItem = item.cantidad * item.precioUnitario; saveCartToStorage(); updateCartUI(); }
 }
 
 function updateCartUI() {
   const countEl = document.getElementById("cartCount"), itemsEl = document.getElementById("cartItems");
   const subtotal = cart.reduce((sum, item) => sum + item.subtotalItem, 0);
   const totalItems = cart.reduce((sum, item) => sum + item.cantidad, 0);
-  const delivery = selectedService === "delivery" && selectedZone 
-    ? convertirMonto(selectedZone.TarifaZona, selectedZone.CodTasa || "T002", currentCurrency) 
-    : 0;
 
   if (totalItems > 0) { countEl.textContent = totalItems; countEl.classList.remove("hidden"); } 
   else { countEl.classList.add("hidden"); }
 
-  if (cart.length === 0) itemsEl.innerHTML = `<p class="text-center text-gray-500 py-10">Tu carrito está vacío</p>`;
+  if (cart.length === 0) itemsEl.innerHTML = `<p class="text-center text-gray-500 py-10">Tu carrito esta vacio</p>`;
   else {
     let html = "";
     cart.forEach(item => {
@@ -733,321 +548,63 @@ function updateCartUI() {
   }
 
   document.getElementById("cartSubtotal").textContent = formatearPrecio(subtotal, currentCurrency);
-  document.getElementById("cartDelivery").textContent = delivery > 0 ? formatearPrecio(delivery, currentCurrency) : "Gratis";
-  document.getElementById("cartTotal").textContent = formatearPrecio(subtotal + delivery, currentCurrency);
+  document.getElementById("cartDelivery").textContent = "Gratis";
+  document.getElementById("cartTotal").textContent = formatearPrecio(subtotal, currentCurrency);
   syncAddButtonStates();
 }
 
+function saveCartToStorage() {
+  localStorage.setItem("fb_cart_v3", JSON.stringify(cart));
+  localStorage.setItem("fb_currency_v3", currentCurrency);
+}
+
+function loadCartFromStorage() {
+  try {
+    const c = localStorage.getItem("fb_cart_v3");
+    if (c) {
+      cart = JSON.parse(c);
+      const cur = localStorage.getItem("fb_currency_v3");
+      if (cur) currentCurrency = cur;
+      cart = cart.map(item => {
+        const prod = products.find(p => p.CodProducto === item.CodProducto);
+        if (prod) {
+          const nuevoPrecio = calcularPrecioConvertido(parseFloat(prod.Precio) || 0, prod.CodTasa, currentCurrency);
+          return { ...item, precioUnitario: nuevoPrecio, subtotalItem: item.cantidad * nuevoPrecio };
+        }
+        return item;
+      });
+      updateCartUI();
+    }
+  } catch (e) { cart = []; }
+}
+
 // ============================================
-// FLUJO DE CHECKOUT EN 3 PASOS
+// CARRITO SIDEBAR
 // ============================================
-function openCart() { document.getElementById("cartSidebar").classList.remove("translate-x-full"); document.getElementById("overlay").classList.remove("hidden"); }
-function closeCart() { document.getElementById("cartSidebar").classList.add("translate-x-full"); checkOverlay(); }
-
-function openCheckout() {
-  if (cart.length === 0) return mostrarAlerta("error", "Vacío", "Agrega productos antes de continuar.", () => { closeCart(); window.scrollTo({top:0}); });
-  if (config.EstadoTienda === "Cerrado") return mostrarAlerta("error", "Cerrado", "No podemos procesar pedidos ahora.");
-
-  closeCart();
-  document.getElementById("checkoutModal").classList.remove("hidden");
-  document.getElementById("overlay").classList.remove("hidden");
-
-  document.getElementById("checkoutStep1").classList.remove("hidden");
-  document.getElementById("checkoutStep2").classList.add("hidden");
-  document.getElementById("checkoutStep3").classList.add("hidden");
-
-  document.getElementById("paymentSelectedInfo").innerHTML = "";
-  document.getElementById("paymentSelectedInfo").classList.add("hidden");
-
-  // Reset propina OFF/bloqueado/valor 0
-  propinaAplicada = 0;
-  propinaToggle = false;
-  const propinaToggleEl = document.getElementById("propinaToggle");
-  const propinaInputEl = document.getElementById("propinaInput");
-  propinaToggleEl.checked = false;
-  propinaInputEl.value = "0";
-  propinaInputEl.disabled = true;
-
-  // Poblar EnSitio select
-  const eSel = document.getElementById("enSitioSelect");
-  const eMsg = document.getElementById("enSitioEmptyMsg");
-  eSel.innerHTML = '<option value="">Selecciona un área o mesa</option>';
-  if (enSitioAreas.length === 0) {
-    eMsg.classList.remove("hidden");
-  } else {
-    eMsg.classList.add("hidden");
-    enSitioAreas.forEach(e => {
-      const label = e.DetalleEnSitio ? `${e.DesEnSitio} — ${e.DetalleEnSitio}` : e.DesEnSitio;
-      eSel.innerHTML += `<option value="${e.CodEnSitio}" data-propina="${e.PropinaEnSitio}" data-codtasa="${e.CodTasa}">${label}</option>`;
-    });
-  }
-
-  // Poblar Zonas
-  const zSel = document.getElementById("zoneSelect");
-  const zoneMsg = document.getElementById("zoneDisabledMsg");
-  zSel.innerHTML = '<option value="">Selecciona una zona</option>';
-
-  if (zones.length === 0) {
-    zoneMsg.classList.remove("hidden");
-    document.getElementById("zoneSection").classList.add("hidden");
-  } else {
-    zoneMsg.classList.add("hidden");
-    document.getElementById("zoneSection").classList.remove("hidden");
-    zones.forEach(z => {
-      const tarifaConvertida = convertirMonto(z.TarifaZona, z.CodTasa || "T002", currentCurrency);
-      zSel.innerHTML += `<option value="${z.CodZona}" data-name="${z.NombreZona}" data-tarifa="${z.TarifaZona}" data-codtasa="${z.CodTasa || 'T002'}">${z.NombreZona} - ${formatearPrecio(tarifaConvertida, currentCurrency)}</option>`;
-    });
-  }
-
-  // Poblar Formas de Pago
-  const pSel = document.getElementById("paymentSelect");
-  pSel.innerHTML = '<option value="">Seleccione cómo pagará</option>';
-  paymentMethods.forEach(pm => {
-    pSel.innerHTML += `<option value="${pm.CodPago}" data-codtasa="${pm.CodTasa}" data-despago="${pm.DesPago}">${pm.DesPago}</option>`;
-  });
-
-  updateCheckoutSummary();
+function openCart() { 
+  document.getElementById("cartSidebar").classList.remove("translate-x-full"); 
+  document.getElementById("overlay").classList.remove("hidden"); 
 }
-
-function nextCheckoutStep1() {
-  const phone = document.getElementById("clientPhone").value.trim();
-  const name = document.getElementById("clientName").value.trim();
-
-  if (phone.length !== 7) return mostrarAlerta("error", "Dato inválido", "El número de WhatsApp debe tener 7 dígitos exactos.");
-  if (!name) return mostrarAlerta("error", "Faltan datos", "Escribe tu nombre completo.");
-
-  document.getElementById("checkoutStep1").classList.add("hidden");
-  document.getElementById("checkoutStep2").classList.remove("hidden");
-}
-
-function nextCheckoutStep2() {
-  if (!selectedService) return mostrarAlerta("error", "Faltan datos", "Selecciona el tipo de servicio.");
-
-  if (selectedService === "delivery") {
-    if (zones.length > 0 && !selectedZone) {
-      return mostrarAlerta("error", "Faltan datos", "Selecciona la zona de delivery.");
-    }
-    const addr = document.getElementById("clientAddress").value.trim();
-    if (!addr || addr.length === 0) {
-      return mostrarAlerta("error", "Faltan datos", "Escribe la dirección de entrega.");
-    }
-  }
-
-  if (selectedService === "sitio") {
-    if (enSitioAreas.length > 0 && !selectedEnSitio) {
-      return mostrarAlerta("error", "Faltan datos", "Selecciona un área o mesa.");
-    }
-  }
-
-  document.getElementById("checkoutStep2").classList.add("hidden");
-  document.getElementById("checkoutStep3").classList.remove("hidden");
-  updateCheckoutSummary();
-}
-
-function backToStep1() {
-  document.getElementById("checkoutStep2").classList.add("hidden");
-  document.getElementById("checkoutStep1").classList.remove("hidden");
-}
-
-function backToStep2() {
-  document.getElementById("checkoutStep3").classList.add("hidden");
-  document.getElementById("checkoutStep2").classList.remove("hidden");
-}
-
-function closeCheckout() { 
-  document.getElementById("checkoutModal").classList.add("hidden"); 
+function closeCart() { 
+  document.getElementById("cartSidebar").classList.add("translate-x-full"); 
   checkOverlay(); 
 }
 
-function updateCheckoutSummary() {
-  const subtotal = cart.reduce((sum, item) => sum + item.subtotalItem, 0);
-  let delivery = 0;
-  if (selectedService === "delivery") {
-    if (selectedZone) {
-      delivery = convertirMonto(selectedZone.TarifaZona, selectedZone.CodTasa || "T002", currentCurrency);
-    } else {
-      delivery = 0;
-    }
+function goToCheckout() {
+  if (cart.length === 0) {
+    mostrarAlerta("error", "Vacio", "Agrega productos antes de continuar.", () => { closeCart(); window.scrollTo({top:0}); });
+    return;
   }
-
-  let propina = 0;
-  const propinaLine = document.getElementById("checkoutPropinaLine");
-  const propinaSection = document.getElementById("propinaSection");
-
-//  1
-
-  if (selectedService === "sitio" && selectedEnSitio && selectedEnSitio.PropinaEnSitio > 0) {
-    propinaSection.classList.remove("hidden");
-    const inputVal = parseFloat(document.getElementById("propinaInput").value) || 0;
-    if (inputVal > 0 && propinaToggle) {
-      propina = inputVal;
-      propinaLine.classList.remove("hidden");
-      document.getElementById("checkoutPropina").textContent = formatearPrecio(propina, currentCurrency);
-    } else {
-      propinaLine.classList.add("hidden");
-    }
-  } else {
-    propinaSection.classList.add("hidden");
-    propinaLine.classList.add("hidden");
+  if (config.EstadoTienda === "Cerrado") {
+    mostrarAlerta("error", "Cerrado", "No podemos procesar pedidos ahora.");
+    return;
   }
-
-  document.getElementById("checkoutSubtotal").textContent = formatearPrecio(subtotal, currentCurrency);
-  document.getElementById("checkoutDelivery").textContent = delivery > 0 ? formatearPrecio(delivery, currentCurrency) : "Gratis";
-  document.getElementById("checkoutTotal").textContent = formatearPrecio(subtotal + delivery + propina, currentCurrency);
+  saveCartToStorage();
+  window.location.href = "checkout.html";
 }
 
 // ============================================
-// PROCESAR Y ENVIAR PEDIDO
-// ============================================
-async function confirmOrder() {
-  const paySelect = document.getElementById("paymentSelect");
-
-  if (!paySelect.value) return mostrarAlerta("error", "Faltan datos", "Selecciona un método de pago.");
-
-  const name = document.getElementById("clientName").value.trim();
-  const phone = document.getElementById("phonePrefix").value + document.getElementById("clientPhone").value.trim();
-
-  // Tres campos separados
-  let address = "";
-  let observationsPayload = "";
-
-  if (selectedService === "delivery") {
-    address = document.getElementById("clientAddress").value.trim();
-    observationsPayload = "";
-  } else if (selectedService === "pickup") {
-    address = "";
-    observationsPayload = "Retiro: Pick Up";
-  } else if (selectedService === "sitio") {
-    address = "";
-    observationsPayload = selectedEnSitio ? "En Sitio: " + selectedEnSitio.DesEnSitio : "En Sitio";
-  }
-
-  let cedula = document.getElementById("checkCedula").checked ? document.getElementById("docPrefix").value + document.getElementById("clientCedula").value.trim() : "";
-  let email = document.getElementById("checkEmail").checked ? document.getElementById("clientEmail").value.trim() : "";
-  let observationsCliente = document.getElementById("checkObs").checked ? document.getElementById("observations").value.trim() : "";
-
-  const pOpt = paySelect.selectedOptions[0];
-  const codPago = pOpt.value;
-  const payLabel = pOpt.dataset.despago;
-  const payCodTasa = pOpt.dataset.codtasa || "T001";
-
-  let payVal = "";
-  const configMap = PAYMENT_CONFIG_MAP[codPago];
-  if (configMap && config[configMap.key]) {
-    payVal = config[configMap.key];
-  }
-
-  const subtotal = cart.reduce((s, i) => s + i.subtotalItem, 0);
-  let delivery = 0;
-  if (selectedService === "delivery") {
-    if (selectedZone) {
-      delivery = convertirMonto(selectedZone.TarifaZona, selectedZone.CodTasa || "T002", currentCurrency);
-    } else {
-      delivery = 0;
-    }
-  }
-
-
-// 2
-
-  // Propina del input directo
-  let propina = 0;
-  if (selectedService === "sitio" && selectedEnSitio && selectedEnSitio.PropinaEnSitio > 0 && propinaToggle) {
-    const inputVal = parseFloat(document.getElementById("propinaInput").value) || 0;
-    if (inputVal > 0) {
-      propina = inputVal;
-    }
-  }
-  const total = subtotal + delivery + propina;
-
-  const orderData = {
-    action: "pedido",
-    cliente: { 
-      nombre: name, 
-      telefono: phone, 
-      direccion: address, 
-      cedula: cedula, 
-      email: email 
-    },
-    tipoServicio: selectedService,
-    codZone: selectedZone ? selectedZone.CodZona : "",
-    zona: selectedZone ? selectedZone.NombreZona : "N/A",
-    codEnSitio: selectedEnSitio ? selectedEnSitio.CodEnSitio : "",
-    desEnSitio: selectedEnSitio ? selectedEnSitio.DesEnSitio : "",
-    codTasa: currentCurrency,
-    desTasa: desTasaPorCod[currentCurrency] || "",
-    codFormaPago: codPago,
-    desPago: payLabel + (payVal ? ": " + payVal : ""),
-    items: cart,
-    subtotal: subtotal,
-    delivery: delivery,
-    propina: propina,
-    total: total,
-    observations: observationsPayload,
-    observationsCliente: observationsCliente
-  };
-
-  const btn = document.getElementById("confirmOrderBtn");
-  const origTxt = btn.innerHTML; btn.innerHTML = "Enviando..."; btn.disabled = true;
-
-  try {
-    const res = await apiPost(orderData);
-    btn.innerHTML = origTxt; btn.disabled = false;
-
-    if (res.success) {
-      let misPedidos = JSON.parse(localStorage.getItem("mis_pedidos_fb") || "[]");
-      if(!misPedidos.includes(res.nroPedido)) misPedidos.push(res.nroPedido);
-      localStorage.setItem("mis_pedidos_fb", JSON.stringify(misPedidos));
-
-      showConfirmation(res.nroPedido, payLabel, payVal, total, cart, address, selectedService, propina, currentCurrency, payCodTasa);
-      cart = []; updateCartUI(); closeCheckout();
-    } else {
-      mostrarAlerta("error", "Error", res.error || "No se pudo registrar.");
-    }
-  } catch (err) {
-    btn.innerHTML = origTxt; btn.disabled = false;
-    mostrarAlerta("error", "Error de Red", "Falló la comunicación con el servidor.");
-  }
-}
-
-function showConfirmation(nro, label, val, total, items, direccion, tipoServicio, propina, codTasaPedido, codTasaPago) {
-  document.getElementById("confirmationModal").classList.remove("hidden");
-  document.getElementById("orderNumber").textContent = nro;
-
-  // Recalcular total a moneda de pago para mostrar al usuario
-  const totalDisplay = convertirMonto(total, codTasaPedido, codTasaPago);
-
-  let infoHtml = `<p class="text-xs text-gray-400 mb-1">${label}</p>`;
-  if (val) infoHtml += `<p class="text-sm text-white font-mono mb-2">${val}</p>`;
-  infoHtml += `<p class="font-bold text-orange-400">Total a transferir: ${formatearPrecio(totalDisplay, codTasaPago)}</p>`;
-  document.getElementById("paymentInfo").innerHTML = infoHtml;
-
-  let itemsText = "";
-  items.forEach((item, idx) => {
-    itemsText += `${idx + 1}. ${item.cantidad}x ${item.DesProducto} - ${formatearPrecio(item.subtotalItem, codTasaPedido)}\n`;
-  });
-
-  let msg = `¡Hola! Acabo de realizar el pedido *${nro}*.\n\n`;
-  msg += `*Productos:*\n${itemsText}\n`;
-  msg += `*Total:* ${formatearPrecio(totalDisplay, codTasaPago)}\n`;
-  msg += `*Pago:* ${label}\n`;
-
-  if (tipoServicio === "delivery" && direccion && direccion.trim() !== "" && !direccion.startsWith("Retiro:")) {
-    msg += `*Dirección:* ${direccion}\n`;
-  }
-  if (tipoServicio === "sitio" && selectedEnSitio) {
-    msg += `*Mesa/Área:* ${selectedEnSitio.DesEnSitio}\n`;
-  }
-  if (propina && propina > 0) {
-    msg += `*Propina:* ${formatearPrecio(propina, codTasaPedido)}\n`;
-  }
-
-  const waNumber = "58" + (config.WhatsAppNegocio || "").replace(/^0/, "");
-  document.getElementById("whatsappBtn").href = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
-}
-
-// ============================================
-// MIS PEDIDOS Y MODALES EXTRA
+// MIS PEDIDOS
 // ============================================
 async function openMyOrders() {
   document.getElementById("sideMenu").classList.add("-translate-x-full");
@@ -1056,7 +613,7 @@ async function openMyOrders() {
   const container = document.getElementById("ordersContent");
 
   if (!currentClientPhone) {
-    container.innerHTML = `<p class="text-center text-gray-500 py-10">Aún no hay Pedidos Pendientes</p>`;
+    container.innerHTML = `<p class="text-center text-gray-500 py-10">Aun no hay Pedidos Pendientes</p>`;
     return;
   }
 
@@ -1067,7 +624,7 @@ async function openMyOrders() {
     if (res.success) {
       const mios = res.data;
       if (mios.length === 0) {
-         container.innerHTML = `<p class="text-center text-gray-500 py-10">Aún no hay Pedidos Pendientes</p>`;
+         container.innerHTML = `<p class="text-center text-gray-500 py-10">Aun no hay Pedidos Pendientes</p>`;
          return;
       }
       let html = "";
@@ -1078,10 +635,10 @@ async function openMyOrders() {
             <span class="font-bold text-orange-400">${p.NroPedido}</span>
             <span class="text-xs text-yellow-500 font-bold">${p.Estado}</span>
           </div>
-          <div class="flex justify-between text-sm text-gray-300 mb-1"><span>Fecha:</span> <span>${p.FechaPedido.substring(0,10)}</span></div>
-          <div class="flex justify-between text-sm text-gray-300 mb-2"><span>Monto:</span> <span class="font-bold text-white">${formatearPrecio(p.TotalPedido, p.CodTasa)}</span></div>
+          <div class="flex justify-between text-sm text-gray-300 mb-1"><span>Fecha:</span> <span>${p.FechaPedido ? String(p.FechaPedido).substring(0,10) : "N/A"}</span></div>
+          <div class="flex justify-between text-sm text-gray-300 mb-2"><span>Monto:</span> <span class="font-bold text-white">${formatearPrecio(p.TotalPedido || 0, p.CodTasa)}</span></div>
           <button class="view-items-btn w-full py-2 rounded-lg border border-orange-500/30 text-orange-400 text-sm font-semibold hover:bg-orange-500/10 transition" data-nro="${p.NroPedido}" data-codtasa="${p.CodTasa}">
-            Ver Ítems
+            Ver Items
           </button>
         </div>`;
       });
@@ -1090,390 +647,13 @@ async function openMyOrders() {
         btn.addEventListener("click", () => showOrderItems(btn.dataset.nro, btn.dataset.codtasa));
       });
     } else {
-      container.innerHTML = `<p class="text-center text-red-500 py-10">No se pudo cargar la información.</p>`;
+      container.innerHTML = `<p class="text-center text-red-500 py-10">No se pudo cargar la informacion.</p>`;
     }
   } catch(e) {
-    container.innerHTML = `<p class="text-center text-red-500 py-10">Error de conexión al consultar pedidos.</p>`;
+    container.innerHTML = `<p class="text-center text-red-500 py-10">Error de conexion al consultar pedidos.</p>`;
   }
 }
 
-// ============================================
-// LISTENERS Y EVENTOS
-// ============================================
-function setupEventListeners() {
-  document.getElementById("cartBtn").addEventListener("click", openCart);
-  document.getElementById("closeCart").addEventListener("click", closeCart);
-  document.getElementById("checkoutBtn").addEventListener("click", openCheckout);
-  document.getElementById("closeCheckout").addEventListener("click", closeCheckout);
-
-  document.getElementById("nextStepBtn").addEventListener("click", nextCheckoutStep1);
-  document.getElementById("nextStep2Btn").addEventListener("click", nextCheckoutStep2);
-  document.getElementById("backStep1Btn").addEventListener("click", backToStep1);
-  document.getElementById("backStep2Btn").addEventListener("click", backToStep2);
-  document.getElementById("confirmOrderBtn").addEventListener("click", confirmOrder);
-
-  document.getElementById("backToCartBtn").addEventListener("click", () => {
-    closeCheckout();
-    openCart();
-  });
-
-  document.getElementById("menuBtn").addEventListener("click", () => { document.getElementById("sideMenu").classList.remove("-translate-x-full"); document.getElementById("overlay").classList.remove("hidden"); });
-  document.getElementById("closeMenu").addEventListener("click", () => { document.getElementById("sideMenu").classList.add("-translate-x-full"); checkOverlay(); });
-
-  document.getElementById("myOrdersBtn").addEventListener("click", openMyOrders);
-  document.getElementById("closeOrdersModal").addEventListener("click", () => { document.getElementById("ordersModal").classList.add("hidden"); checkOverlay(); });
-  document.getElementById("backToOrdersBtn").addEventListener("click", backToOrders);
-  document.getElementById("paymentInfoBtn").addEventListener("click", () => {
-    document.getElementById("sideMenu").classList.add("-translate-x-full");
-    document.getElementById("paymentInfoModal").classList.remove("hidden");
-    document.getElementById("overlay").classList.remove("hidden");
-
-    const content = document.getElementById("paymentInfoContent");
-    content.innerHTML = "";
-    let opts = [];
-    if(config.CuentaZelle) opts.push({n:"Zelle", v:config.CuentaZelle, c:"text-blue-400"});
-    if(config.CuentaBinance) opts.push({n:"Binance", v:config.CuentaBinance, c:"text-yellow-400"});
-    if(config.DatosPagoMovil) opts.push({n:"Pago Móvil", v:config.DatosPagoMovil, c:"text-green-400"});
-    if(config.DatosTransferencia) opts.push({n:"Transferencia", v:config.DatosTransferencia, c:"text-purple-400"});
-
-    opts.forEach(o => {
-      content.innerHTML += `<div class="bg-gray-800/50 rounded-xl p-4 border border-gray-700 mb-3"><div class="font-bold ${o.c} mb-1">${o.n}</div><p class="text-sm text-gray-300 font-mono">${o.v}</p></div>`;
-    });
-  });
-  document.getElementById("closePaymentInfo").addEventListener("click", () => { document.getElementById("paymentInfoModal").classList.add("hidden"); checkOverlay(); });
-
-  document.getElementById("overlay").addEventListener("click", () => {
-    closeCart(); closeCheckout(); document.getElementById("paymentInfoModal").classList.add("hidden");
-    document.getElementById("ordersModal").classList.add("hidden"); document.getElementById("sideMenu").classList.add("-translate-x-full");
-    document.getElementById("sobreModal").classList.add("hidden");
-    document.getElementById("despedidaModal").classList.add("hidden");
-    document.getElementById("overlay").classList.add("hidden");
-  });
-
-  document.getElementById("newOrderBtn").addEventListener("click", () => {
-    document.getElementById("confirmationModal").classList.add("hidden");
-    window.scrollTo({top:0, behavior:"smooth"});
-  });
-
-  // Cambio de moneda: recalcular todo por CodTasa
-  document.getElementById("currencySelector").addEventListener("change", async (e) => {
-    currentCurrency = e.target.value;
-    showLoading();
-
-    // Recalcular productos desde su CodTasa propio
-    products = products.map(p => ({
-      ...p,
-      PrecioConvertido: calcularPrecioConvertido(parseFloat(p.Precio) || 0, p.CodTasa, currentCurrency)
-    }));
-
-    // Recalcular carrito
-    cart = cart.map(item => {
-      const prod = products.find(p => p.CodProducto === item.CodProducto);
-      if (prod) {
-        const nuevoPrecio = calcularPrecioConvertido(parseFloat(prod.Precio) || 0, prod.CodTasa, currentCurrency);
-        return {
-          ...item,
-          precioUnitario: nuevoPrecio,
-          subtotalItem: item.cantidad * nuevoPrecio
-        };
-      }
-      return item;
-    });
-
-    renderProducts();
-    updateCartUI();
-  });
-
-  // Checkboxes Opcionales Checkout Paso 1
-  const toggles = [
-    {check: 'checkCedula', container: 'containerCedula'},
-    {check: 'checkEmail', container: 'containerEmail'},
-    {check: 'checkObs', container: 'containerObs'}
-  ];
-  toggles.forEach(t => {
-    document.getElementById(t.check).addEventListener("change", (e) => {
-      const c = document.getElementById(t.container);
-      if(e.target.checked) { c.classList.remove('hidden'); }
-      else { c.classList.add('hidden'); }
-    });
-  });
-
-  // Botones de servicio
-  document.querySelectorAll(".service-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".service-btn").forEach(b => {
-        b.classList.remove("border-orange-500", "text-orange-400");
-        b.classList.add("border-gray-700");
-      });
-      btn.classList.add("border-orange-500", "text-orange-400");
-      btn.classList.remove("border-gray-700");
-      selectedService = btn.dataset.service;
-
-      const zs = document.getElementById("zoneSection");
-      const as = document.getElementById("addressSection");
-      const dwMsg = document.getElementById("deliveryWhatsAppMsg");
-      const puInfo = document.getElementById("pickupInfoSection");
-      const esSection = document.getElementById("enSitioSection");
-
-      zs.classList.add("hidden");
-      as.classList.add("hidden");
-      dwMsg.classList.add("hidden");
-      puInfo.classList.add("hidden");
-      esSection.classList.add("hidden");
-      selectedZone = null;
-      selectedEnSitio = null;
-      document.getElementById("zoneSelect").value = "";
-      document.getElementById("enSitioSelect").value = "";
-
-      if (selectedService === "delivery") {
-        if (zones.length === 0) {
-          zs.classList.add("hidden");
-        } else {
-          zs.classList.remove("hidden");
-        }
-        as.classList.remove("hidden");
-        dwMsg.classList.remove("hidden");
-        const addrInput = document.getElementById("clientAddress");
-        addrInput.value = "Ciudad Ojeda";
-        if (savedClientData && savedClientData.direccion) {
-          const dir = savedClientData.direccion.trim();
-          if (dir && !dir.toLowerCase().includes("en sitio") && !dir.toLowerCase().includes("retiro")) {
-            addrInput.value = dir;
-          }
-        }
-      } else if (selectedService === "pickup") {
-        puInfo.classList.remove("hidden");
-      } else if (selectedService === "sitio") {
-        esSection.classList.remove("hidden");
-      }
-      updateCheckoutSummary();
-    });
-  });
-
-  document.getElementById("zoneSelect").addEventListener("change", (e) => {
-    const opt = e.target.selectedOptions[0];
-    selectedZone = opt.value ? { 
-      CodZona: opt.value, 
-      NombreZona: opt.dataset.name, 
-      TarifaZona: parseFloat(opt.dataset.tarifa)||0,
-      CodTasa: opt.dataset.codtasa || "T002"
-    } : null;
-    updateCheckoutSummary();
-  });
-
-  document.getElementById("enSitioSelect").addEventListener("change", (e) => {
-    const opt = e.target.selectedOptions[0];
-    const propinaInputEl = document.getElementById("propinaInput");
-    if (opt && opt.value) {
-      const propinaBase = parseFloat(opt.dataset.propina) || 0;
-      const codTasaMesa = opt.dataset.codtasa || "T002";
-      selectedEnSitio = {
-        CodEnSitio: opt.value,
-        DesEnSitio: opt.text,
-        PropinaEnSitio: propinaBase,
-        CodTasa: codTasaMesa
-      };
-      if (propinaBase > 0) {
-        propinaAplicada = convertirMonto(propinaBase, codTasaMesa, currentCurrency);
-        propinaInputEl.value = propinaAplicada.toFixed(2);
-      } else {
-        propinaAplicada = 0;
-        propinaInputEl.value = "0";
-      }
-    } else {
-      selectedEnSitio = null;
-      propinaAplicada = 0;
-      propinaInputEl.value = "0";
-    }
-    updateCheckoutSummary();
-  });
-
-  document.getElementById("propinaToggle").addEventListener("change", () => {
-    propinaToggle = document.getElementById("propinaToggle").checked;
-    const input = document.getElementById("propinaInput");
-    input.disabled = !propinaToggle;
-    updateCheckoutSummary();
-  });
-
-  document.getElementById("propinaInput").addEventListener("input", (e) => {
-    let val = parseFloat(e.target.value);
-    if (isNaN(val) || val < 0) val = 0;
-    propinaAplicada = val;
-    updateCheckoutSummary();
-  });
-
-  document.getElementById("paymentSelect").addEventListener("change", (e) => {
-    const infoDiv = document.getElementById("paymentSelectedInfo");
-    if(e.target.value) {
-      const opt = e.target.selectedOptions[0];
-      const codPago = opt.value;
-      const desPago = opt.dataset.despago;
-
-      const codigosConInfo = ["F001", "F002", "F004", "F005"];
-      if (codigosConInfo.includes(codPago)) {
-        let infoHtml = `<span class="font-bold text-white">${desPago}</span>`;
-        const configMap = PAYMENT_CONFIG_MAP[codPago];
-        if (configMap && config[configMap.key]) {
-          infoHtml += `<p class="font-mono text-orange-400 mt-1">${config[configMap.key]}</p>`;
-        }
-        infoDiv.innerHTML = infoHtml;
-        infoDiv.classList.remove("hidden");
-      } else {
-        infoDiv.classList.add("hidden");
-        infoDiv.innerHTML = "";
-      }
-    } else {
-      infoDiv.classList.add("hidden");
-      infoDiv.innerHTML = "";
-    }
-  });
-
-  // Input de teléfono con búsqueda automática
-  const phoneInput = document.getElementById("clientPhone");
-  const prefixSelect = document.getElementById("phonePrefix");
-  const searchIndicator = document.getElementById("phoneSearchIndicator");
-  const changePhoneBtn = document.getElementById("changePhoneBtn");
-  const nameInput = document.getElementById("clientName");
-
-  phoneInput.addEventListener("input", async (e) => {
-    let val = e.target.value.replace(/\D/g, "").slice(0, 7);
-    e.target.value = val;
-
-    if (val.length === 7) {
-      const prefix = prefixSelect.value;
-      const fullPhone = prefix + val;
-
-      phoneInput.readOnly = true;
-      prefixSelect.disabled = true;
-      nameInput.disabled = true;
-      searchIndicator.classList.remove("hidden");
-      changePhoneBtn.classList.add("hidden");
-
-      try {
-        const res = await apiGet("clientes", { telefono: fullPhone });
-
-        if (res.success && res.data.length > 0) {
-          const cli = res.data[0];
-          savedClientData = {
-            nombre: cli.DesCliente || "",
-            cedula: cli.CedulaRifCliente || "",
-            direccion: cli.DirCliente || "",
-            email: cli.EmailCliente || "",
-            codTasa: cli.CodTasa || ""
-          };
-
-          if (cli.DesCliente) nameInput.value = cli.DesCliente;
-
-          if (cli.CedulaRifCliente) {
-            const match = String(cli.CedulaRifCliente).match(/^([VEJGPC])[-]?(\d+)$/i);
-            if (match) {
-               document.getElementById("docPrefix").value = match[1].toUpperCase();
-               document.getElementById("clientCedula").value = match[2];
-            } else {
-               document.getElementById("clientCedula").value = cli.CedulaRifCliente;
-            }
-            document.getElementById("checkCedula").checked = true;
-            document.getElementById("containerCedula").classList.remove("hidden");
-          }
-
-          if (cli.EmailCliente) {
-            document.getElementById("clientEmail").value = cli.EmailCliente;
-            document.getElementById("checkEmail").checked = true;
-            document.getElementById("containerEmail").classList.remove("hidden");
-          }
-        } else {
-          savedClientData = null;
-        }
-      } catch (err) {
-        console.error("Fallo al recuperar datos del cliente:", err);
-        savedClientData = null;
-      }
-
-      nameInput.disabled = false;
-      searchIndicator.classList.add("hidden");
-      changePhoneBtn.classList.remove("hidden");
-
-      currentClientPhone = fullPhone;
-      localStorage.setItem("fb_client_phone", currentClientPhone);
-    }
-  });
-
-  changePhoneBtn.addEventListener("click", () => {
-    phoneInput.value = "";
-    phoneInput.readOnly = false;
-    prefixSelect.disabled = false;
-    nameInput.value = "";
-    nameInput.disabled = false;
-    savedClientData = null;
-
-    document.getElementById("checkCedula").checked = false;
-    document.getElementById("containerCedula").classList.add("hidden");
-    document.getElementById("clientCedula").value = "";
-
-    document.getElementById("checkEmail").checked = false;
-    document.getElementById("containerEmail").classList.add("hidden");
-    document.getElementById("clientEmail").value = "";
-
-    document.getElementById("checkObs").checked = false;
-    document.getElementById("containerObs").classList.add("hidden");
-    document.getElementById("observations").value = "";
-
-    changePhoneBtn.classList.add("hidden");
-    phoneInput.focus();
-  });
-
-  prefixSelect.addEventListener("change", () => {
-    if (phoneInput.value.length === 7) {
-      phoneInput.dispatchEvent(new Event("input"));
-    }
-  });
-
-  document.getElementById("clientCedula").addEventListener("input", e => e.target.value = e.target.value.replace(/\D/g, "").slice(0, 9));
-
-  // Sobre FastBurguer
-  document.getElementById("sobreBtn").addEventListener("click", () => {
-    document.getElementById("sideMenu").classList.add("-translate-x-full");
-    document.getElementById("sobreModal").classList.remove("hidden");
-    document.getElementById("overlay").classList.remove("hidden");
-  });
-  document.getElementById("closeSobreModal").addEventListener("click", () => {
-    document.getElementById("sobreModal").classList.add("hidden");
-    checkOverlay();
-  });
-
-  // Salir FastBurguer → Modal de despedida
-  document.getElementById("salirBtn").addEventListener("click", () => {
-    document.getElementById("sideMenu").classList.add("-translate-x-full");
-    checkOverlay();
-    document.getElementById("despedidaModal").classList.remove("hidden");
-    document.getElementById("overlay").classList.remove("hidden");
-  });
-
-  // Confirmar salida desde modal
-  document.getElementById("salirConfirmBtn").addEventListener("click", () => {
-    localStorage.removeItem("fb_client_phone");
-    localStorage.removeItem("mis_pedidos_fb");
-    document.getElementById("despedidaModal").classList.add("hidden");
-    document.getElementById("overlay").classList.add("hidden");
-    window.close();
-    setTimeout(() => { window.location.href = "about:blank"; }, 300);
-  });
-
-  // Regresar desde modal de despedida
-  document.getElementById("regresarDespedidaBtn").addEventListener("click", () => {
-    document.getElementById("despedidaModal").classList.add("hidden");
-    checkOverlay();
-  });
-
-  // Opciones → Panel Admin
-  document.getElementById("opcionesBtn").addEventListener("click", () => {
-    window.location.href = "admin.html";
-  });
-}
-
-// ============================================
-// VER ÍTEMS DE UN PEDIDO
-// ============================================
 async function showOrderItems(nroPedido, codTasa) {
   const ordersContent = document.getElementById("ordersContent");
   const orderItemsView = document.getElementById("orderItemsView");
@@ -1510,10 +690,10 @@ async function showOrderItems(nroPedido, codTasa) {
       });
       orderItemsList.innerHTML = html;
     } else {
-      orderItemsList.innerHTML = `<p class="text-center text-gray-500 py-6">No se encontraron ítems para este pedido.</p>`;
+      orderItemsList.innerHTML = `<p class="text-center text-gray-500 py-6">No se encontraron items para este pedido.</p>`;
     }
   } catch (e) {
-    orderItemsList.innerHTML = `<p class="text-center text-red-500 py-6">Error al cargar los ítems.</p>`;
+    orderItemsList.innerHTML = `<p class="text-center text-red-500 py-6">Error al cargar los items.</p>`;
   }
 }
 
@@ -1523,64 +703,124 @@ function backToOrders() {
   document.getElementById("orderItemsList").innerHTML = "";
 }
 
+// ============================================
+// LISTENERS Y EVENTOS
+// ============================================
+function setupEventListeners() {
+  document.getElementById("cartBtn").addEventListener("click", openCart);
+  document.getElementById("closeCart").addEventListener("click", closeCart);
+  document.getElementById("checkoutBtn").addEventListener("click", goToCheckout);
+
+  // Menu lateral
+  document.getElementById("menuBtn").addEventListener("click", () => { 
+    document.getElementById("sideMenu").classList.remove("-translate-x-full"); 
+    document.getElementById("overlay").classList.remove("hidden"); 
+  });
+  document.getElementById("closeMenu").addEventListener("click", () => { 
+    document.getElementById("sideMenu").classList.add("-translate-x-full"); 
+    checkOverlay(); 
+  });
+
+  // Mis Pedidos
+  document.getElementById("myOrdersBtn").addEventListener("click", openMyOrders);
+  document.getElementById("closeOrdersModal").addEventListener("click", () => { 
+    document.getElementById("ordersModal").classList.add("hidden"); 
+    checkOverlay(); 
+  });
+  document.getElementById("backToOrdersBtn").addEventListener("click", backToOrders);
+
+  // Overlay general
+  document.getElementById("overlay").addEventListener("click", () => {
+    closeCart(); 
+    document.getElementById("ordersModal").classList.add("hidden"); 
+    document.getElementById("sideMenu").classList.add("-translate-x-full");
+    document.getElementById("sobreModal").classList.add("hidden");
+    document.getElementById("despedidaModal").classList.add("hidden");
+    document.getElementById("overlay").classList.add("hidden");
+  });
+
+  // Confirmacion
+  document.getElementById("newOrderBtn").addEventListener("click", () => {
+    document.getElementById("confirmationModal").classList.add("hidden");
+    window.scrollTo({top:0, behavior:"smooth"});
+  });
+
+  // Cambio de moneda
+  document.getElementById("currencySelector").addEventListener("change", async (e) => {
+    currentCurrency = e.target.value;
+    showLoading();
+    products = products.map(p => ({
+      ...p,
+      PrecioConvertido: calcularPrecioConvertido(parseFloat(p.Precio) || 0, p.CodTasa, currentCurrency)
+    }));
+    cart = cart.map(item => {
+      const prod = products.find(p => p.CodProducto === item.CodProducto);
+      if (prod) {
+        const nuevoPrecio = calcularPrecioConvertido(parseFloat(prod.Precio) || 0, prod.CodTasa, currentCurrency);
+        return { ...item, precioUnitario: nuevoPrecio, subtotalItem: item.cantidad * nuevoPrecio };
+      }
+      return item;
+    });
+    saveCartToStorage();
+    renderProducts();
+    updateCartUI();
+  });
+
+  // Sobre FastBurguer
+  document.getElementById("sobreBtn").addEventListener("click", () => {
+    document.getElementById("sideMenu").classList.add("-translate-x-full");
+    document.getElementById("sobreModal").classList.remove("hidden");
+    document.getElementById("overlay").classList.remove("hidden");
+  });
+  document.getElementById("closeSobreModal").addEventListener("click", () => {
+    document.getElementById("sobreModal").classList.add("hidden");
+    checkOverlay();
+  });
+
+  // Salir FastBurguer
+  document.getElementById("salirBtn").addEventListener("click", () => {
+    document.getElementById("sideMenu").classList.add("-translate-x-full");
+    checkOverlay();
+    document.getElementById("despedidaModal").classList.remove("hidden");
+    document.getElementById("overlay").classList.remove("hidden");
+  });
+
+  // Confirmar salida
+  document.getElementById("salirConfirmBtn").addEventListener("click", () => {
+    localStorage.removeItem("fb_client_phone");
+    localStorage.removeItem("mis_pedidos_fb");
+    localStorage.removeItem("fb_cart_v3");
+    localStorage.removeItem("fb_currency_v3");
+    document.getElementById("despedidaModal").classList.add("hidden");
+    document.getElementById("overlay").classList.add("hidden");
+    window.close();
+    setTimeout(() => { window.location.href = "about:blank"; }, 300);
+  });
+
+  // Regresar desde despedida
+  document.getElementById("regresarDespedidaBtn").addEventListener("click", () => {
+    document.getElementById("despedidaModal").classList.add("hidden");
+    checkOverlay();
+  });
+
+  // Opciones → Panel Admin
+  document.getElementById("opcionesBtn").addEventListener("click", () => {
+    window.location.href = "admin.html";
+  });
+}
+
 function checkOverlay() {
   if (document.getElementById("sideMenu").classList.contains("-translate-x-full") &&
       document.getElementById("cartSidebar").classList.contains("translate-x-full") &&
-      document.getElementById("checkoutModal").classList.contains("hidden") &&
       document.getElementById("ordersModal").classList.contains("hidden") &&
-      document.getElementById("paymentInfoModal").classList.contains("hidden")) {
+      document.getElementById("sobreModal").classList.contains("hidden") &&
+      document.getElementById("despedidaModal").classList.contains("hidden")) {
     document.getElementById("overlay").classList.add("hidden");
   }
 }
 </script>
 
-<div id="sobreModal" class="fixed inset-0 z-[85] bg-black/80 flex items-center justify-center p-4 hidden">
-  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-sm p-8 border border-white/10 shadow-2xl">
-    <div class="text-center mb-6">
-      <h3 class="text-2xl font-black text-white tracking-wide">FASTBURGUER</h3>
-      <div class="w-16 h-0.5 bg-orange-500/30 mx-auto mt-2 mb-2"></div>
-      <p class="text-sm text-gray-400 font-light">Sistema de Pedido</p>
-    </div>
-    <div class="space-y-4">
-      <div>
-        <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Creado por</p>
-        <p class="text-sm font-semibold text-white">Ing Jesus Linares</p>
-      </div>
-      <div>
-        <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Contacto</p>
-        <p class="text-sm font-semibold text-white">0412-0639340</p>
-      </div>
-      <div>
-        <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">E-Mail</p>
-        <p class="text-sm font-semibold text-white">jesuslinaresp@gmail.com</p>
-      </div>
-    </div>
-    <button id="closeSobreModal" class="mt-8 w-full btn-primary py-3 rounded-xl font-bold text-white transition">
-      Cerrar
-    </button>
-  </div>
-</div>
-
-
-
-
-<div id="despedidaModal" class="fixed inset-0 z-[85] bg-black/90 flex items-center justify-center p-4 hidden">
-  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-sm text-center p-8 border border-white/10 shadow-2xl fade-in">
-    <div class="text-6xl mb-4">🍔</div>
-    <h3 class="text-2xl font-black text-white mb-2 tracking-tight">FastBurguer</h3>
-    <p class="text-lg text-gray-300 mb-8 font-medium">Será una Delicia Verte de Nuevo</p>
-    <div class="flex gap-3">
-      <button id="salirConfirmBtn" class="flex-1 py-3 rounded-xl font-bold text-gray-400 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition">
-        Salir
-      </button>
-      <button id="regresarDespedidaBtn" class="flex-1 btn-primary py-3 rounded-xl font-bold text-white transition">
-        Regresar
-      </button>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
-<!-- CONTROL DE VERSION ADMIN (Cambia este texto en cada nueva implementacion)
-var ADMIN_VERSION = "v8.0 - Panel Admin Fase 2"; -->
+<!-- CONTROL DE VERSION CLIENTE
+var CLIENT_VERSION = "v9.1 - Fase 3A Limpio Sin DatosPago"; -->
