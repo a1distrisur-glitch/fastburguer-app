@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>FastBurguer — Caja</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+.hidden{display:none!important}
+
+/* Loading */
+#load{position:fixed;inset:0;background:rgba(10,10,10,0.95);display:none;justify-content:center;align-items:center;z-index:9999;flex-direction:column;gap:12px}
+#load.show{display:flex}
+.spin{width:40px;height:40px;border:3px solid rgba(255,255,255,0.08);border-top-color:#f7931e;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Toast */
+#toast{position:fixed;top:16px;right:16px;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:600;z-index:9999;display:none;backdrop-filter:blur(10px);max-width:320px;animation:toastIn 0.3s ease}
+#toast.ok{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#22c55e}
+#toast.err{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444}
+#toast.info{background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);color:#3b82f6}
+#toast.warn{background:rgba(247,147,30,0.15);border:1px solid rgba(247,147,30,0.3);color:#fbbf24}
+@keyframes toastIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+
+/* Header */
+.header{position:fixed;top:0;left:0;right:0;height:56px;background:rgba(10,10,10,0.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:100}
+.hBtn{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.2s;background:rgba(255,255,255,0.05);border:none;color:#fff}
+.hBtn:active{transform:scale(0.93);background:rgba(255,107,53,0.15)}
+.hTitle{font-size:16px;font-weight:800;color:#f7931e;letter-spacing:-0.3px}
+.hBadge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;margin-left:8px;letter-spacing:0.3px}
+.hBadge.activo{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.2)}
+.hBadge.inactivo{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.2)}
+
+/* Content */
+.content{padding:70px 14px 20px;min-height:100vh}
+
+/* Section Cards */
+.sectionCard{background:rgba(17,17,17,0.8);border:1px solid rgba(255,255,255,0.06);border-radius:16px;margin-bottom:14px;overflow:hidden;backdrop-filter:blur(10px);animation:cardIn 0.5s ease both}
+@keyframes cardIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.sectionHeader{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.04)}
+.sectionTitle{font-size:14px;font-weight:700;color:#f7931e;display:flex;align-items:center;gap:8px}
+.sectionAction{font-size:12px;color:#ff6b35;font-weight:600;cursor:pointer;padding:6px 12px;border-radius:10px;background:rgba(255,107,53,0.08);transition:0.2s;border:none}
+.sectionAction:hover{background:rgba(255,107,53,0.15)}
+.sectionBody{padding:14px 16px}
+
+/* Turno Status */
+.turnoCard{padding:20px 16px;text-align:center;position:relative;overflow:hidden}
+.turnoCard::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(255,107,53,0.06),transparent 70%);pointer-events:none}
+.turnoIcon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:28px;background:rgba(255,107,53,0.1);color:#f7931e}
+.turnoIcon.activo{background:rgba(34,197,94,0.1);color:#22c55e}
+.turnoTitle{font-size:18px;font-weight:800;margin-bottom:4px}
+.turnoMeta{font-size:13px;color:#9ca3af;margin-bottom:16px;line-height:1.5}
+.turnoMeta strong{color:#fff;font-weight:600}
+.turnoBtn{width:100%;padding:14px;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;transition:0.3s;border:none;display:flex;align-items:center;justify-content:center;gap:8px}
+.turnoBtn:hover{transform:translateY(-1px)}
+.turnoBtn:active{transform:scale(0.97)}
+.turnoBtn.primary{background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff;box-shadow:0 8px 24px rgba(255,107,53,0.25)}
+.turnoBtn.primary:hover{box-shadow:0 12px 32px rgba(255,107,53,0.35)}
+.turnoBtn.danger{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.2)}
+.turnoBtn.danger:hover{background:rgba(239,68,68,0.25)}
+.turnoBtn.success{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.2)}
+.turnoBtn.success:hover{background:rgba(34,197,94,0.25)}
+
+/* KPIs */
+.kpiGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.kpiCard{background:linear-gradient(135deg,rgba(255,107,53,0.08),rgba(247,147,30,0.04));border:1px solid rgba(255,107,53,0.12);border-radius:14px;padding:14px 8px;text-align:center;backdrop-filter:blur(10px);position:relative;overflow:hidden;animation:kpiIn 0.5s ease both}
+@keyframes kpiIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.kpiValue{font-size:20px;font-weight:800;color:#fff;line-height:1}
+.kpiLabel{font-size:10px;color:#9ca3af;margin-top:4px;font-weight:500;text-transform:uppercase;letter-spacing:0.3px}
+
+/* Order Cards */
+.orderCard{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px;cursor:pointer;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);position:relative;overflow:hidden;margin-bottom:10px}
+.orderCard:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,107,53,0.15);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+.orderCard:active{transform:scale(0.98)}
+.orderHeader{display:flex;justify-content:space-between;align-items:start;margin-bottom:8px}
+.orderNro{font-size:14px;font-weight:800;color:#f7931e}
+.orderTime{font-size:11px;color:#6b7280;font-weight:500}
+.orderClient{font-size:15px;font-weight:700;color:#fff;margin-bottom:4px}
+.orderPhone{font-size:12px;color:#9ca3af;margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.orderItems{font-size:12px;color:#9ca3af;margin-bottom:10px;line-height:1.4}
+.orderFooter{display:flex;justify-content:space-between;align-items:center}
+.orderTotal{font-size:18px;font-weight:800;color:#fff}
+.orderType{font-size:10px;font-weight:600;padding:3px 10px;border-radius:8px;text-transform:uppercase;letter-spacing:0.3px}
+.orderType.delivery{background:rgba(59,130,246,0.15);color:#60a5fa}
+.orderType.pickup{background:rgba(34,197,94,0.15);color:#4ade80}
+.orderType.sitio{background:rgba(168,85,247,0.15);color:#c084fc}
+.cobrarBtn{padding:8px 16px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;transition:0.2s;border:none;background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff;box-shadow:0 4px 12px rgba(255,107,53,0.25)}
+.cobrarBtn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(255,107,53,0.35)}
+.cobrarBtn:active{transform:scale(0.95)}
+
+/* Empty state */
+.emptyState{text-align:center;padding:40px 20px;color:#6b7280}
+.emptyStateIcon{font-size:40px;margin-bottom:10px;opacity:0.5}
+.emptyStateText{font-size:13px}
+
+/* Modals */
+.modalOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:300;opacity:0;pointer-events:none;transition:opacity 0.3s;backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center}
+.modalOverlay.show{opacity:1;pointer-events:auto}
+.modalPanel{position:fixed;bottom:0;left:0;right:0;background:#111;border-top:1px solid rgba(255,107,53,0.25);border-radius:24px 24px 0 0;z-index:301;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);max-height:90vh;overflow-y:auto;display:flex;flex-direction:column}
+.modalPanel.show{transform:translateY(0)}
+.modalHeader{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#111;z-index:2}
+.modalTitle{font-size:16px;font-weight:800;color:#fff}
+.modalClose{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.2s;background:rgba(255,255,255,0.05);border:none;color:#9ca3af}
+.modalClose:hover{background:rgba(255,107,53,0.1);color:#ff6b35}
+.modalBody{padding:16px 20px 20px;flex:1}
+.modalFooter{padding:14px 20px 24px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:10px;position:sticky;bottom:0;background:#111;z-index:2}
+
+/* Form elements */
+.fieldLabel{font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;display:block}
+.fieldInput,.fieldSelect{width:100%;background:rgba(255,255,255,0.03);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:12px;padding:13px 14px;font-size:14px;outline:none;transition:0.3s;margin-bottom:14px}
+.fieldInput:focus,.fieldSelect:focus{border-color:#ff6b35;box-shadow:0 0 0 4px rgba(255,107,53,0.08)}
+.fieldInput::placeholder{color:#4b5563}
+.fieldSelect option{background:#1a1a1a;color:#fff}
+.fieldReadonly{background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.04);color:#9ca3af}
+
+/* Split payment */
+.splitItem{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;margin-bottom:12px;position:relative}
+.splitHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.splitTitle{font-size:13px;font-weight:700;color:#fff}
+.splitRemove{font-size:11px;color:#ef4444;cursor:pointer;font-weight:600;padding:4px 8px;border-radius:6px;background:rgba(239,68,68,0.08);border:none}
+.splitRemove:hover{background:rgba(239,68,68,0.15)}
+.splitGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.splitGrid .fieldInput,.splitGrid .fieldSelect{margin-bottom:0}
+.splitFull{grid-column:1/-1}
+
+.addSplitBtn{width:100%;padding:12px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;transition:0.2s;border:1.5px dashed rgba(255,107,53,0.3);background:transparent;color:#ff6b35;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:16px}
+.addSplitBtn:hover{background:rgba(255,107,53,0.05);border-color:#ff6b35}
+
+/* Resumen split */
+.splitResumen{background:rgba(255,107,53,0.05);border:1px solid rgba(255,107,53,0.15);border-radius:12px;padding:14px;margin-bottom:16px}
+.splitResumenRow{display:flex;justify-content:space-between;padding:4px 0;font-size:13px}
+.splitResumenRow.total{border-top:1px solid rgba(255,255,255,0.08);margin-top:6px;padding-top:8px;font-weight:700;font-size:15px}
+.splitResumenLabel{color:#9ca3af}
+.splitResumenValue{color:#fff;font-weight:600}
+.splitResumenValue.total{color:#f7931e;font-weight:800}
+.splitResumenValue.pendiente{color:#ef4444}
+.splitResumenValue.ok{color:#22c55e}
+
+/* Tabla resumen caja */
+.resTable{width:100%;border-collapse:collapse;font-size:13px}
+.resTable th{text-align:left;padding:10px 8px;color:#9ca3af;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.3px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.resTable td{padding:10px 8px;color:#fff;border-bottom:1px solid rgba(255,255,255,0.03)}
+.resTable tr:last-child td{border-bottom:none}
+.resTable .num{text-align:right;font-weight:700}
+.resTable .totalRow td{font-weight:800;color:#f7931e;border-top:2px solid rgba(255,107,53,0.2);border-bottom:none;padding-top:12px}
+
+/* Print modal */
+.printPanel{position:fixed;inset:0;background:#0a0a0a;z-index:400;overflow-y:auto;display:none}
+.printPanel.show{display:block}
+.printHeader{position:sticky;top:0;background:#0a0a0a;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:center;z-index:1}
+.printContent{max-width:380px;margin:0 auto;padding:24px 20px}
+.printTicket{background:#fff;color:#000;padding:24px;border-radius:8px;font-family:'Courier New',monospace;font-size:13px;line-height:1.4}
+.printTicket h2{text-align:center;font-size:16px;font-weight:800;margin-bottom:4px;font-family:'Courier New',monospace}
+.printTicket .center{text-align:center}
+.printTicket .line{border-top:1px dashed #000;margin:8px 0}
+.printTicket .row{display:flex;justify-content:space-between;margin:3px 0}
+.printTicket .bold{font-weight:800}
+.printTicket .total{font-size:15px;font-weight:800}
+
+@media print{
+ body{background:#fff}
+ .printHeader,.noPrint{display:none!important}
+ .printPanel{display:block!important;background:#fff}
+ .printTicket{box-shadow:none;border-radius:0;padding:0}
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,107,53,0.3);border-radius:4px}
+
+@media(min-width:768px){
+ .content{max-width:800px;margin:0 auto;padding-left:20px;padding-right:20px}
+ .modalPanel{max-width:500px;left:50%;right:auto;transform:translate(-50%,100%);border-radius:24px;max-height:85vh;top:10vh;bottom:auto}
+ .modalPanel.show{transform:translate(-50%,0)}
+}
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div id="load"><div class="spin"></div><div style="color:#9ca3af;font-size:13px">Cargando caja...</div></div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Header -->
+<div class="header">
+  <div style="display:flex;align-items:center;gap:10px">
+    <button class="hBtn" onclick="location.href='pedidos.html'" title="Volver">
+      <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="hTitle">Caja</div>
+    <span id="turnoBadge" class="hBadge inactivo">Sin Turno</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <button class="hBtn" onclick="manualRefresh()" title="Actualizar">
+      <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+    </button>
+    <button class="hBtn" onclick="logout()" title="Cerrar sesión">
+      <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- Content -->
+<div class="content">
+
+  <!-- Estado del Turno -->
+  <div class="sectionCard" style="animation-delay:0s">
+    <div class="sectionBody" id="turnoSection">
+      <!-- Dinámico -->
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpiGrid" id="kpiSection" style="animation-delay:0.1s">
+    <div class="kpiCard"><div class="kpiValue" id="kpiTotalCobrado">$0</div><div class="kpiLabel">Total Cobrado</div></div>
+    <div class="kpiCard"><div class="kpiValue" id="kpiCantPagos">0</div><div class="kpiLabel">Pagos</div></div>
+    <div class="kpiCard"><div class="kpiValue" id="kpiPorCobrar">0</div><div class="kpiLabel">Por Cobrar</div></div>
+  </div>
+
+  <!-- Pedidos Por Cobrar -->
+  <div class="sectionCard" style="animation-delay:0.2s">
+    <div class="sectionHeader">
+      <div class="sectionTitle">💰 Pedidos Por Cobrar</div>
+      <span style="font-size:12px;color:#9ca3af" id="porCobrarCount">0</span>
+    </div>
+    <div class="sectionBody" id="porCobrarList">
+      <!-- Dinámico -->
+    </div>
+  </div>
+
+  <!-- Resumen de Caja -->
+  <div class="sectionCard" style="animation-delay:0.3s">
+    <div class="sectionHeader">
+      <div class="sectionTitle">📊 Resumen del Turno</div>
+      <button class="sectionAction" onclick="verDetallePagos()">Ver Detalle</button>
+    </div>
+    <div class="sectionBody" id="resumenCaja">
+      <div class="emptyState">
+        <div class="emptyStateIcon">📋</div>
+        <div class="emptyStateText">Abre un turno para ver el resumen</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal Overlay -->
+<div id="modalOverlay" class="modalOverlay" onclick="closeModal()"></div>
+
+<!-- Modal Abrir Turno -->
+<div id="modalAbrirTurno" class="modalPanel">
+  <div class="modalHeader">
+    <div class="modalTitle">🔓 Abrir Turno</div>
+    <button class="modalClose" onclick="closeModal()"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
+  </div>
+  <div class="modalBody">
+    <label class="fieldLabel">Monto de Apertura</label>
+    <input type="number" class="fieldInput" id="montoApertura" placeholder="0.00" step="0.01">
+    <label class="fieldLabel">Cajero</label>
+    <input type="text" class="fieldInput fieldReadonly" id="nombreCajero" readonly>
+  </div>
+  <div class="modalFooter">
+    <button class="turnoBtn secondary" style="flex:1" onclick="closeModal()">Cancelar</button>
+    <button class="turnoBtn primary" style="flex:2" onclick="confirmarAbrirTurno()">Abrir Turno</button>
+  </div>
+</div>
+
+<!-- Modal Cobrar -->
+<div id="modalCobrar" class="modalPanel">
+  <div class="modalHeader">
+    <div class="modalTitle">💳 Cobrar Pedido</div>
+    <button class="modalClose" onclick="closeModal()"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
+  </div>
+  <div class="modalBody">
+    <div id="cobrarPedidoInfo" style="margin-bottom:16px">
+      <!-- Info del pedido -->
+    </div>
+    <div id="splitContainer">
+      <!-- Items de split -->
+    </div>
+    <button class="addSplitBtn" onclick="agregarSplit()">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      Agregar otra forma de pago
+    </button>
+    <div class="splitResumen">
+      <div class="splitResumenRow"><span class="splitResumenLabel">Total Pedido</span><span class="splitResumenValue" id="resTotalPedido">$0</span></div>
+      <div class="splitResumenRow"><span class="splitResumenLabel">Total Pagado</span><span class="splitResumenValue" id="resTotalPagado">$0</span></div>
+      <div class="splitResumenRow total"><span class="splitResumenLabel">Pendiente</span><span class="splitResumenValue total" id="resPendiente">$0</span></div>
+    </div>
+  </div>
+  <div class="modalFooter">
+    <button class="turnoBtn secondary" style="flex:1" onclick="closeModal()">Cancelar</button>
+    <button class="turnoBtn primary" style="flex:2" onclick="confirmarCobro()">Confirmar Cobro</button>
+  </div>
+</div>
+
+<!-- Modal Cerrar Turno -->
+<div id="modalCerrarTurno" class="modalPanel">
+  <div class="modalHeader">
+    <div class="modalTitle">🔒 Cerrar Turno</div>
+    <button class="modalClose" onclick="closeModal()"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
+  </div>
+  <div class="modalBody">
+    <label class="fieldLabel">Monto Apertura</label>
+    <input type="text" class="fieldInput fieldReadonly" id="ctMontoApertura" readonly>
+    <label class="fieldLabel">Total Cobrado</label>
+    <input type="text" class="fieldInput fieldReadonly" id="ctTotalCobrado" readonly>
+    <label class="fieldLabel">Monto de Arqueo (efectivo en caja)</label>
+    <input type="number" class="fieldInput" id="ctMontoArqueo" placeholder="0.00" step="0.01" oninput="calcularDiferencia()">
+    <label class="fieldLabel">Diferencia</label>
+    <input type="text" class="fieldInput fieldReadonly" id="ctDiferencia" readonly style="font-weight:800">
+    <label class="fieldLabel">Observaciones</label>
+    <input type="text" class="fieldInput" id="ctObservaciones" placeholder="Opcional">
+  </div>
+  <div class="modalFooter">
+    <button class="turnoBtn secondary" style="flex:1" onclick="closeModal()">Cancelar</button>
+    <button class="turnoBtn danger" style="flex:2" onclick="confirmarCerrarTurno()">Cerrar Turno</button>
+  </div>
+</div>
+
+<!-- Print Panel -->
+<div id="printPanel" class="printPanel">
+  <div class="printHeader noPrint">
+    <div style="font-size:16px;font-weight:800;color:#f7931e">Resumen de Cierre</div>
+    <div style="display:flex;gap:8px">
+      <button class="sectionAction" onclick="window.print()">🖨️ Imprimir</button>
+      <button class="modalClose" onclick="cerrarPrintPanel()" style="position:static"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    </div>
+  </div>
+  <div class="printContent">
+    <div class="printTicket" id="printTicket">
+      <!-- Ticket dinámico -->
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================
+// CONFIGURACIÓN
+// ============================================
+var API="https://script.google.com/macros/s/AKfycbxADTPJUAhvkuB0xZPBTXQVfuiDS1Sr3Wn4grfFAabGZaZ82C1xrQWxRWO2fEsBtWJt/exec";
+var TOKEN="";
+var USUARIO=null;
+var TURNO_ACTIVO=null;
+var PEDIDOS=[];
+var POR_COBRAR=[];
+var RESUMEN_CAJA=null;
+var FORMAS_PAGO=[];
+var TASAS=[];
+var SPLIT_PAGOS=[];
+var PEDIDO_ACTUAL=null;
+
+// ============================================
+// UTILIDADES
+// ============================================
+function showLoad(){document.getElementById("load").className="show"}
+function hideLoad(){document.getElementById("load").className=""}
+function toast(m,tipo){var t=document.getElementById("toast");t.textContent=m;t.className=tipo||"ok";t.style.display="block";setTimeout(function(){t.style.display="none"},4000)}
+function apiPost(d){return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)}).then(function(r){return r.json()})}
+function apiGet(action,params){var url=API+"?action="+action+"&_cb="+Date.now();if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);return fetch(url).then(function(r){return r.json()})}
+function formatMoney(val){var v=parseFloat(val)||0;return v.toFixed(2)}
+function formatTime(hora){if(!hora)return"--:--";var h=String(hora);if(h.indexOf(":")>-1)return h.substring(0,5);var n=parseFloat(hora);if(!isNaN(n)){var hh=Math.floor(n*24);var mm=Math.round((n*24-hh)*60);return String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")}return"--:--"}
+function getToday(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function logout(){localStorage.removeItem("fb_token");sessionStorage.clear();location.href="admin.html"}
+
+// ============================================
+// INICIALIZACIÓN
+// ============================================
+function init(){
+  TOKEN=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";
+  if(!TOKEN){location.href="admin.html";return}
+  showLoad();
+  apiPost({action:"validateToken",token:TOKEN}).then(function(r){
+    if(r.success){
+      USUARIO=r.user||{};
+      document.getElementById("nombreCajero").value=(USUARIO.DesUsuario||USUARIO.usuario||"Cajero");
+      cargarTodo();
+    }else{
+      localStorage.removeItem("fb_token");
+      location.href="admin.html";
+    }
+  }).catch(function(e){
+    hideLoad();
+    toast("Error de conexión","err");
+  });
+}
+
+function cargarTodo(){
+  showLoad();
+  Promise.all([
+    apiGet("getTurnoActivo",{codUsuario:USUARIO.CodUsuario||""}),
+    apiGet("getAllPedidos",{fecha:getToday()}),
+    apiGet("get",{sheetName:"FormasPago",token:TOKEN}),
+    apiGet("get",{sheetName:"Tasas",token:TOKEN})
+  ]).then(function(results){
+    hideLoad();
+    var rTurno=results[0], rPedidos=results[1], rPagos=results[2], rTasas=results[3];
+
+    if(rTurno.success&&rTurno.turno) TURNO_ACTIVO=rTurno.turno;
+    else TURNO_ACTIVO=null;
+
+    if(rPedidos.success&&rPedidos.data) PEDIDOS=rPedidos.data||[];
+    else PEDIDOS=[];
+
+    if(rPagos.success&&rPagos.data) FORMAS_PAGO=rPagos.data||[];
+    else FORMAS_PAGO=[];
+
+    if(rTasas.success&&rTasas.data) TASAS=rTasas.data||[];
+    else TASAS=[];
+
+    renderTurno();
+    filtrarPorCobrar();
+    renderPorCobrar();
+    updateKPIs();
+    if(TURNO_ACTIVO) cargarResumen();
+  }).catch(function(e){
+    hideLoad();
+    toast("Error cargando datos","err");
+  });
+}
+
+function manualRefresh(){cargarTodo()}
+
+// ============================================
+// TURNO
+// ============================================
+function renderTurno(){
+  var container=document.getElementById("turnoSection");
+  if(TURNO_ACTIVO){
+    var badge=document.getElementById("turnoBadge");
+    badge.textContent="Turno "+TURNO_ACTIVO.CodTurno;
+    badge.className="hBadge activo";
+
+    container.innerHTML=
+      '<div class="turnoCard">'+
+      '<div class="turnoIcon activo">🔓</div>'+
+      '<div class="turnoTitle" style="color:#22c55e">Turno Abierto</div>'+
+      '<div class="turnoMeta">'+
+      '<strong>'+TURNO_ACTIVO.CodTurno+'</strong><br>'+
+      'Cajero: <strong>'+(TURNO_ACTIVO.DesUsuario||"N/A")+'</strong><br>'+
+      'Apertura: <strong>'+formatMoney(TURNO_ACTIVO.MontoApertura)+" "+(TURNO_ACTIVO.CodPago||"")+'</strong><br>'+
+      'Hora: <strong>'+formatTime(TURNO_ACTIVO.HoraApertura)+'</strong>'+
+      '</div>'+
+      '<div style="display:flex;gap:10px">'+
+      '<button class="turnoBtn danger" style="flex:1" onclick="openCerrarTurno()">🔒 Cerrar Turno</button>'+
+      '</div>'+
+      '</div>';
+  }else{
+    var badge=document.getElementById("turnoBadge");
+    badge.textContent="Sin Turno";
+    badge.className="hBadge inactivo";
+
+    container.innerHTML=
+      '<div class="turnoCard">'+
+      '<div class="turnoIcon">🔐</div>'+
+      '<div class="turnoTitle">Sin Turno Activo</div>'+
+      '<div class="turnoMeta">Debes abrir un turno para poder<br>registrar pagos y cobrar pedidos.</div>'+
+      '<button class="turnoBtn primary" onclick="openAbrirTurno()">🔓 Abrir Turno</button>'+
+      '</div>';
+  }
+}
+
+function openAbrirTurno(){
+  document.getElementById("montoApertura").value="";
+  openModal("modalAbrirTurno");
+}
+
+function confirmarAbrirTurno(){
+  var monto=parseFloat(document.getElementById("montoApertura").value);
+  if(isNaN(monto)||monto<0){toast("Ingresa un monto válido","err");return}
+
+  showLoad();
+  apiPost({
+    action:"abrirTurno",
+    token:TOKEN,
+    codUsuario:USUARIO.CodUsuario||"",
+    desUsuario:USUARIO.DesUsuario||USUARIO.usuario||"",
+    montoApertura:monto
+  }).then(function(r){
+    hideLoad();
+    if(r.success){
+      toast("Turno abierto: "+r.codTurno,"ok");
+      TURNO_ACTIVO=r.turno||null;
+      closeModal();
+      renderTurno();
+      cargarResumen();
+    }else{
+      toast(r.error||"Error abriendo turno","err");
+    }
+  }).catch(function(e){
+    hideLoad();
+    toast("Error de red","err");
+  });
+}
+
+// ============================================
+// POR COBRAR
+// ============================================
+function filtrarPorCobrar(){
+  POR_COBRAR=PEDIDOS.filter(function(p){
+    var estado=String(p.EstadoPedido||p.Estado||"").trim();
+    var pago=String(p.EstadoPago||"").trim();
+    return (estado==="Listo"||estado==="Entregado")&&pago!=="Pagado";
+  });
+}
+
+function renderPorCobrar(){
+  var container=document.getElementById("porCobrarList");
+  document.getElementById("porCobrarCount").textContent=POR_COBRAR.length;
+
+  if(POR_COBRAR.length===0){
+    container.innerHTML='<div class="emptyState"><div class="emptyStateIcon">💰</div><div class="emptyStateText">No hay pedidos por cobrar</div></div>';
+    return;
+  }
+
+  var html="";
+  POR_COBRAR.forEach(function(p){
+    var tipo=String(p.TipoServicio||"").toLowerCase();
+    var tipoClass=tipo==="delivery"?"delivery":tipo==="sitio"?"sitio":"pickup";
+    var tipoLabel=tipo==="delivery"?"Delivery":tipo==="sitio"?"En Sitio":"Pick Up";
+    var total=formatMoney(p.TotalPedido||0);
+
+    html+='<div class="orderCard">';
+    html+='<div class="orderHeader">';
+    html+='<div class="orderNro">'+(p.NroPedido||"N/A")+'</div>';
+    html+='<div class="orderTime">'+formatTime(p.HoraPedido)+'</div>';
+    html+='</div>';
+    html+='<div class="orderClient">'+(p.Cliente||"Cliente")+'</div>';
+    html+='<div class="orderPhone">📱 '+(p.Telefono||"N/A")+'</div>';
+    if(p.ObservacionesCliente) html+='<div class="orderItems">'+(p.ObservacionesCliente)+'</div>';
+    html+='<div class="orderFooter">';
+    html+='<div class="orderTotal">'+total+'</div>';
+    html+='<div style="display:flex;align-items:center;gap:8px">';
+    html+='<div class="orderType '+tipoClass+'">'+tipoLabel+'</div>';
+    html+='<button class="cobrarBtn" onclick="openCobrar(''+p.NroPedido+'')">Cobrar</button>';
+    html+='</div>';
+    html+='</div>';
+    html+='</div>';
+  });
+  container.innerHTML=html;
+}
+
+// ============================================
+// COBRAR (SPLIT PAYMENT)
+// ============================================
+function openCobrar(nroPedido){
+  if(!TURNO_ACTIVO){toast("Debes abrir un turno primero","warn");return}
+  PEDIDO_ACTUAL=PEDIDOS.find(function(p){return p.NroPedido===nroPedido});
+  if(!PEDIDO_ACTUAL){toast("Pedido no encontrado","err");return}
+
+  SPLIT_PAGOS=[{
+    codFormaPago:PEDIDO_ACTUAL.CodFormaPago||"",
+    montoPago:parseFloat(PEDIDO_ACTUAL.TotalPedido)||0,
+    codTasa:PEDIDO_ACTUAL.CodTasa||"",
+    referencia:""
+  }];
+
+  document.getElementById("cobrarPedidoInfo").innerHTML=
+    '<div style="background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.15);border-radius:12px;padding:12px 14px;margin-bottom:4px">'+
+    '<div style="font-size:13px;color:#9ca3af;margin-bottom:2px">Pedido <strong style="color:#f7931e">'+(PEDIDO_ACTUAL.NroPedido||"")+'</strong></div>'+
+    '<div style="font-size:20px;font-weight:800;color:#fff">Total: '+formatMoney(PEDIDO_ACTUAL.TotalPedido||0)+" "+(PEDIDO_ACTUAL.CodTasa||"")+'</div>'+
+    '<div style="font-size:12px;color:#9ca3af;margin-top:2px">'+(PEDIDO_ACTUAL.Cliente||"")+'</div>'+
+    '</div>';
+
+  renderSplitItems();
+  actualizarResumenSplit();
+  openModal("modalCobrar");
+}
+
+function renderSplitItems(){
+  var container=document.getElementById("splitContainer");
+  var html="";
+  SPLIT_PAGOS.forEach(function(pago,idx){
+    html+='<div class="splitItem">';
+    html+='<div class="splitHeader">';
+    html+='<div class="splitTitle">Pago '+(idx+1)+'</div>';
+    if(SPLIT_PAGOS.length>1) html+='<button class="splitRemove" onclick="quitarSplit('+idx+')">Eliminar</button>';
+    html+='</div>';
+    html+='<div class="splitGrid">';
+    html+='<div>';
+    html+='<label class="fieldLabel">Forma de Pago</label>';
+    html+='<select class="fieldSelect" id="splitFp_'+idx+'" onchange="actualizarResumenSplit()">';
+    html+='<option value="">Seleccionar...</option>';
+    FORMAS_PAGO.forEach(function(fp){
+      html+='<option value="'+(fp.CodFormaPago||"")+'" '+(pago.codFormaPago===(fp.CodFormaPago||"")?"selected":"")+'>'+(fp.DesFormaPago||fp.Descripcion||"" )+'</option>';
+    });
+    html+='</select>';
+    html+='</div>';
+    html+='<div>';
+    html+='<label class="fieldLabel">Monto</label>';
+    html+='<input type="number" class="fieldInput" id="splitMonto_'+idx+'" value="'+pago.montoPago+'" step="0.01" oninput="actualizarResumenSplit()">';
+    html+='</div>';
+    html+='<div>';
+    html+='<label class="fieldLabel">Tasa</label>';
+    html+='<select class="fieldSelect" id="splitTasa_'+idx+'">';
+    html+='<option value="">Seleccionar...</option>';
+    TASAS.forEach(function(t){
+      html+='<option value="'+(t.CodTasa||"")+'" '+(pago.codTasa===(t.CodTasa||"")?"selected":"")+'>'+(t.DesTasa||t.Descripcion||"" )+'</option>';
+    });
+    html+='</select>';
+    html+='</div>';
+    html+='<div>';
+    html+='<label class="fieldLabel">Referencia</label>';
+    html+='<input type="text" class="fieldInput" id="splitRef_'+idx+'" value="'+(pago.referencia||"")+'" placeholder="Opcional">';
+    html+='</div>';
+    html+='</div>';
+    html+='</div>';
+  });
+  container.innerHTML=html;
+}
+
+function agregarSplit(){
+  SPLIT_PAGOS.push({codFormaPago:"",montoPago:0,codTasa:"",referencia:""});
+  renderSplitItems();
+  actualizarResumenSplit();
+}
+
+function quitarSplit(idx){
+  if(SPLIT_PAGOS.length<=1){toast("Debe haber al menos un pago","warn");return}
+  SPLIT_PAGOS.splice(idx,1);
+  renderSplitItems();
+  actualizarResumenSplit();
+}
+
+function actualizarResumenSplit(){
+  var totalPedido=parseFloat(PEDIDO_ACTUAL.TotalPedido)||0;
+  var totalPagado=0;
+
+  SPLIT_PAGOS.forEach(function(pago,idx){
+    var fp=document.getElementById("splitFp_"+idx); if(fp) pago.codFormaPago=fp.value;
+    var m=document.getElementById("splitMonto_"+idx); if(m) pago.montoPago=parseFloat(m.value)||0;
+    var t=document.getElementById("splitTasa_"+idx); if(t) pago.codTasa=t.value;
+    var r=document.getElementById("splitRef_"+idx); if(r) pago.referencia=r.value;
+    totalPagado+=pago.montoPago;
+  });
+
+  var pendiente=Math.max(0,totalPedido-totalPagado);
+  var moneda=PEDIDO_ACTUAL.CodTasa||"";
+
+  document.getElementById("resTotalPedido").textContent=formatMoney(totalPedido)+" "+moneda;
+  document.getElementById("resTotalPagado").textContent=formatMoney(totalPagado)+" "+moneda;
+  var elPendiente=document.getElementById("resPendiente");
+  elPendiente.textContent=formatMoney(pendiente)+" "+moneda;
+  elPendiente.className="splitResumenValue total "+(pendiente>0?"pendiente":"ok");
+}
+
+function confirmarCobro(){
+  actualizarResumenSplit();
+  var totalPedido=parseFloat(PEDIDO_ACTUAL.TotalPedido)||0;
+  var totalPagado=0;
+  var pagos=[];
+
+  for(var i=0;i<SPLIT_PAGOS.length;i++){
+    var p=SPLIT_PAGOS[i];
+    if(!p.codFormaPago){toast("Selecciona forma de pago en pago "+(i+1),"err");return}
+    if(p.montoPago<=0){toast("Monto inválido en pago "+(i+1),"err");return}
+    totalPagado+=p.montoPago;
+    pagos.push({
+      codFormaPago:p.codFormaPago,
+      montoPago:p.montoPago,
+      codTasa:p.codTasa||PEDIDO_ACTUAL.CodTasa||"",
+      referencia:p.referencia||""
+    });
+  }
+
+  if(totalPagado<totalPedido){
+    if(!confirm("El total pagado ("+formatMoney(totalPagado)+") es menor al pedido ("+formatMoney(totalPedido)+"). ¿Deseas continuar?")) return;
+  }
+
+  showLoad();
+  apiPost({
+    action:"registrarPago",
+    token:TOKEN,
+    nroPedido:PEDIDO_ACTUAL.NroPedido,
+    codTurno:TURNO_ACTIVO.CodTurno,
+    pagos:pagos
+  }).then(function(r){
+    hideLoad();
+    if(r.success){
+      toast(r.message||"Pago registrado","ok");
+      closeModal();
+      cargarTodo();
+    }else{
+      toast(r.error||"Error registrando pago","err");
+    }
+  }).catch(function(e){
+    hideLoad();
+    toast("Error de red","err");
+  });
+}
+
+// ============================================
+// RESUMEN CAJA
+// ============================================
+function cargarResumen(){
+  if(!TURNO_ACTIVO) return;
+  apiGet("getResumenCaja",{codTurno:TURNO_ACTIVO.CodTurno}).then(function(r){
+    if(r.success){
+      RESUMEN_CAJA=r;
+      renderResumen();
+      updateKPIs();
+    }
+  }).catch(function(e){});
+}
+
+function renderResumen(){
+  var container=document.getElementById("resumenCaja");
+  if(!RESUMEN_CAJA||!RESUMEN_CAJA.totales){
+    container.innerHTML='<div class="emptyState"><div class="emptyStateIcon">📋</div><div class="emptyStateText">Sin movimientos aún</div></div>';
+    return;
+  }
+
+  var totales=RESUMEN_CAJA.totales||[];
+  var totalGeneral=RESUMEN_CAJA.totalGeneral||0;
+  var cantidad=RESUMEN_CAJA.cantidadPagos||0;
+
+  var html='<table class="resTable">';
+  html+='<tr><th>Forma de Pago</th><th class="num">Monto</th></tr>';
+  totales.forEach(function(t){
+    html+='<tr><td>'+(t.DesPago||t.DesFormaPago||"N/A")+'</td><td class="num">'+formatMoney(t.MontoPago||0)+'</td></tr>';
+  });
+  html+='<tr class="totalRow"><td>Total General</td><td class="num">'+formatMoney(totalGeneral)+'</td></tr>';
+  html+='</table>';
+  html+='<div style="text-align:center;margin-top:10px;font-size:12px;color:#9ca3af">'+cantidad+' pago(s) registrado(s)</div>';
+  container.innerHTML=html;
+}
+
+function updateKPIs(){
+  var totalCobrado=RESUMEN_CAJA?RESUMEN_CAJA.totalGeneral||0:0;
+  var cantPagos=RESUMEN_CAJA?RESUMEN_CAJA.cantidadPagos||0:0;
+  document.getElementById("kpiTotalCobrado").textContent="$"+formatMoney(totalCobrado);
+  document.getElementById("kpiCantPagos").textContent=cantPagos;
+  document.getElementById("kpiPorCobrar").textContent=POR_COBRAR.length;
+}
+
+function verDetallePagos(){
+  if(!RESUMEN_CAJA||!RESUMEN_CAJA.detalle||RESUMEN_CAJA.detalle.length===0){
+    toast("No hay pagos para mostrar","info");
+    return;
+  }
+  // Podría abrir un modal con tabla de pagos detallados, por ahora toast con info
+  var detalle=RESUMEN_CAJA.detalle||[];
+  var msg=detalle.length+" pagos. Total: $"+formatMoney(RESUMEN_CAJA.totalGeneral||0);
+  toast(msg,"info");
+}
+
+// ============================================
+// CERRAR TURNO
+// ============================================
+function openCerrarTurno(){
+  if(!TURNO_ACTIVO){toast("No hay turno activo","err");return}
+  document.getElementById("ctMontoApertura").value=formatMoney(TURNO_ACTIVO.MontoApertura||0);
+  var totalCobrado=RESUMEN_CAJA?RESUMEN_CAJA.totalGeneral||0:0;
+  document.getElementById("ctTotalCobrado").value="$"+formatMoney(totalCobrado);
+  document.getElementById("ctMontoArqueo").value="";
+  document.getElementById("ctDiferencia").value="";
+  document.getElementById("ctObservaciones").value="";
+  openModal("modalCerrarTurno");
+}
+
+function calcularDiferencia(){
+  var apertura=parseFloat(TURNO_ACTIVO.MontoApertura)||0;
+  var cobrado=RESUMEN_CAJA?RESUMEN_CAJA.totalGeneral||0:0;
+  var arqueo=parseFloat(document.getElementById("ctMontoArqueo").value)||0;
+  var dif=arqueo-apertura-cobrado;
+  var el=document.getElementById("ctDiferencia");
+  el.value=(dif>=0?"+":"")+formatMoney(dif);
+  el.style.color=dif===0?"#22c55e":dif>0?"#f7931e":"#ef4444";
+}
+
+function confirmarCerrarTurno(){
+  var arqueo=parseFloat(document.getElementById("ctMontoArqueo").value);
+  if(isNaN(arqueo)||arqueo<0){toast("Ingresa monto de arqueo","err");return}
+
+  showLoad();
+  apiPost({
+    action:"cerrarTurno",
+    token:TOKEN,
+    codTurno:TURNO_ACTIVO.CodTurno,
+    montoArqueo:arqueo,
+    observaciones:document.getElementById("ctObservaciones").value.trim()
+  }).then(function(r){
+    hideLoad();
+    if(r.success){
+      toast("Turno cerrado correctamente","ok");
+      generarTicketCierre(r.turno||TURNO_ACTIVO,RESUMEN_CAJA);
+      TURNO_ACTIVO=null;
+      RESUMEN_CAJA=null;
+      closeModal();
+      renderTurno();
+      updateKPIs();
+      document.getElementById("resumenCaja").innerHTML='<div class="emptyState"><div class="emptyStateIcon">📋</div><div class="emptyStateText">Abre un turno para ver el resumen</div></div>';
+    }else{
+      toast(r.error||"Error cerrando turno","err");
+    }
+  }).catch(function(e){
+    hideLoad();
+    toast("Error de red","err");
+  });
+}
+
+// ============================================
+// TICKET IMPRIMIBLE
+// ============================================
+function generarTicketCierre(turno,resumen){
+  var totales=resumen?resumen.totales||[]:[];
+  var totalGen=resumen?resumen.totalGeneral||0:0;
+  var cant=resumen?resumen.cantidadPagos||0:0;
+  var apertura=parseFloat(turno.MontoApertura)||0;
+  var arqueo=parseFloat(turno.MontoArqueo)||0;
+  var dif=parseFloat(turno.Diferencia)||0;
+  var now=new Date();
+
+  var html='<h2>FASTBURGUER</h2>';
+  html+='<div class="center" style="font-size:11px;margin-bottom:8px">CIERRE DE CAJA</div>';
+  html+='<div class="line"></div>';
+  html+='<div class="row"><span>Turno:</span><span class="bold">'+(turno.CodTurno||"")+'</span></div>';
+  html+='<div class="row"><span>Cajero:</span><span>'+(turno.DesUsuario||"")+'</span></div>';
+  html+='<div class="row"><span>Fecha:</span><span>'+now.toLocaleDateString()+'</span></div>';
+  html+='<div class="row"><span>Hora:</span><span>'+now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</span></div>';
+  html+='<div class="line"></div>';
+  html+='<div class="row bold"><span>FORMA DE PAGO</span><span>MONTO</span></div>';
+  html+='<div class="line"></div>';
+  if(totales.length===0){
+    html+='<div class="center" style="margin:4px 0">Sin pagos registrados</div>';
+  }else{
+    totales.forEach(function(t){
+      html+='<div class="row"><span>'+(t.DesPago||t.DesFormaPago||"N/A")+'</span><span>'+formatMoney(t.MontoPago||0)+'</span></div>';
+    });
+  }
+  html+='<div class="line"></div>';
+  html+='<div class="row total"><span>TOTAL COBRADO</span><span>'+formatMoney(totalGen)+'</span></div>';
+  html+='<div class="row"><span>Cant. Pagos:</span><span>'+cant+'</span></div>';
+  html+='<div class="line"></div>';
+  html+='<div class="row"><span>Monto Apertura:</span><span>'+formatMoney(apertura)+'</span></div>';
+  html+='<div class="row"><span>Monto Arqueo:</span><span>'+formatMoney(arqueo)+'</span></div>';
+  html+='<div class="row bold" style="margin-top:4px"><span>DIFERENCIA:</span><span>'+(dif>=0?"+":"")+formatMoney(dif)+'</span></div>';
+  if(turno.Observaciones) html+='<div class="center" style="margin-top:6px;font-size:11px">Obs: '+turno.Observaciones+'</div>';
+  html+='<div class="line"></div>';
+  html+='<div class="center" style="font-size:10px;margin-top:4px">¡Gracias por su trabajo!</div>';
+
+  document.getElementById("printTicket").innerHTML=html;
+  document.getElementById("printPanel").classList.add("show");
+}
+
+function cerrarPrintPanel(){
+  document.getElementById("printPanel").classList.remove("show");
+}
+
+// ============================================
+// MODALES
+// ============================================
+function openModal(id){
+  document.getElementById("modalOverlay").classList.add("show");
+  document.getElementById(id).classList.add("show");
+  document.body.style.overflow="hidden";
+}
+function closeModal(){
+  document.getElementById("modalOverlay").classList.remove("show");
+  document.querySelectorAll(".modalPanel").forEach(function(m){m.classList.remove("show")});
+  document.body.style.overflow="";
+}
+
+// ============================================
+// INICIAR
+// ============================================
+document.addEventListener("DOMContentLoaded",init);
+</script>
+<!--FastBurguer Panel de Caja v1.0 | Fecha: 2026-06-04 | Asistencia: Kimi K2.6 | Proyecto: Ing. Jesus Linares | Contacto: 0412-0639340-->
+</body>
+</html>
