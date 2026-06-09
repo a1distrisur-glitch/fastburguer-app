@@ -101,7 +101,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .modalClose:hover{background:rgba(255,255,255,0.1);color:#fff}
 .modalBody{padding:16px 20px 20px}
 .fLabel{display:block;font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;margin-top:14px}
-.fLabel:first-child{margin-top:0}
+.fLabel:first-child{margin-top:0}.fLabel:first-of-type{margin-top:0}.codeLabel{background:linear-gradient(135deg,rgba(255,107,53,0.15),rgba(247,147,30,0.08));border:1.5px solid rgba(255,107,53,0.25);color:#f7931e;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:10px 16px;border-radius:10px;text-align:center;margin-bottom:16px;font-family:monospace}
 .fInput{width:100%;background:rgba(17,17,17,0.9);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;padding:12px 14px;font-size:14px;outline:none;transition:0.3s}
 .fInput:focus{border-color:#ff6b35;box-shadow:0 0 0 3px rgba(255,107,53,0.12)}
 .fInput::placeholder{color:#4b5563}
@@ -223,8 +223,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       </button>
     </div>
     <div class="modalBody">
-      <div class="fLabel">Codigo</div>
-      <input type="text" id="fCod" class="fInput" disabled>
+      <div class="codeLabel" id="codeLabel">CÓDIGO Z002</div>
 
       <div class="fLabel">Nombre Zona</div>
       <input type="text" id="fNom" class="fInput" placeholder="Ej: Centro">
@@ -266,8 +265,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <script>
 var API="https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9FoXBkMYwPD4xkK1llpxakpExC6DspQvnOI6Vmw/exec";
-var urlToken="";var href=window.location.href;var match=href.match(/[?&]t=([^&]+)/);if(match){urlToken=decodeURIComponent(match[1])}
-var TOKEN=urlToken||sessionStorage.getItem("fb_token")||localStorage.getItem("fb_token")||"";
 var ROWS=[];var SEL=null;var FORM_STATE=true;var MODAL_MODE="add";var SHOW_INACTIVOS=false;var TASAS=[];
 
 function showLoad(){document.getElementById("load").className="show"}
@@ -277,7 +274,7 @@ function toast(m,ok){var t=document.getElementById("toast");t.textContent=m;t.cl
 function apiGet(action,params){var url=API+"?action="+action+"&_cb="+Date.now();if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);return fetch(url).then(function(r){return r.json()})}
 
 function loadTasas(){
-return apiGet("adminData",{method:"GET",sheetName:"Tasas",token:TOKEN})
+return apiGet("adminData",{method:"GET",sheetName:"Tasas"})
 .then(function(r){
  if(r.success){
   TASAS=r.data||[];
@@ -310,23 +307,16 @@ function normalize(s){return String(s||"").toLowerCase().normalize("NFD").replac
 
 function openMenu(){document.getElementById("menuPanel").className="open";document.getElementById("menuOverlay").className="show"}
 function closeMenu(){document.getElementById("menuPanel").className="";document.getElementById("menuOverlay").className=""}
-function logout(){localStorage.removeItem("fb_token");sessionStorage.clear();location.href="admin.html"}
+function logout(){location.href="admin.html"}
 
 function init(){
-if(!TOKEN){location.href="admin.html";return}
-if(urlToken){sessionStorage.setItem("fb_token",TOKEN);localStorage.setItem("fb_token",TOKEN)}
 showLoad();
-apiPost({action:"validateToken",token:TOKEN})
-.then(function(r){
- if(!r.success){sessionStorage.removeItem("fb_token");localStorage.removeItem("fb_token");location.href="admin.html";return}
- return loadTasas().then(function(){loadData();});
-})
-.catch(function(e){hideLoad();toast("Error de red",false)});
+loadTasas().then(function(){loadData();});
 }
 
 function loadData(){
 showLoad();
-apiGet("adminData",{method:"GET",sheetName:"ZonasDelivery",token:TOKEN})
+apiGet("adminData",{method:"GET",sheetName:"ZonasDelivery"})
 .then(function(r){
  hideLoad();
  if(r.success){ROWS=r.data||[];render()}
@@ -399,10 +389,30 @@ if(SHOW_INACTIVOS){btnAdd.disabled=true;}else{btnAdd.disabled=false;}
 if(SEL){btnEdit.disabled=false;btnDel.disabled=SEL.Estado==="Inactivo";}else{btnEdit.disabled=true;btnDel.disabled=true;}
 }
 
+function generateNextCode(currentCode){
+  var prefix=currentCode.replace(/[0-9]/g,"");
+  var numStr=currentCode.replace(/\D/g,"");
+  var num=parseInt(numStr)+1;
+  var newNumStr=String(num).padStart(numStr.length,"0");
+  return prefix+newNumStr;
+}
+function fetchNextCode(codeField){
+  return apiGet("get",{sheetName:"Correlativos"})
+  .then(function(r){
+    if(r.success&&r.data&&r.data.length>0){
+      var currentCode=String(r.data[0][codeField]||"").trim();
+      if(currentCode)return generateNextCode(currentCode);
+    }
+    return"Auto";
+  }).catch(function(){return"Auto";});
+}
 function openAddModal(){
 MODAL_MODE="add";FORM_STATE=true;
 document.getElementById("modalTitle").textContent="Nueva Zona";
-document.getElementById("fCod").value="Auto";
+document.getElementById("codeLabel").textContent="CÓDIGO ...";
+fetchNextCode("CodZona").then(function(nextCode){
+  document.getElementById("codeLabel").textContent="CÓDIGO "+nextCode;
+});
 document.getElementById("fNom").value="";
 document.getElementById("fDesc").value="";
 document.getElementById("fMoneda").value="T002";
@@ -418,7 +428,7 @@ function openEditModal(){
 if(!SEL){toast("Seleccione una zona",false);return}
 MODAL_MODE="edit";FORM_STATE=SEL.Estado==="Activo";
 document.getElementById("modalTitle").textContent="Editar Zona";
-document.getElementById("fCod").value=SEL.CodZona||"";
+document.getElementById("codeLabel").textContent="CÓDIGO "+(SEL.CodZona||"");
 document.getElementById("fNom").value=SEL.NombreZona||"";
 document.getElementById("fDesc").value=SEL.DescripcionZona||"";
 document.getElementById("fMoneda").value=SEL.CodTasa||"";
@@ -475,7 +485,7 @@ if(!PENDING_DEL){closeConfirm();return}
 var delItem=PENDING_DEL;
 closeConfirm();
 showLoad();
-apiPost({action:"adminData",method:"DELETE",sheetName:"ZonasDelivery",token:TOKEN,data:{CodZona:delItem.CodZona}})
+apiPost({action:"adminData",method:"DELETE",sheetName:"ZonasDelivery",data:{CodZona:delItem.CodZona}})
 .then(function(r){
  hideLoad();
  if(r.success){toast("Eliminado",true);SEL=null;loadData();}
@@ -490,7 +500,7 @@ var filtered=getVisibleRows();
 var r=filtered[i];
 var nst=r.Estado==="Activo"?"Inactivo":"Activo";
 showLoad();
-apiPost({action:"adminData",method:"PUT",sheetName:"ZonasDelivery",token:TOKEN,data:{CodZona:r.CodZona,Estado:nst}})
+apiPost({action:"adminData",method:"PUT",sheetName:"ZonasDelivery",data:{CodZona:r.CodZona,Estado:nst}})
 .then(function(res){
  hideLoad();
  if(res.success){toast("Estado actualizado",true);loadData();}
@@ -513,7 +523,7 @@ if(!d.CodTasa){toast("Seleccione una moneda",false);return;}
 showLoad();
 if(MODAL_MODE==="edit"&&SEL){
 d.CodZona=SEL.CodZona;
-apiPost({action:"adminData",method:"PUT",sheetName:"ZonasDelivery",token:TOKEN,data:d})
+apiPost({action:"adminData",method:"PUT",sheetName:"ZonasDelivery",data:d})
 .then(function(r){
  hideLoad();
  if(r.success){toast("Guardado",true);SEL=null;closeModal();loadData();}
@@ -521,7 +531,7 @@ apiPost({action:"adminData",method:"PUT",sheetName:"ZonasDelivery",token:TOKEN,d
 })
 .catch(function(e){hideLoad();toast("Error de red",false);});
 }else{
-apiPost({action:"adminData",method:"POST",sheetName:"ZonasDelivery",token:TOKEN,data:d})
+apiPost({action:"adminData",method:"POST",sheetName:"ZonasDelivery",data:d})
 .then(function(r){
  hideLoad();
  if(r.success){toast("Creado: "+r.code,true);SEL=null;closeModal();loadData();}
@@ -552,10 +562,10 @@ init();
 </script>
 
 <!--
-FastBurguer Admin v9.12
+FastBurguer Admin v9.13
 Modulo: zonas.html
-Version: 9.12
-Fecha: 2026-06-01
+Version: 9.13
+Fecha: 2026-06-08
 Asistencia: Generado con IA
 Proyecto: Ing. Jesus Linares
 Contacto: 0412-0639340
