@@ -7,24 +7,47 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+
 #load{position:fixed;inset:0;background:rgba(10,10,10,0.9);display:none;justify-content:center;align-items:center;z-index:9999;flex-direction:column;gap:12px}
 #load.show{display:flex}
 .spin{width:36px;height:36px;border:3px solid rgba(255,255,255,0.1);border-top-color:#f7931e;border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+
 #toast{position:fixed;top:16px;right:16px;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;display:none;backdrop-filter:blur(10px)}
 #toast.ok{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#22c55e}
 #toast.err{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444}
+
 #menuOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:998;opacity:0;transition:opacity 0.3s;pointer-events:none}
 #menuOverlay.show{opacity:1;pointer-events:auto}
-#menuPanel{position:fixed;left:0;top:0;width:220px;height:100vh;background:#111;z-index:999;border-right:1px solid rgba(255,255,255,0.06);transform:translateX(-100%);transition:transform 0.3s ease;padding:20px 0}
+#menuPanel{position:fixed;left:0;top:0;width:260px;height:100vh;background:#111;z-index:999;border-right:1px solid rgba(255,107,53,0.3);transform:translateX(-100%);transition:transform 0.3s ease;padding:20px 0 80px;overflow-y:auto}
 #menuPanel.open{transform:translateX(0)}
-.menuItem{padding:14px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:0.2s;font-size:14px;font-weight:500;color:#d1d5db}
-.menuItem:hover{background:rgba(255,107,53,0.08);color:#fff}
+
+.menuHeader{padding:0 20px 16px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.menuTitle{font-size:18px;font-weight:900;background:linear-gradient(135deg,#ff6b35,#f7931e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px}
+.menuCloseBtn{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.2s;background:transparent;border:none;color:#f7931e}
+.menuCloseBtn:hover{background:rgba(255,107,53,0.1);color:#ff6b35}
+.menuCloseBtn:active{transform:scale(0.93)}
+.menuSubtitle{font-size:12px;color:#22c55e;font-weight:600;margin-top:2px}
+
+.menuItem{padding:13px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:0.2s;border-radius:0}
+.menuItem:hover{background:rgba(255,255,255,0.03)}
+.menuItem:hover .mIcon{color:#ff6b35}
+.menuItem:hover .mLabel{color:#fff}
+.mIcon{width:20px;height:20px;color:#6b7280;transition:0.2s;flex-shrink:0}
+.mLabel{font-size:14px;font-weight:500;color:#d1d5db;transition:0.2s}
+
+.menuFooter{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.05);margin-top:8px}
+.btnLogout{width:100%;padding:13px 20px;background:transparent;border:none;color:#ef4444;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;gap:12px;transition:0.2s}
+.btnLogout:hover{background:rgba(239,68,68,0.08)}
+.btnLogout:hover .mIcon{color:#ef4444}
+.btnLogout .mIcon{color:#ef4444;width:20px;height:20px;flex-shrink:0}
+
 .header{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(10,10,10,0.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:100}
 .hBtn{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.2s;background:rgba(255,255,255,0.05);border:none;color:#fff}
 .hBtn:active{transform:scale(0.93);background:rgba(255,107,53,0.15)}
 .hTitle{font-size:15px;font-weight:700;color:#f7931e}
 .hRegresar{background:#ef4444!important;color:#fff!important;padding:0 14px!important;width:auto!important;font-size:13px;font-weight:600}
+
 .searchBar{position:fixed;top:54px;left:0;right:0;padding:10px 12px;background:rgba(10,10,10,0.95);border-bottom:1px solid rgba(255,255,255,0.06);z-index:99;display:flex;align-items:center;gap:8px}
 .searchIcon{color:#6b7280;width:18px;height:18px;flex-shrink:0}
 .searchInput{flex:1;background:rgba(26,26,26,0.8);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;padding:10px 12px;font-size:14px;outline:none;transition:0.3s}
@@ -34,6 +57,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .searchClear:hover{color:#ef4444}
 .filterSelect{background:rgba(26,26,26,0.8);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;padding:10px 8px;font-size:13px;outline:none;transition:0.3s;flex-shrink:0}
 .filterSelect:focus{border-color:#ff6b35}
+
 .cardsArea{padding:120px 12px 90px}
 .tableWrap{background:#111;border:1.5px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden}
 .tableHeader{display:flex;background:linear-gradient(135deg,rgba(255,107,53,0.2),rgba(247,147,30,0.1));border-bottom:1.5px solid rgba(255,107,53,0.3);padding:12px 14px;font-size:11px;font-weight:700;color:#f7931e;text-transform:uppercase;letter-spacing:0.5px}
@@ -66,9 +90,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .btnEdit:active{transform:scale(0.97)}
 .btnDel{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444}
 .btnDel:active{transform:scale(0.97)}
+
 #modalOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;display:none;justify-content:center;align-items:center;padding:16px}
 #modalOverlay.show{display:flex}
-.modalCard{background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;width:100%;max-width:400px;max-height:85vh;overflow-y:auto;animation:modalIn 0.3s ease}
+.modalCard{background:#1a1a1a;border:1px solid rgba(255,255,255,0.08);border-radius:20px;width:100%;max-width:400px;max-height:85vh;overflow-y:auto;animation:modalIn 0.3s ease}
 @keyframes modalIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
 .modalHeader{padding:20px 20px 0;display:flex;justify-content:space-between;align-items:center}
 .modalTitle{font-size:18px;font-weight:800;color:#f7931e}
@@ -76,7 +101,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .modalClose:hover{background:rgba(255,255,255,0.1);color:#fff}
 .modalBody{padding:16px 20px 20px}
 .fLabel{display:block;font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;margin-top:14px}
-.fInput{width:100%;background:rgba(26,26,26,0.8);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;padding:12px 14px;font-size:14px;outline:none;transition:0.3s}
+.fLabel:first-child{margin-top:0}
+.codeLabel{background:linear-gradient(135deg,rgba(255,107,53,0.15),rgba(247,147,30,0.08));border:1.5px solid rgba(255,107,53,0.25);color:#f7931e;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:10px 16px;border-radius:10px;text-align:center;margin-bottom:16px;font-family:monospace}
+.fInput{width:100%;background:rgba(17,17,17,0.9);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;padding:12px 14px;font-size:14px;outline:none;transition:0.3s}
 .fInput:focus{border-color:#ff6b35;box-shadow:0 0 0 3px rgba(255,107,53,0.12)}
 .fInput::placeholder{color:#4b5563}
 .fInput:disabled{background:rgba(10,10,10,0.6);color:#6b7280;cursor:not-allowed}
@@ -119,165 +146,203 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <div id="menuOverlay" onclick="closeMenu()"></div>
 <div id="menuPanel">
-<div style="padding:0 20px 16px;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:8px">
-<div style="font-weight:700;font-size:15px">FastBurguer</div>
-<div style="font-size:12px;color:#6b7280">Usuarios</div>
-</div>
-<div class="menuItem" onclick="doAdd()">Agregar</div>
-<div class="menuItem" onclick="doEdit()">Editar</div>
-<div class="menuItem" onclick="doDel()">Borrar</div>
-<div class="menuItem" style="border-top:1px solid rgba(255,255,255,0.06);margin-top:8px" onclick="toggleViewInactivos()">
-<span style="flex:1;font-size:14px;font-weight:500;color:#d1d5db">Ver Inactivos</span>
-<div class="modalToggle" id="menuToggle" style="pointer-events:none"></div>
-</div>
+  <div class="menuHeader">
+    <div>
+      <div class="menuTitle">FastBurger</div>
+      <div class="menuSubtitle">Usuarios</div>
+    </div>
+    <button class="menuCloseBtn" onclick="closeMenu()">
+      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+  </div>
+  <div style="padding:8px 0">
+    <div class="menuItem" onclick="doAdd()">
+      <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      <span class="mLabel">Agregar</span>
+    </div>
+    <div class="menuItem" onclick="doEdit()">
+      <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+      <span class="mLabel">Editar</span>
+    </div>
+    <div class="menuItem" onclick="doDel()">
+      <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+      <span class="mLabel">Borrar</span>
+    </div>
+    <div class="menuItem" style="border-top:1px solid rgba(255,255,255,0.05);margin-top:8px" onclick="toggleViewInactivos()">
+      <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+      <span class="mLabel">Ver Inactivos</span>
+      <div class="modalToggle" id="menuToggle" style="pointer-events:none;margin-left:auto"></div>
+    </div>
+  </div>
+  <div class="menuFooter">
+    <button class="btnLogout" onclick="logout()">
+      <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      <span class="mLabel">Cerrar Sesion</span>
+    </button>
+  </div>
 </div>
 
 <div class="header">
-<button class="hBtn" onclick="openMenu()">
-<svg style="width:20px;height:20px;color:#f7931e" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-</svg>
-</button>
-<div class="hTitle">Usuarios</div>
-<button class="hBtn hRegresar" onclick="location.href='admin.html'">Regresar</button>
+  <button class="hBtn" onclick="openMenu()">
+    <svg style="width:20px;height:20px;color:#f7931e" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+  </button>
+  <div class="hTitle">Usuarios</div>
+  <button class="hBtn hRegresar" onclick="location.href='admin.html'">Regresar</button>
 </div>
 
 <div class="searchBar">
-<svg class="searchIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-</svg>
-<input type="text" id="searchInput" class="searchInput" placeholder="Buscar..." autocomplete="off">
-<span class="searchClear" id="searchClear" onclick="clearSearch()">X</span>
-<select id="filterField" class="filterSelect" onchange="render()">
-<option value="all">Todo</option>
-<option value="CodUsuario">Codigo</option>
-<option value="NombreUsuario">Nombre</option>
-</select>
+  <svg class="searchIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+  </svg>
+  <input type="text" id="searchInput" class="searchInput" placeholder="Buscar..." autocomplete="off">
+  <span class="searchClear" id="searchClear" onclick="clearSearch()">X</span>
+  <select id="filterField" class="filterSelect" onchange="render()">
+    <option value="all">Todo</option>
+    <option value="CodUsuario">Codigo</option>
+    <option value="NombreUsuario">Nombre</option>
+    <option value="RolUsuario">Rol</option>
+  </select>
 </div>
 
 <div class="cardsArea" id="main"></div>
 
 <div class="actionBar">
-<button class="actionBtn btnAdd" id="btnAdd" onclick="openAddModal()">Agregar</button>
-<button class="actionBtn btnEdit" id="btnEdit" onclick="openEditModal()" disabled>Editar</button>
-<button class="actionBtn btnDel" id="btnDel" onclick="doDel()" disabled>Borrar</button>
+  <button class="actionBtn btnAdd" id="btnAdd" onclick="openAddModal()">Agregar</button>
+  <button class="actionBtn btnEdit" id="btnEdit" onclick="openEditModal()" disabled>Editar</button>
+  <button class="actionBtn btnDel" id="btnDel" onclick="doDel()" disabled>Borrar</button>
 </div>
 
 <div id="modalOverlay" onclick="closeModal(event)">
-<div class="modalCard" onclick="event.stopPropagation()">
-<div class="modalHeader">
-<div class="modalTitle" id="modalTitle">Nuevo Usuario</div>
-<button class="modalClose" onclick="closeModal()">
-<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-</svg>
-</button>
+  <div class="modalCard" onclick="event.stopPropagation()">
+    <div class="modalHeader">
+      <div class="modalTitle" id="modalTitle">Nuevo Usuario</div>
+      <button class="modalClose" onclick="closeModal()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modalBody">
+      <div class="codeLabel" id="codeLabel">CÓDIGO U002</div>
+
+      <div class="fLabel">Nombre Usuario</div>
+      <input type="text" id="fNombre" class="fInput" placeholder="Ej: admin">
+
+      <div class="fLabel">Clave</div>
+      <input type="text" id="fClave" class="fInput" placeholder="Ej: 1234">
+
+      <div class="fLabel">Descripcion</div>
+      <input type="text" id="fDes" class="fInput" placeholder="Ej: Administrador Principal">
+
+      <div class="fLabel">Detalle</div>
+      <input type="text" id="fDet" class="fInput" placeholder="Ej: Acceso total al sistema">
+
+      <div class="fLabel">Moneda por Defecto</div>
+      <select id="fTasa" class="fInput" style="cursor:pointer">
+        <option value="">Cargando tasas...</option>
+      </select>
+
+      <div class="fLabel">Rol</div>
+      <select id="fRol" class="fInput" style="cursor:pointer">
+        <option value="admin">Admin</option>
+        <option value="cliente">Cliente</option>
+        <option value="operador">Operador</option>
+      </select>
+
+      <div class="fLabel">Telefono</div>
+      <input type="text" id="fTel" class="fInput" placeholder="Ej: 04141234567">
+
+      <div class="fLabel">Instagram</div>
+      <input type="text" id="fInsta" class="fInput" placeholder="Ej: @fastburguer (opcional)">
+
+      <div class="fLabel">Email</div>
+      <input type="text" id="fEmail" class="fInput" placeholder="Ej: admin@fastburguer.com (opcional)">
+
+      <div class="fLabel">Menu</div>
+      <input type="text" id="fMenu" class="fInput" placeholder="Ej: 1">
+
+      <div class="fLabel">Estado</div>
+      <div class="modalToggleWrap">
+        <div class="modalToggle on" id="fToggle" onclick="toggleFormState()"></div>
+        <span class="modalToggleTxt" id="fToggleTxt">Activo</span>
+      </div>
+
+      <div class="modalBtns">
+        <button class="btnSave" onclick="save()">Guardar</button>
+        <button class="btnCan" onclick="closeModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
 </div>
-<div class="modalBody">
-<div class="fLabel">Codigo</div>
-<input type="text" id="fCod" class="fInput" disabled>
 
-<div class="fLabel">Cod Tasa</div>
-<select id="fTasa" class="fInput"><option value="">Seleccione...</option></select>
-
-<div class="fLabel">Rol</div>
-<select id="fRol" class="fInput">
-<option value="admin">admin</option>
-<option value="cliente">cliente</option>
-</select>
-
-<div class="fLabel">Telefono</div>
-<input type="text" id="fTlf" class="fInput" placeholder="Ej: 0412...">
-
-<div class="fLabel">Instagram</div>
-<input type="text" id="fIg" class="fInput" placeholder="Ej: @usuario">
-
-<div class="fLabel">Email</div>
-<input type="text" id="fEmail" class="fInput" placeholder="Ej: correo@...">
-
-<div class="fLabel">Clave</div>
-<input type="text" id="fClave" class="fInput" placeholder="Ej: 1234">
-
-<div class="fLabel">Nombre Usuario</div>
-<input type="text" id="fNom" class="fInput" placeholder="Ej: jperez">
-
-<div class="fLabel">Descripcion</div>
-<input type="text" id="fDesc" class="fInput" placeholder="Ej: Administrador">
-
-<div class="fLabel">Detalle</div>
-<input type="text" id="fDet" class="fInput" placeholder="Ej: Acceso total">
-
-<div class="fLabel">Menu</div>
-<input type="text" id="fMenu" class="fInput" placeholder="Ej: 1,2,3">
-
-<div class="fLabel">Estado</div>
-<div class="modalToggleWrap">
-<div class="modalToggle on" id="fToggle" onclick="toggleFormState()"></div>
-<span class="modalToggleTxt" id="fToggleTxt">Activo</span>
-</div>
-
-<div class="modalBtns">
-<button class="btnSave" onclick="save()">Guardar</button>
-<button class="btnCan" onclick="closeModal()">Cancelar</button>
-</div>
-</div>
-</div>
+<div id="confirmOverlay" onclick="closeConfirm(event)">
+  <div class="confirmCard" onclick="event.stopPropagation()">
+    <div class="confirmTitle">&#9888; Confirmar eliminacion</div>
+    <div class="confirmMsg" id="confirmMsg">Desea eliminar este registro?</div>
+    <div class="confirmBtns">
+      <button class="btnConfirmCan" onclick="closeConfirm()">Cancelar</button>
+      <button class="btnConfirmDel" onclick="confirmDel()">Eliminar</button>
+    </div>
+  </div>
 </div>
 
 <script>
 var API="https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9FoXBkMYwPD4xkK1llpxakpExC6DspQvnOI6Vmw/exec";
-var urlToken="";var href=window.location.href;var match=href.match(/[?&]t=([^&]+)/);if(match){urlToken=decodeURIComponent(match[1])}
-var TOKEN=urlToken||sessionStorage.getItem("fb_token")||localStorage.getItem("fb_token")||"";
-var ROWS=[];var SEL=null;var FORM_STATE=true;var MODAL_MODE="add";var SHOW_INACTIVOS=false;var TASAS=[];
+var ROWS=[];var SEL=null;var FORM_STATE=true;var MODAL_MODE="add";var SHOW_INACTIVOS=false;
+var TASAS=[];
 
 function showLoad(){document.getElementById("load").className="show"}
 function hideLoad(){document.getElementById("load").className=""}
 function toast(m,ok){var t=document.getElementById("toast");t.textContent=m;t.className=ok?"ok":"err";t.style.display="block";setTimeout(function(){t.style.display="none"},3000)}
 
 function apiGet(action,params){var url=API+"?action="+action+"&_cb="+Date.now();if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);return fetch(url).then(function(r){return r.json()})}
-
-function loadTasas(){
-return apiGet("adminData",{method:"GET",sheetName:"Tasas",token:TOKEN})
-.then(function(r){
- if(r.success){
-  TASAS=r.data||[];
-  var sel=document.getElementById("fTasa");
-  sel.innerHTML='<option value="">Seleccione...</option>';
-  for(var i=0;i<TASAS.length;i++){
-   var t=TASAS[i];
-   if(t.Estado==="Activo"){
-    var opt=document.createElement("option");
-    opt.value=t.CodTasa||"";
-    opt.textContent=(t.CodTasa||"")+" - "+(t.DesTasa||"");
-    sel.appendChild(opt);
-   }
-  }
- }
-});
-}
-
 function apiPost(d){return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.text();}).then(function(t){try{return JSON.parse(t);}catch(e){throw new Error("Respuesta no es JSON: "+t.substring(0,200));}})}
 
 function normalize(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
 
 function openMenu(){document.getElementById("menuPanel").className="open";document.getElementById("menuOverlay").className="show"}
 function closeMenu(){document.getElementById("menuPanel").className="";document.getElementById("menuOverlay").className=""}
+function logout(){location.href="admin.html"}
+
+function loadTasas(){
+return apiGet("adminData",{method:"GET",sheetName:"Tasas"})
+.then(function(r){
+ if(r.success){TASAS=(r.data||[]).filter(function(t){return t.Estado==="Activo"});}
+ else{TASAS=[];}
+});
+}
+
+function populateTasaSelect(){
+var sel=document.getElementById("fTasa");
+sel.innerHTML="";
+if(TASAS.length===0){
+ sel.innerHTML='<option value="">Sin tasas activas</option>';
+ return;
+}
+for(var i=0;i<TASAS.length;i++){
+ var t=TASAS[i];
+ var opt=document.createElement("option");
+ opt.value=t.CodTasa||"";
+ opt.textContent=(t.DesTasa||t.CodTasa||"")+" ("+(t.SimboloTasa||"")+")";
+ sel.appendChild(opt);
+}
+var foundT002=false;
+for(var i=0;i<sel.options.length;i++){
+ if(sel.options[i].value==="T002"){sel.selectedIndex=i;foundT002=true;break;}
+}
+if(!foundT002&&sel.options.length>0)sel.selectedIndex=0;
+}
 
 function init(){
-if(!TOKEN){location.href="admin.html";return}
-if(urlToken){sessionStorage.setItem("fb_token",TOKEN);localStorage.setItem("fb_token",TOKEN)}
 showLoad();
-apiPost({action:"validateToken",token:TOKEN})
-.then(function(r){
- if(!r.success){sessionStorage.removeItem("fb_token");localStorage.removeItem("fb_token");location.href="admin.html";return}
- return loadTasas().then(function(){loadData();});
-})
-.catch(function(e){hideLoad();toast("Error de red",false)});
+loadTasas().then(function(){loadData();});
 }
 
 function loadData(){
 showLoad();
-apiGet("adminData",{method:"GET",sheetName:"Usuarios",token:TOKEN})
+apiGet("adminData",{method:"GET",sheetName:"Usuarios"})
 .then(function(r){
  hideLoad();
  if(r.success){ROWS=r.data||[];render()}
@@ -296,12 +361,12 @@ var m=document.getElementById("main");
 m.innerHTML="";
 var filtered=getVisibleRows();
 if(filtered.length===0){
- m.innerHTML='<div class="emptyState"><div class="emptyStateIcon">&#128202;</div>No se encontraron usuarios</div>';
+ m.innerHTML='<div class="emptyState"><div class="emptyStateIcon">&#128100;</div>No se encontraron usuarios</div>';
  return;
 }
 var wrap=document.createElement("div");wrap.className="tableWrap";
 var header=document.createElement("div");header.className="tableHeader";
-header.innerHTML='<div class="th thCheck">&#128203;</div><div class="th">Codigo</div><div class="th">Nombre</div><div class="th">Rol</div><div class="th">Telefono</div><div class="th">Estado</div>';
+header.innerHTML='<div class="th">Codigo</div><div class="th">Nombre</div><div class="th">Rol</div><div class="th">Estado</div>';
 wrap.appendChild(header);
 for(var i=0;i<filtered.length;i++){
 var r=filtered[i];
@@ -310,7 +375,7 @@ var isSel=SEL&&SEL.CodUsuario===r.CodUsuario;
 var row=document.createElement("div");
 row.className="tableRow"+(isSel?" sel":"")+(st?"":" inact");
 row.onclick=function(idx){return function(){selectCard(idx)}}(i);
-row.innerHTML='<div class="rowCheck"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div><div class="td">'+(r.CodUsuario||"")+'</div><div class="td">'+(r.NombreUsuario||"")+'</div><div class="td">'+(r.RolUsuario||"")+'</div><div class="td">'+(r.TelUsuario||"")+'</div><div class="rowToggle '+(st?"on":"")+' noclick"></div>';
+row.innerHTML='<div class="rowCheck"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div><div class="td">'+(r.CodUsuario||"")+'</div><div class="td">'+(r.NombreUsuario||"")+'</div><div class="td">'+(r.RolUsuario||"")+'</div><div class="rowToggle '+(st?"on":"")+' noclick"></div>';
 wrap.appendChild(row);
 }
 m.appendChild(wrap);
@@ -331,6 +396,7 @@ return out.filter(function(r){
 if(field==="all"){return normalize(r.CodUsuario).indexOf(q)!==-1||normalize(r.NombreUsuario).indexOf(q)!==-1||normalize(r.RolUsuario).indexOf(q)!==-1}
 if(field==="CodUsuario")return normalize(r.CodUsuario).indexOf(q)!==-1;
 if(field==="NombreUsuario")return normalize(r.NombreUsuario).indexOf(q)!==-1;
+if(field==="RolUsuario")return normalize(r.RolUsuario).indexOf(q)!==-1;
 return false;
 });
 }
@@ -346,26 +412,56 @@ function updateActionButtons(){
 var btnAdd=document.getElementById("btnAdd");
 var btnEdit=document.getElementById("btnEdit");
 var btnDel=document.getElementById("btnDel");
-if(SHOW_INACTIVOS){btnAdd.disabled=true;}else{btnAdd.disabled=false;}
-if(SEL){btnEdit.disabled=false;btnDel.disabled=SEL.Estado==="Inactivo";}else{btnEdit.disabled=true;btnDel.disabled=true;}
+if(SHOW_INACTIVOS){
+ btnAdd.disabled=true;
+}else{
+ btnAdd.disabled=false;
+}
+if(SEL){
+ btnEdit.disabled=false;
+ btnDel.disabled=SEL.Estado==="Inactivo";
+}else{
+ btnEdit.disabled=true;btnDel.disabled=true;
+}
 }
 
+function generateNextCode(currentCode){
+  var prefix=currentCode.replace(/[0-9]/g,"");
+  var numStr=currentCode.replace(/\D/g,"");
+  var num=parseInt(numStr)+1;
+  var newNumStr=String(num).padStart(numStr.length,"0");
+  return prefix+newNumStr;
+}
+function fetchNextCode(codeField){
+  return apiGet("get",{sheetName:"Correlativos"})
+  .then(function(r){
+    if(r.success&&r.data&&r.data.length>0){
+      var currentCode=String(r.data[0][codeField]||"").trim();
+      if(currentCode)return generateNextCode(currentCode);
+    }
+    return"Auto";
+  }).catch(function(){return"Auto";});
+}
 function openAddModal(){
 MODAL_MODE="add";FORM_STATE=true;
 document.getElementById("modalTitle").textContent="Nuevo Usuario";
-document.getElementById("fCod").value="Auto";
-document.getElementById("fTasa").value="";
-document.getElementById("fRol").value="admin";
-document.getElementById("fTlf").value="";
-document.getElementById("fIg").value="";
-document.getElementById("fEmail").value="";
+document.getElementById("codeLabel").textContent="CÓDIGO ...";
+fetchNextCode("CodUsuario").then(function(nextCode){
+  document.getElementById("codeLabel").textContent="CÓDIGO "+nextCode;
+});
+document.getElementById("fNombre").value="";
 document.getElementById("fClave").value="";
-document.getElementById("fNom").value="";
-document.getElementById("fDesc").value="";
+document.getElementById("fDes").value="";
 document.getElementById("fDet").value="";
+document.getElementById("fTel").value="";
+document.getElementById("fInsta").value="";
+document.getElementById("fEmail").value="";
 document.getElementById("fMenu").value="";
+document.getElementById("fRol").value="admin";
 document.getElementById("fToggle").className="modalToggle on";
 document.getElementById("fToggleTxt").textContent="Activo";
+document.getElementById("fToggle").onclick=toggleFormState;
+populateTasaSelect();
 document.getElementById("modalOverlay").className="show";
 closeMenu();
 }
@@ -374,17 +470,21 @@ function openEditModal(){
 if(!SEL){toast("Seleccione un usuario",false);return}
 MODAL_MODE="edit";FORM_STATE=SEL.Estado==="Activo";
 document.getElementById("modalTitle").textContent="Editar Usuario";
-document.getElementById("fCod").value=SEL.CodUsuario||"";
-document.getElementById("fTasa").value=SEL.CodTasa||"";
-document.getElementById("fRol").value=SEL.RolUsuario||"admin";
-document.getElementById("fTlf").value=SEL.TelUsuario||"";
-document.getElementById("fIg").value=SEL.Instagram||"";
-document.getElementById("fEmail").value=SEL.EmailUsuario||"";
+document.getElementById("codeLabel").textContent="CÓDIGO "+(SEL.CodUsuario||"");
+document.getElementById("fNombre").value=SEL.NombreUsuario||"";
 document.getElementById("fClave").value=SEL.Clave||"";
-document.getElementById("fNom").value=SEL.NombreUsuario||"";
-document.getElementById("fDesc").value=SEL.DesUsuario||"";
+document.getElementById("fDes").value=SEL.DesUsuario||"";
 document.getElementById("fDet").value=SEL.DetalleUsuario||"";
+document.getElementById("fTel").value=SEL.TelUsuario||"";
+document.getElementById("fInsta").value=SEL.Instagram||"";
+document.getElementById("fEmail").value=SEL.EmailUsuario||"";
 document.getElementById("fMenu").value=SEL.MenuUsuario||"";
+document.getElementById("fRol").value=SEL.RolUsuario||"admin";
+populateTasaSelect();
+var sel=document.getElementById("fTasa");
+for(var i=0;i<sel.options.length;i++){
+ if(sel.options[i].value===(SEL.CodTasa||"")){sel.selectedIndex=i;break;}
+}
 var ft=document.getElementById("fToggle");
 if(FORM_STATE){
 ft.className="modalToggle on disabled";
@@ -436,7 +536,7 @@ if(!PENDING_DEL){closeConfirm();return}
 var delItem=PENDING_DEL;
 closeConfirm();
 showLoad();
-apiPost({action:"adminData",method:"DELETE",sheetName:"Usuarios",token:TOKEN,data:{CodUsuario:delItem.CodUsuario}})
+apiPost({action:"adminData",method:"DELETE",sheetName:"Usuarios",data:{CodUsuario:delItem.CodUsuario}})
 .then(function(r){
  hideLoad();
  if(r.success){toast("Eliminado",true);SEL=null;loadData();}
@@ -445,41 +545,26 @@ apiPost({action:"adminData",method:"DELETE",sheetName:"Usuarios",token:TOKEN,dat
 .catch(function(e){hideLoad();toast("Error de red",false);});
 }
 
-function doToggle(e,i){
-e.stopPropagation();
-var filtered=getVisibleRows();
-var r=filtered[i];
-var nst=r.Estado==="Activo"?"Inactivo":"Activo";
-showLoad();
-apiPost({action:"adminData",method:"PUT",sheetName:"Usuarios",token:TOKEN,data:{CodUsuario:r.CodUsuario,Estado:nst}})
-.then(function(res){
- hideLoad();
- if(res.success){toast("Estado actualizado",true);loadData();}
- else{toast(res.error||"Error",false);}
-})
-.catch(function(e){hideLoad();toast("Error de red",false);});
-}
-
 function save(){
 var d={
-CodTasa:document.getElementById("fTasa").value.trim(),
-RolUsuario:document.getElementById("fRol").value,
-TelUsuario:document.getElementById("fTlf").value.trim(),
-Instagram:document.getElementById("fIg").value.trim(),
-EmailUsuario:document.getElementById("fEmail").value.trim(),
+NombreUsuario:document.getElementById("fNombre").value.trim(),
 Clave:document.getElementById("fClave").value.trim(),
-NombreUsuario:document.getElementById("fNom").value.trim(),
-DesUsuario:document.getElementById("fDesc").value.trim(),
+DesUsuario:document.getElementById("fDes").value.trim(),
 DetalleUsuario:document.getElementById("fDet").value.trim(),
+CodTasa:document.getElementById("fTasa").value.trim(),
+RolUsuario:document.getElementById("fRol").value.trim(),
+TelUsuario:document.getElementById("fTel").value.trim(),
+Instagram:document.getElementById("fInsta").value.trim(),
+EmailUsuario:document.getElementById("fEmail").value.trim(),
 MenuUsuario:document.getElementById("fMenu").value.trim(),
 Estado:FORM_STATE?"Activo":"Inactivo"
 };
-if(!d.NombreUsuario){toast("Nombre de usuario requerido",false);return;}
-if(!d.CodTasa){toast("Seleccione una tasa",false);return;}
+if(!d.NombreUsuario||!d.Clave){toast("Nombre y Clave requeridos",false);return;}
+if(!d.CodTasa){toast("Moneda requerida",false);return;}
 showLoad();
 if(MODAL_MODE==="edit"&&SEL){
 d.CodUsuario=SEL.CodUsuario;
-apiPost({action:"adminData",method:"PUT",sheetName:"Usuarios",token:TOKEN,data:d})
+apiPost({action:"adminData",method:"PUT",sheetName:"Usuarios",data:d})
 .then(function(r){
  hideLoad();
  if(r.success){toast("Guardado",true);SEL=null;closeModal();loadData();}
@@ -487,7 +572,7 @@ apiPost({action:"adminData",method:"PUT",sheetName:"Usuarios",token:TOKEN,data:d
 })
 .catch(function(e){hideLoad();toast("Error de red",false);});
 }else{
-apiPost({action:"adminData",method:"POST",sheetName:"Usuarios",token:TOKEN,data:d})
+apiPost({action:"adminData",method:"POST",sheetName:"Usuarios",data:d})
 .then(function(r){
  hideLoad();
  if(r.success){toast("Creado: "+r.code,true);SEL=null;closeModal();loadData();}
@@ -500,7 +585,11 @@ apiPost({action:"adminData",method:"POST",sheetName:"Usuarios",token:TOKEN,data:
 function toggleViewInactivos(){
 SHOW_INACTIVOS=!SHOW_INACTIVOS;
 var t=document.getElementById("menuToggle");
-if(SHOW_INACTIVOS){t.className="modalToggle on";}else{t.className="modalToggle";}
+if(SHOW_INACTIVOS){
+ t.className="modalToggle on";
+}else{
+ t.className="modalToggle";
+}
 closeMenu();
 SEL=null;
 render();
@@ -518,23 +607,13 @@ init();
 </script>
 
 <!--
-FastBurguer Admin v9.10
+FastBurguer Admin v9.13
 Modulo: usuarios.html
-Version: 9.10
-Fecha: 2026-06-01
+Version: 9.13
+Fecha: 2026-06-08
 Asistencia: Generado con IA
 Proyecto: Ing. Jesus Linares
 Contacto: 0412-0639340
 -->
-<div id="confirmOverlay" onclick="closeConfirm(event)">
-<div class="confirmCard" onclick="event.stopPropagation()">
-<div class="confirmTitle">&#9888; Confirmar eliminacion</div>
-<div class="confirmMsg" id="confirmMsg">Desea eliminar este registro?</div>
-<div class="confirmBtns">
-<button class="btnConfirmCan" onclick="closeConfirm()">Cancelar</button>
-<button class="btnConfirmDel" onclick="confirmDel()">Eliminar</button>
-</div>
-</div>
-</div>
 </body>
 </html>
