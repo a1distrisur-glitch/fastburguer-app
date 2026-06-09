@@ -25,8 +25,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .menuCloseBtn:hover{background:rgba(255,107,53,0.15);color:#ff6b35}
 .menuSubtitle{font-size:11px;color:#22c55e;font-weight:600;margin-top:3px;letter-spacing:0.5px}
 .menuSection{padding:6px 0}
-.menuSectionTitle{padding:8px 20px;font-size:10px;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:1.2px;display:flex;align-items:center;gap:8px}
+.menuSectionTitle{padding:8px 20px;font-size:10px;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:1.2px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
 .menuSectionTitle::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.06)}
+.menuSectionTitle .sectionArrow{width:14px;height:14px;transition:0.3s;color:#6b7280;flex-shrink:0}
+.menuSectionTitle.open .sectionArrow{transform:rotate(180deg);color:#ff6b35}
+.menuSectionContent{max-height:0;overflow:hidden;transition:max-height 0.35s ease}
+.menuSectionContent.open{max-height:800px}
 .menuItem{padding:11px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:0.2s;border-radius:0;position:relative}
 .menuItem:hover{background:rgba(255,255,255,0.03)}
 .menuItem:hover .mIcon{color:#ff6b35}
@@ -36,20 +40,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .mIcon{width:20px;height:20px;color:#6b7280;transition:0.2s;flex-shrink:0}
 .mLabel{font-size:14px;font-weight:500;color:#d1d5db;transition:0.2s}
 .menuBadge{margin-left:auto;font-size:10px;font-weight:700;color:#ff6b35;background:rgba(255,107,53,0.12);padding:2px 8px;border-radius:20px}
+.menuSoon{margin-left:auto;font-size:9px;font-weight:600;color:#6b7280;background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:0.3px}
 .menuFooter{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.06);margin-top:8px}
 .btnLogout{width:100%;padding:13px 20px;background:transparent;border:none;color:#ef4444;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;gap:12px;transition:0.2s}
 .btnLogout:hover{background:rgba(239,68,68,0.08)}
 .btnLogout:hover .mIcon{color:#ef4444}
 .btnLogout .mIcon{color:#ef4444;width:20px;height:20px;flex-shrink:0}
-.submenu{padding-left:52px;background:rgba(255,255,255,0.02);max-height:0;overflow:hidden;transition:max-height 0.3s ease}
-.submenu.open{max-height:200px}
-.submenuItem{padding:9px 20px;font-size:13px;color:#9ca3af;cursor:pointer;transition:0.2s;display:flex;align-items:center;gap:8px;border-radius:0}
-.submenuItem:hover{color:#ff6b35;background:rgba(255,107,53,0.04)}
-.submenuItem::before{content:"";width:4px;height:4px;border-radius:50%;background:#6b7280;margin-right:4px;transition:0.2s}
-.submenuItem:hover::before{background:#ff6b35}
-.hasSubmenu{justify-content:space-between!important}
-.submenuArrow{width:16px;height:16px;transition:0.3s;color:#6b7280;flex-shrink:0}
-.submenuArrow.open{transform:rotate(180deg);color:#ff6b35}
 #loginScreen{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px;position:relative}
 #loginScreen::before{content:'';position:absolute;top:0;left:0;right:0;height:300px;background:linear-gradient(180deg,rgba(255,107,53,0.08),transparent);pointer-events:none}
 .loginCard{width:100%;max-width:360px;background:rgba(17,17,17,0.95);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:32px;position:relative;z-index:1;backdrop-filter:blur(16px);box-shadow:0 24px 48px rgba(0,0,0,0.4)}
@@ -78,6 +74,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .kpiCard{background:linear-gradient(135deg,rgba(255,107,53,0.08),rgba(247,147,30,0.04));border:1px solid rgba(255,107,53,0.15);border-radius:16px;padding:16px 12px;text-align:center;backdrop-filter:blur(10px);position:relative;overflow:hidden;animation:kpiIn 0.5s ease both}
 .kpiCard:nth-child(1){animation-delay:0.1s}
 .kpiCard:nth-child(2){animation-delay:0.2s}
+.kpiCard:nth-child(3){animation-delay:0.3s}
+.kpiCard:nth-child(4){animation-delay:0.4s}
 @keyframes kpiIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .kpiCard::before{content:'';position:absolute;top:-50%;right:-50%;width:100%;height:100%;background:radial-gradient(circle,rgba(255,107,53,0.1),transparent 70%);pointer-events:none}
 .kpiIcon{font-size:24px;margin-bottom:8px;display:block}
@@ -126,30 +124,58 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div id="menuOverlay" onclick="closeMenu()"></div>
 <div id="menuPanel">
 <div class="menuHeader"><div><div class="menuTitle">FastBurger</div><div class="menuSubtitle">Panel Administrativo</div></div><button class="menuCloseBtn" onclick="closeMenu()"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg></button></div>
-<div class="menuSection"><div class="menuSectionTitle">&#128202; Operaciones</div>
-<div class="menuItem" onclick="goTo('pedidos')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg><span class="mLabel">Pedidos</span><span class="menuBadge" id="menuBadgePedidos">0</span></div>
-<div class="menuItem" onclick="goTo('pedidos')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg><span class="mLabel">Delivery</span></div>
-<div class="menuItem" onclick="goTo('pedidos')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg><span class="mLabel">Pagos / Caja</span></div>
-<div class="menuItem" onclick="goTo('pedidos')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg><span class="mLabel">Propinas</span></div>
+
+<!-- === OPERACIONES === -->
+<div class="menuSection">
+<div class="menuSectionTitle" onclick="toggleSection(this)"><span>&#128202; Operaciones</span><svg class="sectionArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div>
+<div class="menuSectionContent" id="secOperaciones">
+<div class="menuItem" onclick="goTo('pedidos')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg><span class="mLabel">Pedidos</span></div>
+<div class="menuItem" onclick="goTo('caja')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg><span class="mLabel">Pagos / Caja</span></div>
+<div class="menuItem" onclick="comingSoon('Delivery')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg><span class="mLabel">Delivery</span><span class="menuSoon">Muy Pronto</span></div>
+<div class="menuItem" onclick="comingSoon('Propinas')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg><span class="mLabel">Propinas</span><span class="menuSoon">Muy Pronto</span></div>
 </div>
-<div class="menuSection"><div class="menuSectionTitle">&#128230; Catalogo</div>
+</div>
+
+<!-- === DATOS === -->
+<div class="menuSection">
+<div class="menuSectionTitle" onclick="toggleSection(this)"><span>&#128230; Datos</span><svg class="sectionArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div>
+<div class="menuSectionContent" id="secDatos">
 <div class="menuItem" onclick="goTo('tasas')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="mLabel">Tasas de Cambio</span></div>
-<div class="menuItem hasSubmenu" onclick="toggleSubmenu(this)"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg><span class="mLabel">Productos Menu</span><svg class="submenuArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div>
-<div class="submenu" id="submenuProductos"><div class="submenuItem" onclick="goTo('categorias')">Categorias</div><div class="submenuItem" onclick="goTo('productos')">Productos</div></div>
+<div class="menuItem" onclick="goTo('productos')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg><span class="mLabel">Productos Menu</span></div>
+<div class="menuItem" onclick="goTo('categorias')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg><span class="mLabel">Categorias</span></div>
+<div class="menuItem" onclick="goTo('mesas')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg><span class="mLabel">Mesas En Sitio</span></div>
+<div class="menuItem" onclick="goTo('zonas')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg><span class="mLabel">Zonas Delivery</span></div>
+<div class="menuItem" onclick="goTo('servicios')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"/></svg><span class="mLabel">Meseros</span></div>
+<div class="menuItem" onclick="goTo('clientes')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg><span class="mLabel">Clientes</span></div>
 </div>
-<div class="menuSection"><div class="menuSectionTitle">&#9881; Configuracion</div>
-<div class="menuItem hasSubmenu" onclick="toggleSubmenu(this)"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg><span class="mLabel">Negocio</span><svg class="submenuArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div>
-<div class="submenu" id="submenuNegocio"><div class="submenuItem" onclick="goTo('negocio')">Configuracion</div><div class="submenuItem" onclick="goTo('pagos')">Formas de Pago</div><div class="submenuItem" onclick="goTo('clientes')">Clientes</div><div class="submenuItem" onclick="goTo('mesas')">Mesas</div><div class="submenuItem" onclick="goTo('usuarios')">Usuarios</div></div>
-<div class="menuItem hasSubmenu" onclick="toggleSubmenu(this)"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"/></svg><span class="mLabel">Servicios</span><svg class="submenuArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div>
-<div class="submenu" id="submenuServicios"><div class="submenuItem" onclick="goTo('servicios')">Servidores</div><div class="submenuItem" onclick="goTo('zonas')">Zonas Delivery</div></div>
 </div>
-<div class="menuSection"><div class="menuSectionTitle">&#128200; Informes</div>
-<div class="menuItem" onclick="comingSoon('Ventas')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg><span class="mLabel">Ventas</span></div>
-<div class="menuItem" onclick="comingSoon('Historico')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="mLabel">Historico Tasas</span></div>
-<div class="menuItem" onclick="comingSoon('Cierre')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg><span class="mLabel">Cierre de Caja</span></div>
+
+<!-- === NEGOCIO === -->
+<div class="menuSection">
+<div class="menuSectionTitle" onclick="toggleSection(this)"><span>&#9881; Negocio</span><svg class="sectionArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div>
+<div class="menuSectionContent" id="secNegocio">
+<div class="menuItem" onclick="comingSoon('Configuracion')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg><span class="mLabel">Configuracion</span><span class="menuSoon">Muy Pronto</span></div>
+<div class="menuItem" onclick="comingSoon('Correlativos')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg><span class="mLabel">Correlativos</span><span class="menuSoon">Muy Pronto</span></div>
+<div class="menuItem" onclick="goTo('pagos')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg><span class="mLabel">Formas de Pago</span></div>
+<div class="menuItem" onclick="goTo('usuarios')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg><span class="mLabel">Usuarios</span></div>
 </div>
+</div>
+
+<!-- === INFORMES === -->
+<div class="menuSection">
+<div class="menuSectionTitle" onclick="toggleSection(this)"><span>&#128200; Informes</span><svg class="sectionArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div>
+<div class="menuSectionContent" id="secInformes">
+<div class="menuItem" onclick="comingSoon('Ventas')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg><span class="mLabel">Ventas</span><span class="menuSoon">Muy Pronto</span></div>
+<div class="menuItem" onclick="comingSoon('Cierres de Caja')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg><span class="mLabel">Cierres de Caja</span><span class="menuSoon">Muy Pronto</span></div>
+<div class="menuItem" onclick="comingSoon('Productos Vendidos')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg><span class="mLabel">Productos Vendidos</span><span class="menuSoon">Muy Pronto</span></div>
+<div class="menuItem" onclick="comingSoon('Clientes Informe')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"/></svg><span class="mLabel">Clientes</span><span class="menuSoon">Muy Pronto</span></div>
+<div class="menuItem" onclick="comingSoon('Historico Tasas')"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="mLabel">Historico Tasas</span><span class="menuSoon">Muy Pronto</span></div>
+</div>
+</div>
+
 <div class="menuFooter"><button class="btnLogout" onclick="logout()"><svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg><span class="mLabel">Cerrar Sesion</span></button></div>
 </div>
+
 <div id="loginScreen">
 <div class="loginCard">
 <div class="loginLogo">&#127828;</div>
@@ -162,11 +188,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <button id="loginBtn" class="btnLogin" onclick="doLogin()"><span id="btnText">Ingresar</span></button>
 <button class="btnBack" onclick="location.href='index.html'"><svg style="width:16px;height:16px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>Volver al menu</button>
 </div>
-<div class="version">FastBurguer Admin v12.0</div>
+<div class="version">FastBurguer Admin v12.3</div>
 <div id="debugPanel" style="margin-top:16px;width:100%;max-width:360px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:10px;max-height:200px;overflow-y:auto;font-family:monospace;font-size:11px;color:#9ca3af">
   <div style="color:#f7931e;font-weight:700;margin-bottom:6px">&#128295; Diagnostico</div>
 </div>
 </div>
+
 <div id="mainScreen">
 <div class="header">
 <button class="hBtn" onclick="openMenu()"><svg style="width:20px;height:20px;color:#f7931e" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
@@ -176,13 +203,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="content">
 <div class="kpiGrid">
 <div class="kpiCard"><span class="kpiIcon">&#128722;</span><div class="kpiValue" id="kpiPedidos">0</div><div class="kpiLabel">Pedidos</div><div class="kpiChange">total registrados</div></div>
-<div class="kpiCard"><span class="kpiIcon">&#128100;</span><div class="kpiValue" id="kpiClientes">0</div><div class="kpiLabel">Clientes</div><div class="kpiChange">total registrados</div></div>
+<div class="kpiCard"><span class="kpiIcon">&#128100;</span><div class="kpiValue" id="kpiClientes">0</div><div class="kpiLabel">Clientes Activos</div><div class="kpiChange">solo activos</div></div>
+<div class="kpiCard"><span class="kpiIcon">&#128178;</span><div class="kpiValue" id="kpiTasas">--</div><div class="kpiLabel">Tasa USD</div><div class="kpiChange" id="kpiTasasDesc">cargando...</div></div>
+<div class="kpiCard"><span class="kpiIcon">&#127828;</span><div class="kpiValue" id="kpiProductos">0</div><div class="kpiLabel">Productos</div><div class="kpiChange">total registrados</div></div>
 </div>
 <div class="quickGrid">
 <div class="quickBtn" onclick="goTo('pedidos')"><div class="quickIcon">&#128722;</div><div class="quickLabel">Pedidos</div></div>
-<div class="quickBtn" onclick="goTo('productos')"><div class="quickIcon">&#127828;</div><div class="quickLabel">Productos</div></div>
-<div class="quickBtn" onclick="goTo('tasas')"><div class="quickIcon">&#128178;</div><div class="quickLabel">Tasas</div></div>
 <div class="quickBtn" onclick="goTo('clientes')"><div class="quickIcon">&#128100;</div><div class="quickLabel">Clientes</div></div>
+<div class="quickBtn" onclick="goTo('tasas')"><div class="quickIcon">&#128178;</div><div class="quickLabel">Tasas</div></div>
+<div class="quickBtn" onclick="goTo('productos')"><div class="quickIcon">&#127828;</div><div class="quickLabel">Productos</div></div>
 </div>
 <div class="sectionCard">
 <div class="sectionHeader"><div class="sectionTitle">&#127978; Estado Tienda</div></div>
@@ -191,8 +220,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 </div>
 </div>
+
 <script>
-// === DIAGNOSTICO INTEGRADO v12.0 ===
+// === DIAGNOSTICO INTEGRADO v12.3 ===
 window._adminErrors = [];
 window.onerror = function(msg, url, line, col, err) {
   var info = "ERROR: " + msg + " (linea " + line + ":" + col + ")";
@@ -214,7 +244,9 @@ var TOKEN="";
 var CONFIG={};
 var PEDIDOS=[];
 var CLIENTES=[];
-var DASH_READY={config:false,pedidos:false,clientes:false};
+var TASAS=[];
+var PRODUCTOS=[];
+var DASH_READY={config:false,pedidos:false,clientes:false,tasas:false,productos:false};
 function showLoad(){document.getElementById("load").className="show"}
 function hideLoad(){document.getElementById("load").className=""}
 function toast(m,ok){var t=document.getElementById("toast");t.textContent=m;t.className=ok?"ok":"err";t.style.display="block";setTimeout(function(){t.style.display="none"},3000)}
@@ -223,15 +255,15 @@ function apiPost(d){return fetch(API,{method:"POST",headers:{"Content-Type":"tex
 function apiGet(action,params){var url=API+"?action="+action+"&_cb="+Date.now();if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);return fetch(url).then(function(r){return r.json()})}
 function openMenu(){document.getElementById("menuPanel").className="open";document.getElementById("menuOverlay").className="show"}
 function closeMenu(){document.getElementById("menuPanel").className="";document.getElementById("menuOverlay").className=""}
-function toggleSubmenu(el){var arrow=el.querySelector(".submenuArrow");var subId=el.nextElementSibling.id;var sub=document.getElementById(subId);if(sub.className==="submenu open"){sub.className="submenu";arrow.className="submenuArrow";}else{sub.className="submenu open";arrow.className="submenuArrow open";}}
+function toggleSection(el){var arrow=el.querySelector(".sectionArrow");var content=el.nextElementSibling;if(content.className==="menuSectionContent open"){content.className="menuSectionContent";el.className="menuSectionTitle";}else{content.className="menuSectionContent open";el.className="menuSectionTitle open";}}
 function goTo(page){var t=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";if(t){window.location.href=page+".html?t="+encodeURIComponent(t);}else{toast("Inicie sesion primero",false);}}
-function comingSoon(modulo){toast(modulo+" - Fase 3",false);closeMenu();}
+function comingSoon(modulo){toast(modulo+" - Muy Pronto",false);closeMenu();}
 function logout(){localStorage.removeItem("fb_token");sessionStorage.clear();location.reload()}
 function doLogin(){var u=document.getElementById("loginUser").value.trim();var p=document.getElementById("loginPass").value;var err=document.getElementById("loginError");var btn=document.getElementById("btnText");err.textContent="";if(!u||!p){err.textContent="Complete todos los campos";return}btn.innerHTML='<div class="spin" style="width:18px;height:18px;border-width:2px"></div>';apiPost({action:"login",usuario:u,clave:xorBase64(p)}).then(function(r){if(r.success&&r.token){localStorage.setItem("fb_token",r.token);sessionStorage.setItem("fb_token",r.token);showMain()}else{err.textContent=r.error||"Credenciales invalidas";btn.textContent="Ingresar"}}).catch(function(e){err.textContent="Error de red. Intente de nuevo.";btn.textContent="Ingresar"});}
 function showMain(){var ls=document.getElementById("loginScreen");ls.classList.remove("hidden");ls.style.display="none";document.getElementById("mainScreen").style.display="block";loadDashboard();}
 function showDashboard(){window.scrollTo({top:0,behavior:'smooth'});}
-function checkDone(){if(DASH_READY.config&&DASH_READY.pedidos&&DASH_READY.clientes){hideLoad();}}
-function loadDashboard(){showLoad();DASH_READY={config:false,pedidos:false,clientes:false};var token=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";loadConfig(token);loadPedidos(token);loadClientes(token);}
+function checkDone(){if(DASH_READY.config&&DASH_READY.pedidos&&DASH_READY.clientes&&DASH_READY.tasas&&DASH_READY.productos){hideLoad();}}
+function loadDashboard(){showLoad();DASH_READY={config:false,pedidos:false,clientes:false,tasas:false,productos:false};var token=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";loadConfig(token);loadPedidos(token);loadClientes(token);loadTasas(token);loadProductos(token);}
 function loadConfig(token){
   apiPost({action:"config",method:"GET",token:token}).then(function(r){
     if(r.success&&r.config){CONFIG=r.config;renderStoreStatus();}
@@ -261,19 +293,43 @@ function loadClientes(token){
     CLIENTES=[];calcKPIs();
   }).finally(function(){DASH_READY.clientes=true;checkDone();});
 }
+function loadTasas(token){
+  apiGet("get",{sheetName:"Tasas",token:token}).then(function(r){
+    if(r.success&&r.data){TASAS=r.data||[];calcKPIs();}
+    else{TASAS=[];calcKPIs();}
+  }).catch(function(e){
+    TASAS=[];calcKPIs();
+  }).finally(function(){DASH_READY.tasas=true;checkDone();});
+}
+function loadProductos(token){
+  apiGet("get",{sheetName:"ProductoMenu",token:token}).then(function(r){
+    if(r.success&&r.data){PRODUCTOS=r.data||[];calcKPIs();}
+    else{PRODUCTOS=[];calcKPIs();}
+  }).catch(function(e){
+    PRODUCTOS=[];calcKPIs();
+  }).finally(function(){DASH_READY.productos=true;checkDone();});
+}
 function calcKPIs(){
   var totalPedidos = PEDIDOS.length;
-  var totalClientes = CLIENTES.length;
-  var pendientes = PEDIDOS.filter(function(p){return String(p.Estado||"").trim()==="Pendiente";}).length;
+  var clientesActivos = CLIENTES.filter(function(c){return String(c.Estado||"").trim().toLowerCase()==="activo";}).length;
+  var productosActivos = PRODUCTOS.filter(function(p){return String(p.Estado||"").trim().toLowerCase()==="activo";}).length;
+  var tasaUSD = TASAS.find(function(t){return String(t.DesTasa||"").toLowerCase().includes("dolar")||String(t.DesTasa||"").toLowerCase().includes("usd");});
+  if(!tasaUSD) tasaUSD = TASAS.find(function(t){return String(t.Estado||"").trim().toLowerCase()==="activo";});
+  var tasaValor = tasaUSD ? (tasaUSD.ValorTasa||tasaUSD.valorTasa||"--") : "--";
+  var tasaDesc = tasaUSD ? (tasaUSD.DesTasa||tasaUSD.desTasa||"Activa") : "Sin tasa";
   document.getElementById("kpiPedidos").textContent = totalPedidos;
-  document.getElementById("kpiClientes").textContent = totalClientes;
-  document.getElementById("menuBadgePedidos").textContent = pendientes;
-  debugLog("KPIs Totales",{pedidos:totalPedidos,clientes:totalClientes,pendientes:pendientes});
+  document.getElementById("kpiClientes").textContent = clientesActivos;
+  document.getElementById("kpiProductos").textContent = productosActivos;
+  document.getElementById("kpiTasas").textContent = tasaValor;
+  document.getElementById("kpiTasasDesc").textContent = tasaDesc;
+  debugLog("KPIs Totales",{pedidos:totalPedidos,clientesActivos:clientesActivos,productosActivos:productosActivos,tasa:tasaValor});
 }
 function showKPIsPlaceholder(){
   document.getElementById("kpiPedidos").textContent="0";
   document.getElementById("kpiClientes").textContent="0";
-  document.getElementById("menuBadgePedidos").textContent="0";
+  document.getElementById("kpiProductos").textContent="0";
+  document.getElementById("kpiTasas").textContent="--";
+  document.getElementById("kpiTasasDesc").textContent="cargando...";
 }
 function renderStoreStatus(){
   var estado=CONFIG.EstadoTienda||"Cerrado";
@@ -323,6 +379,6 @@ function init(){
 document.getElementById("loginPass").addEventListener("keypress",function(e){if(e.key==="Enter")doLogin()});
 init();
 </script>
-<!--FastBurguer Admin v12.0 Dashboard Final. Asistencia: Kimi K2.6. Proyecto: Ing. Jesus Linares. Contacto: 0412-0639340-->
+<!--FastBurguer Admin v12.3 Dashboard. Asistencia: Kimi K2.6. Proyecto: Ing. Jesus Linares. Contacto: 0412-0639340-->
 </body>
 </html>
