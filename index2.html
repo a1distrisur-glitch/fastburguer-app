@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FastBurger</title>
+<link rel="manifest" href="manifest.json">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://i.ibb.co">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  /* ============================================
+     FASTBURGUER v9.2 — Fase 3B Visual Ultramoderna
+     ============================================ */
+
+  /* Base */
+  body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;}
+
+  /* Glassmorphism 2.0 — más profundidad, bordes luminosos */
+  .glass{
+    background:rgba(255,255,255,0.04);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    box-shadow:0 4px 30px rgba(0,0,0,0.3);
+  }
+
+  /* Botón primario — con micro-interacciones */
+  .btn-primary{
+    background:linear-gradient(135deg,#ff6b35 0%,#f7931e 100%);
+    transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  .btn-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 30px rgba(255,107,53,0.45), 0 0 15px rgba(255,107,53,0.15);
+  }
+  .btn-primary:active{transform:scale(0.98);}
+
+  /* Product Cards — Cinematográficas */
+  .product-card{
+    transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+    border:1px solid transparent;
+  }
+  .product-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 20px 40px rgba(0,0,0,0.4);
+    border-color:rgba(255,107,53,0.15);
+  }
+  .product-card:hover img{transform:scale(1.05);}
+  .product-card img{transition:transform 0.5s cubic-bezier(0.4,0,0.2,1);}
+
+  /* Cart Badge — Pulse refinado */
+  .cart-badge{animation:pulse 0.5s cubic-bezier(0.4,0,0.2,1);}
+  @keyframes pulse{0%{transform:scale(1);}50%{transform:scale(1.35);}100%{transform:scale(1);}}
+
+  /* Categorías — Pills con glow */
+  .category-btn{
+    transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  .category-btn.active{
+    background:linear-gradient(135deg,#ff6b35 0%,#f7931e 100%);
+    color:#fff;
+    border-color:transparent;
+    box-shadow:0 4px 15px rgba(255,107,53,0.25);
+  }
+  .category-btn:not(.active):hover{
+    border-color:rgba(255,255,255,0.3);
+    color:#fff;
+    background:rgba(255,255,255,0.08);
+  }
+
+  /* No stock / Cerrado — Overlay elegante */
+  .no-stock{opacity:0.5;pointer-events:none;}
+  .no-stock .add-btn{display:none;}
+  .no-stock::after{content:"No disponible";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);font-weight:700;font-size:1.2rem;border-radius:0.75rem;}
+
+  /* Botón Agregar bloqueado (tienda cerrada) */
+  .add-btn-disabled{
+    background:#374151 !important;
+    color:#6b7280 !important;
+    opacity:0.4;
+    cursor:not-allowed !important;
+    pointer-events:none !important;
+    transform:none !important;
+    box-shadow:none !important;
+  }
+
+  /* Scrollbar custom — Solo carrito y modales */
+  .custom-scroll::-webkit-scrollbar{width:6px;}
+  .custom-scroll::-webkit-scrollbar-track{background:transparent;}
+  .custom-scroll::-webkit-scrollbar-thumb{background:#374151;border-radius:3px;}
+  .custom-scroll::-webkit-scrollbar-thumb:hover{background:#4b5563;}
+  .custom-scroll{-ms-overflow-style:none;scrollbar-width:thin;scrollbar-color:#374151 transparent;}
+
+  /* Scrollbar hide para categorías */
+  .scrollbar-hide::-webkit-scrollbar{display:none;}
+  .scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none;}
+
+  /* Fade in refinado */
+  .fade-in{animation:fadeIn 0.5s cubic-bezier(0.4,0,0.2,1);}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+  /* Content visibility */
+  .content-auto{content-visibility:auto;contain-intrinsic-size:auto 350px;}
+
+  /* Drawer */
+  .drawer{transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);}
+
+  /* Alerta custom — Entrada scale */
+  .alert-enter{animation:alertEnter 0.35s cubic-bezier(0.4,0,0.2,1);}
+  @keyframes alertEnter{from{opacity:0;transform:scale(0.92) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+
+  /* Icon glow para alertas */
+  .icon-glow-error{box-shadow:0 0 20px rgba(59,130,246,0.3);}
+  .icon-glow-success{box-shadow:0 0 20px rgba(34,197,94,0.3);}
+
+  /* Carrito item hover */
+  .cart-item{transition:background 0.2s ease;}
+  .cart-item:hover{background:rgba(255,255,255,0.03);}
+
+  /* Qty buttons hover */
+  .qty-btn{transition:all 0.2s ease;}
+  .qty-btn:hover{background:rgba(255,107,53,0.15);color:#ff6b35;}
+
+  /* Remove button hover */
+  .remove-btn{transition:all 0.2s ease;}
+  .remove-btn:hover{background:rgba(239,68,68,0.15);color:#ef4444;border-radius:6px;}
+
+  /* Overlay cerrado — Icono pulse */
+  .closed-icon{animation:closedPulse 2s ease-in-out infinite;}
+  @keyframes closedPulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.1);opacity:0.8;}}
+
+  /* Menú hamburguesa — Stroke más grueso, posición ajustada */
+  #menuBtn svg{stroke-width:2.5;}
+
+  /* Precios — Monospace para alineación perfecta */
+  .price-mono{font-variant-numeric:tabular-nums;letter-spacing:-0.02em;}
+
+  /* Selector moneda deshabilitado */
+  .currency-disabled{
+    opacity:0.5 !important;
+    cursor:not-allowed !important;
+    pointer-events:none !important;
+    border-color:#374151 !important;
+  }
+
+  /* Header border gradiente sutil */
+  .header-glow{
+    position:relative;
+  }
+  .header-glow::after{
+    content:'';
+    position:absolute;
+    bottom:0;
+    left:0;
+    right:0;
+    height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,107,53,0.3),transparent);
+  }
+
+  /* Skeleton loading */
+  .skeleton{
+    background:linear-gradient(90deg,#1f2937 25%,#374151 50%,#1f2937 75%);
+    background-size:200% 100%;
+    animation:skeleton 1.5s ease-in-out infinite;
+    border-radius:0.75rem;
+  }
+  @keyframes skeleton{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+  /* Botón flotante cambio de vista */
+  .view-toggle-btn{
+    position:fixed;
+    bottom:1.5rem;
+    right:1.5rem;
+    z-index:55;
+    width:3.5rem;
+    height:3.5rem;
+    border-radius:9999px;
+    background:rgba(17,17,17,0.9);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    border:1px solid rgba(255,107,53,0.4);
+    color:#ff6b35;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+    box-shadow:0 4px 20px rgba(0,0,0,0.4), 0 0 10px rgba(255,107,53,0.1);
+  }
+  .view-toggle-btn:hover{
+    transform:scale(1.1) translateY(-2px);
+    border-color:rgba(255,107,53,0.8);
+    box-shadow:0 8px 30px rgba(0,0,0,0.5), 0 0 20px rgba(255,107,53,0.2);
+    color:#fff;
+    background:linear-gradient(135deg,#ff6b35 0%,#f7931e 100%);
+  }
+  .view-toggle-btn:active{transform:scale(0.95);}
+  .view-toggle-btn svg{width:1.5rem;height:1.5rem;}
+
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- HEADER -->
+<header class="fixed top-0 left-0 right-0 z-50 glass header-glow flex flex-col">
+  <div class="max-w-7xl w-full mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <button id="menuBtn" class="p-2.5 rounded-xl bg-gray-800 border border-gray-700 hover:bg-orange-500/20 text-orange-400 hover:text-orange-500 transition ml-1" aria-label="Abrir Menu">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div>
+        <h1 class="font-black text-xl tracking-tight text-white">FastBurger</h1>
+        <p class="text-xs text-gray-400" id="storeStatus">Cargando...</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <select id="currencySelector" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500">
+        <option value="T002" selected>$ USD</option>
+        <option value="T001">Bs</option>
+        <option value="T003">EUR</option>
+        <option value="T004">BN</option>
+      </select>
+      <button id="cartBtn" class="relative p-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 transition border border-gray-700" aria-label="Ver Carrito">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        <span id="cartCount" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold hidden">0</span>
+      </button>
+    </div>
+  </div>
+  <div class="max-w-7xl w-full mx-auto px-4 pb-3">
+    <div id="categoriesContainer" class="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
+      <button class="category-btn active px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap bg-gray-800/80 border border-gray-700 text-gray-300 transition" data-cat="all">Todos</button>
+    </div>
+  </div>
+</header>
+
+<!-- SIDE MENU (Drawer izquierdo) -->
+<div id="sideMenu" class="fixed inset-y-0 left-0 w-72 bg-[#111] z-[70] transform -translate-x-full drawer shadow-2xl border-r border-orange-500/30">
+  <div class="p-6">
+    <div class="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
+      <span class="font-black text-xl tracking-wide bg-gradient-to-r from-orange-500 to-amber-400 bg-clip-text text-transparent">FastBurger</span>
+      <button id="closeMenu" class="flex items-center gap-1 px-3 py-2 hover:bg-orange-500/10 rounded-xl text-orange-400 hover:text-orange-500 transition text-sm font-semibold">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+    </div>
+    <nav class="space-y-2">
+      <button id="myOrdersBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white font-semibold transition text-left border border-transparent">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        Mis Pedidos
+      </button>
+      <button id="opcionesBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white font-semibold transition text-left border border-transparent">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Opciones
+      </button>
+      <button id="sobreBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-300 hover:text-white font-semibold transition text-left border border-transparent">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Sobre FastBurguer
+      </button>
+      <div class="border-t border-white/5 my-2"></div>
+      <button id="salirBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/10 text-red-400 hover:text-red-500 font-semibold transition text-left border border-transparent">
+        <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Salir FastBurguer
+      </button>
+    </nav>
+  </div>
+</div>
+
+<!-- OVERLAY CERRADO — v9.2: Experiencia elegante con Continuar -->
+<div id="closedOverlay" class="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center hidden">
+  <div class="text-center p-8 max-w-sm mx-auto">
+    <div class="text-6xl mb-4 closed-icon">🔒</div>
+    <h2 class="text-3xl font-black mb-2 text-white tracking-tight">Cerrado Temporalmente</h2>
+    <p class="text-gray-400 mb-2 text-lg font-light">Encantados de Atenderle Pronto</p>
+    <p class="text-orange-400 font-bold text-xl mb-8" id="hoursText">10:00 - 22:00</p>
+    <button id="continueClosedBtn" class="btn-primary px-8 py-3 rounded-xl font-bold text-white text-lg shadow-lg">
+      Continuar
+    </button>
+    <p class="text-gray-500 text-xs mt-4">Podrás ver el menú, pero no realizar pedidos</p>
+  </div>
+</div>
+
+<!-- MAIN PRODUCTOS -->
+<main class="pt-[130px] pb-32 px-4 max-w-7xl mx-auto">
+  <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <div class="col-span-full flex items-center justify-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+    </div>
+  </div>
+</main>
+
+<!-- SIDEBAR CARRITO (derecha) -->
+<div id="cartSidebar" class="fixed inset-y-0 right-0 w-full sm:w-[420px] bg-[#111] z-[70] transform translate-x-full transition-transform duration-300 shadow-2xl border-l border-white/10 flex flex-col">
+  <div class="p-4 border-b border-white/10 flex items-center justify-between">
+    <h2 class="text-xl font-black text-white">Tu Pedido</h2>
+    <button id="closeCart" class="flex items-center gap-1 px-3 py-2 hover:bg-white/10 rounded-lg transition text-sm font-semibold text-gray-300">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      Regresar
+    </button>
+  </div>
+  <div id="cartItems" class="flex-1 overflow-y-auto custom-scroll p-4 space-y-3">
+    <p class="text-center text-gray-500 py-10">Tu carrito esta vacio</p>
+  </div>
+  <div class="p-4 border-t border-white/10 space-y-3">
+    <div class="flex justify-between text-sm text-gray-300"><span>Subtotal</span><span id="cartSubtotal" class="font-bold text-white">Bs 0.00</span></div>
+    <div class="flex justify-between text-sm text-gray-300"><span>Delivery</span><span id="cartDelivery" class="font-bold text-gray-400">Bs 0.00</span></div>
+    <div class="flex justify-between text-lg font-black border-t border-white/10 pt-2 text-white">
+      <span>Total</span><span id="cartTotal" class="text-orange-400">Bs 0.00</span>
+    </div>
+    <button id="checkoutBtn" class="w-full btn-primary py-3 rounded-xl font-bold text-lg text-white transition disabled:opacity-50 disabled:cursor-not-allowed">
+      Confirmar Pedido
+    </button>
+  </div>
+</div>
+
+<!-- MODAL PEDIDOS -->
+<div id="ordersModal" class="fixed inset-0 z-[85] bg-black/80 flex items-center justify-center p-4 hidden">
+  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-md max-h-[85vh] overflow-y-auto flex flex-col">
+    <div class="p-6 sticky top-0 bg-[#1a1a1a] border-b border-white/5 z-10 flex items-center justify-between">
+      <h2 class="text-2xl font-black text-white">Pedidos Pendientes</h2>
+      <button id="closeOrdersModal" class="flex items-center gap-1 px-3 py-2 hover:bg-white/10 rounded-lg transition text-sm font-semibold text-gray-300">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        Regresar
+      </button>
+    </div>
+    <div class="p-6 flex-1">
+      <div id="ordersContent" class="space-y-4">
+         <p class="text-center text-gray-500 py-4">Buscando pedidos...</p>
+      <p class="text-center text-gray-400 text-sm hidden" id="ordersEmptySub">Realiza un Pedido para ver Tu Historial</p>
+      </div>
+      <div id="orderItemsView" class="hidden">
+        <button id="backToOrdersBtn" class="flex items-center gap-1 px-3 py-2 mb-4 btn-primary rounded-lg transition text-sm font-bold text-white shadow-lg hover:scale-[1.02]">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          Regresar a Pedidos
+        </button>
+        <h3 id="itemsOrderTitle" class="text-lg font-bold text-white mb-3"></h3>
+        <div id="orderItemsList" class="space-y-3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMACION -->
+<div id="confirmationModal" class="fixed inset-0 z-[90] bg-black/90 flex items-center justify-center p-4 hidden">
+  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-md text-center p-8 fade-in border border-white/10 shadow-2xl">
+    <div class="text-6xl mb-4">🎉</div>
+    <h2 class="text-2xl font-black mb-2 text-white">¡Pedido Registrado!</h2>
+    <p class="text-gray-400 mb-4">Tu numero de pedido es:</p>
+    <div class="bg-gray-800 rounded-xl p-4 mb-6 border border-gray-700">
+      <p id="orderNumber" class="text-3xl font-black text-orange-400">PED00001</p>
+    </div>
+    <div id="paymentInfo" class="bg-gray-800/50 rounded-xl p-4 mb-6 text-left space-y-2 text-sm text-gray-300 border border-gray-700"></div>
+    <a id="whatsappBtn" href="#" target="_blank" class="inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebd5a] text-white px-6 py-3 rounded-xl font-bold transition mb-3 w-full shadow-lg">
+      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Avisar por WhatsApp
+    </a>
+    <button id="newOrderBtn" class="block w-full py-3 rounded-xl font-bold text-gray-300 border border-gray-600 hover:bg-gray-800 transition">
+      Cerrar y volver al menu
+    </button>
+  </div>
+</div>
+
+<!-- OVERLAY GENERAL -->
+<div id="overlay" class="fixed inset-0 bg-black/50 z-[65] hidden"></div>
+
+<!-- ALERTA CUSTOM -->
+<div id="customAlertModal" class="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4 hidden">
+  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-sm text-center p-6 border border-white/10 shadow-2xl alert-enter">
+    <div id="alertIconContainer" class="mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4"></div>
+    <h4 id="alertTitleText" class="text-xl font-black text-white mb-2"></h4>
+    <p id="alertBodyText" class="text-sm text-gray-400 mb-6"></p>
+    <button id="alertActionBtn" class="w-full btn-primary py-3 rounded-xl font-bold text-white transition">
+      Entendido
+    </button>
+  </div>
+</div>
+
+<!-- MODAL SOBRE -->
+<div id="sobreModal" class="fixed inset-0 z-[85] bg-black/80 flex items-center justify-center p-4 hidden">
+  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-sm p-8 border border-white/10 shadow-2xl">
+    <div class="text-center mb-6">
+      <h3 class="text-2xl font-black text-white tracking-wide">FASTBURGUER</h3>
+      <div class="w-16 h-0.5 bg-orange-500/30 mx-auto mt-2 mb-2"></div>
+      <p class="text-sm text-gray-400 font-light">Sistema de Pedido</p>
+    </div>
+    <div class="space-y-4">
+      <div><p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Creado por</p><p class="text-sm font-semibold text-white">Ing Jesus Linares</p></div>
+      <div><p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Contacto</p><p class="text-sm font-semibold text-white">0412-0639340</p></div>
+      <div><p class="text-xs text-gray-500 uppercase tracking-wider mb-1">E-Mail</p><p class="text-sm font-semibold text-white">jesuslinaresp@gmail.com</p></div>
+    </div>
+    <button id="closeSobreModal" class="mt-8 w-full btn-primary py-3 rounded-xl font-bold text-white transition">
+      Cerrar
+    </button>
+  </div>
+</div>
+
+<!-- MODAL DESPEDIDA -->
+<div id="despedidaModal" class="fixed inset-0 z-[85] bg-black/90 flex items-center justify-center p-4 hidden">
+  <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-sm text-center p-8 border border-white/10 shadow-2xl fade-in">
+    <div class="text-6xl mb-4">🍔</div>
+    <h3 class="text-2xl font-black text-white mb-2 tracking-tight">FastBurguer</h3>
+    <p class="text-lg text-gray-300 mb-8 font-medium">Sera una Delicia Verte de Nuevo</p>
+    <div class="flex gap-3">
+      <button id="salirConfirmBtn" class="flex-1 py-3 rounded-xl font-bold text-gray-400 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition">Salir</button>
+      <button id="regresarDespedidaBtn" class="flex-1 btn-primary py-3 rounded-xl font-bold text-white transition">Regresar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================
+// CONFIGURACION Y ESTADO GENERAL
+// ============================================
+const API_URL = "https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9FoXBkMYwPD4xkK1llpxakpExC6DspQvnOI6Vmw/exec";
+const PLACEHOLDER_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect fill='%23333' width='400' height='400'/%3E%3Ctext fill='%23666' font-family='sans-serif' font-size='24' dy='10.5' font-weight='bold' x='50%25' y='50%25' text-anchor='middle'%3E🍔%3C/text%3E%3C/svg%3E";
+
+let products = [];
+let categories = [];
+let zones = [];
+let cart = [];
+let currentCurrency = "";
+let tasasPorCod = {};
+let simboloACod = {};
+let codASimbolo = {};
+let desTasaPorCod = {};
+let config = {};
+let currentClientPhone = localStorage.getItem("fb_client_phone") || "";
+let savedClientData = null;
+let enSitioAreas = [];
+
+document.addEventListener("DOMContentLoaded", init);
+
+// ============================================
+// SISTEMA DE ALERTAS
+// ============================================
+function mostrarAlerta(tipo, titulo, mensaje, callback = null, btnText = "Aceptar") {
+  const modal = document.getElementById("customAlertModal");
+  const iconContainer = document.getElementById("alertIconContainer");
+  const titleText = document.getElementById("alertTitleText");
+  const bodyText = document.getElementById("alertBodyText");
+  const actionBtn = document.getElementById("alertActionBtn");
+
+  titleText.textContent = titulo;
+  bodyText.textContent = mensaje;
+  actionBtn.textContent = btnText;
+
+  // Reset animation
+  const modalBox = modal.querySelector('.alert-enter');
+  if (modalBox) {
+    modalBox.style.animation = 'none';
+    modalBox.offsetHeight; // trigger reflow
+    modalBox.style.animation = '';
+  }
+
+  if (tipo === "error") {
+    iconContainer.className = "mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-blue-500/20 text-blue-500 icon-glow-error";
+    iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
+  } else {
+    iconContainer.className = "mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-green-500/20 text-green-500 icon-glow-success";
+    iconContainer.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`;
+  }
+
+  actionBtn.onclick = function() {
+    modal.classList.add("hidden");
+    if (callback) callback();
+  };
+  modal.classList.remove("hidden");
+}
+
+// ============================================
+// INICIALIZACION Y CARGA
+// ============================================
+async function init() {
+  showLoading();
+  try {
+    const r = await apiGet("init");
+    if (!r.success) throw new Error("Respuesta invalida del servidor");
+
+    config = r.data.config || {};
+    categories = r.data.categorias || [];
+    zones = r.data.zonas || [];
+    enSitioAreas = r.data.enSitio || [];
+
+    let tasasArray = r.data.tasas || [];
+    tasasArray.sort((a, b) => (parseInt(a.OrdenTasa) || 0) - (parseInt(b.OrdenTasa) || 0));
+
+    tasasPorCod = {};
+    simboloACod = {};
+    codASimbolo = {};
+    desTasaPorCod = {};
+    tasasArray.forEach(t => {
+      const cod = t.CodTasa;
+      const simbolo = t.SimboloTasa;
+      const valor = parseFloat(t.ValorTasa) || 0;
+      const des = t.DesTasa || "";
+      if (cod) {
+        tasasPorCod[cod] = valor;
+        desTasaPorCod[cod] = des;
+        if (simbolo) {
+          simboloACod[simbolo] = cod;
+          codASimbolo[cod] = simbolo;
+        }
+      }
+    });
+
+    currentCurrency = config.CodTasa || "T002";
+
+    const currencySelector = document.getElementById("currencySelector");
+    currencySelector.innerHTML = "";
+    tasasArray.forEach(t => {
+      const cod = t.CodTasa;
+      const simbolo = t.SimboloTasa || "";
+      const option = document.createElement("option");
+      option.value = cod;
+      option.textContent = simbolo;
+      if (cod === currentCurrency) option.selected = true;
+      currencySelector.appendChild(option);
+    });
+
+    products = (r.data.productos || []).map(p => ({
+      ...p,
+      PrecioConvertido: calcularPrecioConvertido(parseFloat(p.Precio) || 0, p.CodTasa, currentCurrency)
+    }));
+
+    renderCategories();
+    renderProducts();
+    updateStoreStatus();
+    setupEventListeners();
+    loadCartFromStorage();
+  } catch (err) {
+    mostrarAlerta("error", "Error de Red", "No se pudo cargar el menu. Verifica tu conexion.", () => window.location.reload(), "Reintentar");
+  }
+}
+
+function showLoading() {
+  // Skeleton cards para experiencia ultramoderna
+  let skeletons = "";
+  for (let i = 0; i < 4; i++) {
+    skeletons += `
+    <div class="glass rounded-2xl overflow-hidden content-auto">
+      <div class="relative aspect-square bg-gray-800 skeleton"></div>
+      <div class="p-4 space-y-3">
+        <div class="h-3 bg-gray-800 rounded w-1/3 skeleton"></div>
+        <div class="h-5 bg-gray-800 rounded w-3/4 skeleton"></div>
+        <div class="h-3 bg-gray-800 rounded w-full skeleton"></div>
+        <div class="flex justify-between items-center pt-1">
+          <div class="h-6 bg-gray-800 rounded w-1/4 skeleton"></div>
+          <div class="h-8 bg-gray-800 rounded w-1/4 skeleton"></div>
+        </div>
+      </div>
+    </div>`;
+  }
+  document.getElementById("productsGrid").innerHTML = `
+    <div class="col-span-full flex items-center justify-center py-8 mb-4">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-500"></div>
+      <span class="ml-3 text-gray-400 text-sm font-medium">Cargando menú...</span>
+    </div>
+    <div class="col-span-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">${skeletons}</div>`;
+}
+
+function convertirMonto(monto, codTasaOrigen, codTasaDestino) {
+  if (!tasasPorCod || !tasasPorCod[codTasaOrigen] || !tasasPorCod[codTasaDestino]) return monto;
+  const montoEnBS = monto * tasasPorCod[codTasaOrigen];
+  return montoEnBS / tasasPorCod[codTasaDestino];
+}
+
+function calcularPrecioConvertido(precio, codTasaOrigen, codTasaDestino) {
+  return convertirMonto(precio, codTasaOrigen, codTasaDestino);
+}
+
+function formatearPrecio(valor, codTasa) {
+  const v = parseFloat(valor) || 0;
+  const simbolo = codASimbolo[codTasa] || "BS";
+  if (simbolo === "USD") return "$" + v.toFixed(2);
+  if (simbolo === "BS") return "Bs " + v.toFixed(2);
+  if (simbolo === "EUR") return "EUR " + v.toFixed(2);
+  if (simbolo === "BN") return "BN " + v.toFixed(2);
+  return v.toFixed(2);
+}
+
+async function apiGet(action, params) {
+  let url = API_URL + "?action=" + action;
+  if (params) for (let key in params) url += "&" + key + "=" + encodeURIComponent(params[key]);
+  url += "&_cb=" + Date.now();
+  const res = await fetch(url);
+  return res.json();
+}
+
+function updateStoreStatus() {
+  const statusEl = document.getElementById("storeStatus");
+  const currencySelector = document.getElementById("currencySelector");
+
+  if (config.EstadoTienda === "Cerrado") {
+    statusEl.textContent = "Cerrado"; statusEl.className = "text-xs text-red-400";
+    document.getElementById("closedOverlay").classList.remove("hidden");
+    document.getElementById("hoursText").textContent = (config.HorarioApertura || "10:00") + " - " + (config.HorarioCierre || "22:00");
+    // Bloquear selector de moneda
+    currencySelector.disabled = true;
+    currencySelector.classList.add("currency-disabled");
+  } else {
+    statusEl.textContent = "Abierto"; statusEl.className = "text-xs text-green-400";
+    document.getElementById("closedOverlay").classList.add("hidden");
+    // Desbloquear selector de moneda
+    currencySelector.disabled = false;
+    currencySelector.classList.remove("currency-disabled");
+  }
+}
+
+// ============================================
+// RENDERIZADO DEL MENU
+// ============================================
+function renderCategories() {
+  const container = document.getElementById("categoriesContainer");
+  let html = `<button class="category-btn active px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap bg-gray-800/80 border border-gray-700 text-gray-300 transition" data-cat="all">Todos</button>`;
+  categories.forEach(cat => {
+    html += `<button class="category-btn px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap bg-gray-800/80 border border-gray-700 text-gray-300 transition hover:border-gray-500" data-cat="${cat.CodCategoria}">${cat.DesCategoria}</button>`;
+  });
+  container.innerHTML = html;
+
+  container.querySelectorAll(".category-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      container.querySelectorAll(".category-btn").forEach(b => { 
+        b.classList.remove("active", "bg-[#ff6b35]", "text-white", "border-transparent"); 
+        b.classList.add("bg-gray-800/80", "text-gray-300", "border-gray-700"); 
+      });
+      btn.classList.add("active", "bg-[#ff6b35]", "text-white", "border-transparent");
+      btn.classList.remove("bg-gray-800/80", "text-gray-300", "border-gray-700");
+      filterProducts(btn.dataset.cat);
+    });
+  });
+}
+
+function filterProducts(catCode) {
+  renderProductGrid(catCode === "all" ? products : products.filter(p => p.CodCategoria === catCode));
+}
+function renderProducts() { renderProductGrid(products); }
+
+function renderProductGrid(list) {
+  const grid = document.getElementById("productsGrid");
+  const isStoreClosed = config.EstadoTienda === "Cerrado";
+
+  if (list.length === 0) {
+    grid.innerHTML = `<div class="col-span-full text-center py-20 text-gray-500">No hay productos en esta categoria</div>`;
+    return;
+  }
+
+  let html = "";
+  list.forEach(p => {
+    const isNoStock = p.StockProducto !== "Disponible";
+    const noStockClass = isNoStock ? "no-stock relative" : "";
+
+    // Botón Agregar: si tienda cerrada → bloqueado visualmente, si no stock → hidden
+    let btnClass, btnText, btnDisabled;
+    if (isNoStock) {
+      btnClass = "add-btn hidden";
+      btnText = "Agregar";
+      btnDisabled = "disabled";
+    } else if (isStoreClosed) {
+      btnClass = "add-btn add-btn-disabled px-4 py-2 rounded-xl font-bold text-sm";
+      btnText = "Agregar";
+      btnDisabled = "disabled";
+    } else {
+      btnClass = "add-btn btn-primary px-4 py-2 rounded-xl font-bold text-sm text-white transition";
+      btnText = "Agregar";
+      btnDisabled = "";
+    }
+
+    html += `
+    <div class="product-card ${noStockClass} glass rounded-2xl overflow-hidden fade-in content-auto">
+      <div class="relative aspect-square bg-gray-800 overflow-hidden">
+        <img src="${p.ImagenProducto || PLACEHOLDER_IMG}" alt="${p.DesProducto}" class="w-full h-full object-cover" loading="lazy" decoding="async" onerror="this.src='${PLACEHOLDER_IMG}'">
+        ${isNoStock ? '<div class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-lg">Agotado</div>' : ''}
+        ${(isStoreClosed && !isNoStock) ? '<div class="absolute top-2 right-2 bg-gray-600 text-white text-xs font-bold px-2 py-1 rounded-lg">Cerrado</div>' : ''}
+      </div>
+      <div class="p-4">
+        <p class="text-xs text-orange-400 font-semibold mb-1">${p.DesCategoria}</p>
+        <h3 class="font-bold text-lg mb-1 line-clamp-1 text-white leading-tight">${p.DesProducto}</h3>
+        <p class="text-sm text-gray-400 mb-3 line-clamp-2 min-h-[40px] leading-relaxed">${p.DetalleProducto || ""}</p>
+        <div class="flex items-center justify-between">
+          <span class="text-xl font-black text-orange-400 price-mono">${formatearPrecio(p.PrecioConvertido, currentCurrency)}</span>
+          <button class="${btnClass}" data-code="${p.CodProducto}" ${btnDisabled}>
+            ${btnText}
+          </button>
+        </div>
+      </div>
+    </div>`;
+  });
+  grid.innerHTML = html;
+
+  // Solo agregar listeners si tienda abierta
+  if (!isStoreClosed) {
+    grid.querySelectorAll(".add-btn").forEach(btn => {
+      if (!btn.disabled) btn.addEventListener("click", () => addToCart(btn.dataset.code));
+    });
+  }
+  syncAddButtonStates();
+}
+
+// ============================================
+// LOGICA DE CARRITO
+// ============================================
+function syncAddButtonStates() {
+  document.querySelectorAll(".add-btn").forEach(btn => {
+    const code = btn.dataset.code;
+    const inCart = cart.some(item => item.CodProducto === code);
+    if (inCart) {
+      btn.innerHTML = "En carrito";
+      btn.classList.remove("btn-primary");
+      btn.classList.add("bg-green-500", "text-white");
+      btn.disabled = true;
+    } else {
+      btn.innerHTML = "Agregar";
+      btn.classList.remove("bg-green-500", "text-white");
+      btn.classList.add("btn-primary");
+      btn.disabled = false;
+    }
+  });
+}
+
+function addToCart(code) {
+  const product = products.find(p => p.CodProducto === code);
+  if (!product) return;
+  if (product.StockProducto !== "Disponible") {
+    mostrarAlerta("error", "Producto agotado", "Este producto no esta disponible actualmente.");
+    return;
+  }
+  const existing = cart.find(item => item.CodProducto === code);
+  if (existing) {
+    existing.cantidad++; existing.subtotalItem = existing.cantidad * existing.precioUnitario;
+  } else {
+    cart.push({ 
+      CodProducto: product.CodProducto, 
+      CodCategoria: product.CodCategoria, 
+      DesCategoria: product.DesCategoria, 
+      DesProducto: product.DesProducto, 
+      cantidad: 1, 
+      precioUnitario: product.PrecioConvertido, 
+      subtotalItem: product.PrecioConvertido,
+      CodTasaProducto: product.CodTasa
+    });
+  }
+  saveCartToStorage();
+  updateCartUI();
+  const badge = document.getElementById("cartCount");
+  badge.classList.remove("cart-badge"); void badge.offsetWidth; badge.classList.add("cart-badge");
+}
+
+function removeFromCart(code) { cart = cart.filter(item => item.CodProducto !== code); saveCartToStorage(); updateCartUI(); }
+function updateQuantity(code, delta) {
+  const item = cart.find(i => i.CodProducto === code);
+  if (!item) return;
+  item.cantidad += delta;
+  if (item.cantidad <= 0) removeFromCart(code);
+  else { item.subtotalItem = item.cantidad * item.precioUnitario; saveCartToStorage(); updateCartUI(); }
+}
+
+function updateCartUI() {
+  const countEl = document.getElementById("cartCount"), itemsEl = document.getElementById("cartItems");
+  const subtotal = cart.reduce((sum, item) => sum + item.subtotalItem, 0);
+  const totalItems = cart.reduce((sum, item) => sum + item.cantidad, 0);
+
+  if (totalItems > 0) { countEl.textContent = totalItems; countEl.classList.remove("hidden"); } 
+  else { countEl.classList.add("hidden"); }
+
+  if (cart.length === 0) itemsEl.innerHTML = `<p class="text-center text-gray-500 py-10">Tu carrito esta vacio</p>`;
+  else {
+    let html = "";
+    cart.forEach(item => {
+      const prod = products.find(p => p.CodProducto === item.CodProducto);
+      const imgSrc = prod ? (prod.ImagenProducto || PLACEHOLDER_IMG) : PLACEHOLDER_IMG;
+      html += `<div class="cart-item flex gap-3 bg-gray-800/50 rounded-xl p-3">
+        <img src="${imgSrc}" alt="${item.DesProducto}" class="w-14 h-14 rounded-lg object-cover flex-shrink-0 bg-gray-700" loading="lazy" onerror="this.src='${PLACEHOLDER_IMG}'">
+        <div class="flex-1 min-w-0"><h4 class="font-bold text-sm text-white truncate">${item.DesProducto}</h4><p class="text-xs text-gray-400">${item.DesCategoria}</p><p class="text-sm font-semibold text-orange-400 mt-1 price-mono">${formatearPrecio(item.subtotalItem, currentCurrency)}</p></div>
+        <div class="flex flex-col items-center gap-1"><button class="qty-btn w-7 h-7 rounded-lg bg-gray-700 text-white flex justify-center items-center text-sm font-bold" data-code="${item.CodProducto}" data-delta="1">+</button><span class="text-sm font-bold text-white">${item.cantidad}</span><button class="qty-btn w-7 h-7 rounded-lg bg-gray-700 text-white flex justify-center items-center text-sm font-bold" data-code="${item.CodProducto}" data-delta="-1">-</button></div>
+        <button class="remove-btn p-1.5 text-red-400 flex-shrink-0" data-code="${item.CodProducto}"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+      </div>`;
+    });
+    itemsEl.innerHTML = html;
+    itemsEl.querySelectorAll(".qty-btn").forEach(btn => btn.addEventListener("click", () => updateQuantity(btn.dataset.code, parseInt(btn.dataset.delta))));
+    itemsEl.querySelectorAll(".remove-btn").forEach(btn => btn.addEventListener("click", () => removeFromCart(btn.dataset.code)));
+  }
+
+  document.getElementById("cartSubtotal").textContent = formatearPrecio(subtotal, currentCurrency);
+  document.getElementById("cartDelivery").textContent = "Gratis";
+  document.getElementById("cartTotal").textContent = formatearPrecio(subtotal, currentCurrency);
+  syncAddButtonStates();
+}
+
+function saveCartToStorage() {
+  localStorage.setItem("fb_cart_v3", JSON.stringify(cart));
+  localStorage.setItem("fb_currency_v3", currentCurrency);
+}
+
+function loadCartFromStorage() {
+  try {
+    const c = localStorage.getItem("fb_cart_v3");
+    if (c) {
+      cart = JSON.parse(c);
+      const cur = localStorage.getItem("fb_currency_v3");
+      if (cur) currentCurrency = cur;
+      cart = cart.map(item => {
+        const prod = products.find(p => p.CodProducto === item.CodProducto);
+        if (prod) {
+          const nuevoPrecio = calcularPrecioConvertido(parseFloat(prod.Precio) || 0, prod.CodTasa, currentCurrency);
+          return { ...item, precioUnitario: nuevoPrecio, subtotalItem: item.cantidad * nuevoPrecio };
+        }
+        return item;
+      });
+      updateCartUI();
+    }
+  } catch (e) { cart = []; }
+}
+
+// ============================================
+// CARRITO SIDEBAR
+// ============================================
+function openCart() { 
+  document.getElementById("cartSidebar").classList.remove("translate-x-full"); 
+  document.getElementById("overlay").classList.remove("hidden"); 
+}
+function closeCart() { 
+  document.getElementById("cartSidebar").classList.add("translate-x-full"); 
+  checkOverlay(); 
+}
+
+function goToCheckout() {
+  if (cart.length === 0) {
+    mostrarAlerta("error", "Vacio", "Agrega productos antes de continuar.", () => { closeCart(); window.scrollTo({top:0}); });
+    return;
+  }
+  if (config.EstadoTienda === "Cerrado") {
+    mostrarAlerta("error", "Cerrado", "No podemos procesar pedidos en este momento. Vuelve durante nuestro horario de atención.");
+    return;
+  }
+  saveCartToStorage();
+  window.location.href = "checkout.html";
+}
+
+// ============================================
+// MIS PEDIDOS
+// ============================================
+async function openMyOrders() {
+  document.getElementById("sideMenu").classList.add("-translate-x-full");
+  document.getElementById("ordersModal").classList.remove("hidden");
+  document.getElementById("overlay").classList.remove("hidden");
+  const container = document.getElementById("ordersContent");
+
+  if (!currentClientPhone) {
+    container.innerHTML = `<div class="text-center py-10"><p class="text-gray-500 mb-2">Aun no hay Pedidos Pendientes</p><p class="text-gray-400 text-sm">Realiza un Pedido para ver Tu Historial</p></div>`;
+    return;
+  }
+
+  container.innerHTML = `<div class="flex justify-center py-10"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div></div>`;
+
+  try {
+    const res = await apiGet("pedidos", { telefono: currentClientPhone });
+    if (res.success) {
+      const mios = res.data;
+      if (mios.length === 0) {
+         container.innerHTML = `<div class="text-center py-10"><p class="text-gray-500 mb-2">Aun no hay Pedidos Pendientes</p><p class="text-gray-400 text-sm">Realiza un Pedido para ver Tu Historial</p></div>`;
+         return;
+      }
+      let html = "";
+      mios.forEach(p => {
+        html += `
+        <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-4 mb-3">
+          <div class="flex justify-between items-center mb-2 border-b border-gray-700 pb-2">
+            <span class="font-bold text-orange-400">${p.NroPedido}</span>
+            <span class="text-xs text-yellow-500 font-bold">${p.Estado}</span>
+          </div>
+          <div class="flex justify-between text-sm text-gray-300 mb-1"><span>Fecha:</span> <span>${p.FechaPedido ? String(p.FechaPedido).substring(0,10) : "N/A"}</span></div>
+          <div class="flex justify-between text-sm text-gray-300 mb-2"><span>Monto:</span> <span class="font-bold text-white">${formatearPrecio(p.TotalPedido || 0, p.CodTasa)}</span></div>
+          <button class="view-items-btn w-full py-2 rounded-lg border border-orange-500/30 text-orange-400 text-sm font-semibold hover:bg-orange-500/10 transition" data-nro="${p.NroPedido}" data-codtasa="${p.CodTasa}">
+            Ver Items
+          </button>
+        </div>`;
+      });
+      container.innerHTML = html;
+      container.querySelectorAll(".view-items-btn").forEach(btn => {
+        btn.addEventListener("click", () => showOrderItems(btn.dataset.nro, btn.dataset.codtasa));
+      });
+    } else {
+      container.innerHTML = `<p class="text-center text-red-500 py-10">No se pudo cargar la informacion.</p>`;
+    }
+  } catch(e) {
+    container.innerHTML = `<p class="text-center text-red-500 py-10">Error de conexion al consultar pedidos.</p>`;
+  }
+}
+
+async function showOrderItems(nroPedido, codTasa) {
+  const ordersContent = document.getElementById("ordersContent");
+  const orderItemsView = document.getElementById("orderItemsView");
+  const orderItemsList = document.getElementById("orderItemsList");
+  const itemsOrderTitle = document.getElementById("itemsOrderTitle");
+
+  ordersContent.classList.add("hidden");
+  orderItemsView.classList.remove("hidden");
+
+  itemsOrderTitle.textContent = "Pedido " + nroPedido;
+  orderItemsList.innerHTML = `<div class="flex justify-center py-6"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div></div>`;
+
+  try {
+    const res = await apiGet("pedidoItems", { nroPedido: nroPedido });
+    if (res.success && res.data.length > 0) {
+      let html = "";
+      res.data.forEach(item => {
+        html += `
+        <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-3">
+          <div class="flex justify-between items-start mb-1">
+            <span class="font-bold text-sm text-white">${item.DesProducto || "Producto"}</span>
+            <span class="text-xs text-orange-400 font-bold">x${item.Cantidad || 0}</span>
+          </div>
+          <p class="text-xs text-gray-400 mb-2">${item.DesCategoria || ""}</p>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-400">Precio unit:</span>
+            <span class="text-white font-mono">${formatearPrecio(item.PrecioUnitario || 0, codTasa)}</span>
+          </div>
+          <div class="flex justify-between text-sm font-bold border-t border-gray-700 pt-1 mt-1">
+            <span class="text-gray-300">Subtotal:</span>
+            <span class="text-orange-400">${formatearPrecio(item.SubtotalItem || 0, codTasa)}</span>
+          </div>
+        </div>`;
+      });
+      orderItemsList.innerHTML = html;
+    } else {
+      orderItemsList.innerHTML = `<p class="text-center text-gray-500 py-6">No se encontraron items para este pedido.</p>`;
+    }
+  } catch (e) {
+    orderItemsList.innerHTML = `<p class="text-center text-red-500 py-6">Error al cargar los items.</p>`;
+  }
+}
+
+function backToOrders() {
+  document.getElementById("ordersContent").classList.remove("hidden");
+  document.getElementById("orderItemsView").classList.add("hidden");
+  document.getElementById("orderItemsList").innerHTML = "";
+}
+
+// ============================================
+// LISTENERS Y EVENTOS
+// ============================================
+function setupEventListeners() {
+  document.getElementById("cartBtn").addEventListener("click", openCart);
+  document.getElementById("closeCart").addEventListener("click", closeCart);
+  document.getElementById("checkoutBtn").addEventListener("click", goToCheckout);
+
+  // Menu lateral
+  document.getElementById("menuBtn").addEventListener("click", () => { 
+    document.getElementById("sideMenu").classList.remove("-translate-x-full"); 
+    document.getElementById("overlay").classList.remove("hidden"); 
+  });
+  document.getElementById("closeMenu").addEventListener("click", () => { 
+    document.getElementById("sideMenu").classList.add("-translate-x-full"); 
+    checkOverlay(); 
+  });
+
+  // Mis Pedidos
+  document.getElementById("myOrdersBtn").addEventListener("click", openMyOrders);
+  document.getElementById("closeOrdersModal").addEventListener("click", () => { 
+    document.getElementById("ordersModal").classList.add("hidden"); 
+    checkOverlay(); 
+  });
+  document.getElementById("backToOrdersBtn").addEventListener("click", backToOrders);
+
+  // Overlay general
+  document.getElementById("overlay").addEventListener("click", () => {
+    closeCart(); 
+    document.getElementById("ordersModal").classList.add("hidden"); 
+    document.getElementById("sideMenu").classList.add("-translate-x-full");
+    document.getElementById("sobreModal").classList.add("hidden");
+    document.getElementById("despedidaModal").classList.add("hidden");
+    document.getElementById("overlay").classList.add("hidden");
+  });
+
+  // Confirmacion
+  document.getElementById("newOrderBtn").addEventListener("click", () => {
+    document.getElementById("confirmationModal").classList.add("hidden");
+    window.scrollTo({top:0, behavior:"smooth"});
+  });
+
+  // Cambio de moneda
+  document.getElementById("currencySelector").addEventListener("change", async (e) => {
+    currentCurrency = e.target.value;
+    showLoading();
+    products = products.map(p => ({
+      ...p,
+      PrecioConvertido: calcularPrecioConvertido(parseFloat(p.Precio) || 0, p.CodTasa, currentCurrency)
+    }));
+    cart = cart.map(item => {
+      const prod = products.find(p => p.CodProducto === item.CodProducto);
+      if (prod) {
+        const nuevoPrecio = calcularPrecioConvertido(parseFloat(prod.Precio) || 0, prod.CodTasa, currentCurrency);
+        return { ...item, precioUnitario: nuevoPrecio, subtotalItem: item.cantidad * nuevoPrecio };
+      }
+      return item;
+    });
+    saveCartToStorage();
+    renderProducts();
+    updateCartUI();
+  });
+
+  // Sobre FastBurguer
+  document.getElementById("sobreBtn").addEventListener("click", () => {
+    document.getElementById("sideMenu").classList.add("-translate-x-full");
+    document.getElementById("sobreModal").classList.remove("hidden");
+    document.getElementById("overlay").classList.remove("hidden");
+  });
+  document.getElementById("closeSobreModal").addEventListener("click", () => {
+    document.getElementById("sobreModal").classList.add("hidden");
+    checkOverlay();
+  });
+
+  // Salir FastBurguer
+  document.getElementById("salirBtn").addEventListener("click", () => {
+    document.getElementById("sideMenu").classList.add("-translate-x-full");
+    checkOverlay();
+    document.getElementById("despedidaModal").classList.remove("hidden");
+    document.getElementById("overlay").classList.remove("hidden");
+  });
+
+  // Confirmar salida
+  document.getElementById("salirConfirmBtn").addEventListener("click", () => {
+    localStorage.removeItem("fb_client_phone");
+    localStorage.removeItem("mis_pedidos_fb");
+    localStorage.removeItem("fb_cart_v3");
+    localStorage.removeItem("fb_currency_v3");
+    document.getElementById("despedidaModal").classList.add("hidden");
+    document.getElementById("overlay").classList.add("hidden");
+    window.close();
+    setTimeout(() => { window.location.href = "about:blank"; }, 300);
+  });
+
+  // Regresar desde despedida
+  document.getElementById("regresarDespedidaBtn").addEventListener("click", () => {
+    document.getElementById("despedidaModal").classList.add("hidden");
+    checkOverlay();
+  });
+
+  // Botón Continuar en overlay cerrado
+  document.getElementById("continueClosedBtn").addEventListener("click", () => {
+    document.getElementById("closedOverlay").classList.add("hidden");
+    // Asegurar que controles estén bloqueados
+    const currencySelector = document.getElementById("currencySelector");
+    currencySelector.disabled = true;
+    currencySelector.classList.add("currency-disabled");
+    // Re-renderizar productos para mostrar botones bloqueados
+    renderProducts();
+  });
+
+  // Opciones → Panel Admin
+  document.getElementById("opcionesBtn").addEventListener("click", () => {
+    window.location.href = "admin.html";
+  });
+
+
+  // Botón cambio de vista
+  document.getElementById("viewToggleBtn").addEventListener("click", () => {
+    window.location.href = "index.html";
+  });
+
+}
+
+function checkOverlay() {
+  if (document.getElementById("sideMenu").classList.contains("-translate-x-full") &&
+      document.getElementById("cartSidebar").classList.contains("translate-x-full") &&
+      document.getElementById("ordersModal").classList.contains("hidden") &&
+      document.getElementById("sobreModal").classList.contains("hidden") &&
+      document.getElementById("despedidaModal").classList.contains("hidden")) {
+    document.getElementById("overlay").classList.add("hidden");
+  }
+}
+</script>
+
+
+<!-- BOTON FLOTANTE CAMBIO DE VISTA -->
+<button id="viewToggleBtn" class="view-toggle-btn" aria-label="Cambiar a vista cards" title="Vista Cards">
+  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+</button>
+
+</body>
+</html>
+<!-- CONTROL DE VERSION CLIENTE
+var CLIENT_VERSION = "v9.2 - Fase 3B Visual Ultramoderna"; -->
