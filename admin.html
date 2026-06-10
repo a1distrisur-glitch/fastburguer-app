@@ -117,6 +117,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
  .content{max-width:800px;margin:0 auto}
 }
 </style>
+<base target="_blank">
 </head>
 <body>
 <div id="load"><div class="spin"></div><div style="color:#9ca3af;font-size:13px">Cargando...</div></div>
@@ -188,10 +189,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <button id="loginBtn" class="btnLogin" onclick="doLogin()"><span id="btnText">Ingresar</span></button>
 <button class="btnBack" onclick="location.href='index.html'"><svg style="width:16px;height:16px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>Volver al menu</button>
 </div>
-<div class="version">FastBurguer Admin v12.4</div>
-<div id="debugPanel" style="margin-top:16px;width:100%;max-width:360px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:10px;max-height:200px;overflow-y:auto;font-family:monospace;font-size:11px;color:#9ca3af">
-  <div style="color:#f7931e;font-weight:700;margin-bottom:6px">&#128295; Diagnostico</div>
-</div>
+<div class="version">FastBurguer Admin v12.5</div>
+
 </div>
 
 <div id="mainScreen">
@@ -221,23 +220,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 </div>
 
-<script>
-// === DIAGNOSTICO INTEGRADO v12.3 ===
-window._adminErrors = [];
-window.onerror = function(msg, url, line, col, err) {
-  var info = "ERROR: " + msg + " (linea " + line + ":" + col + ")";
-  window._adminErrors.push(info);
-  console.error(info);
-  var dbg = document.getElementById("debugPanel");
-  if(dbg) dbg.innerHTML += '<div style="color:#ef4444;font-size:12px;margin:2px 0">' + info + '</div>';
-  return false;
-};
-function debugLog(label, data) {
-  console.log("[DEBUG] " + label, data);
-  var dbg = document.getElementById("debugPanel");
-  if(dbg) dbg.innerHTML += '<div style="color:#22c55e;font-size:11px;margin:1px 0">' + label + ': ' + (data !== undefined ? JSON.stringify(data).substring(0,80) : '') + '</div>';
-}
-</script>
+
 <script>
 var API="https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9FoXBkMYwPD4xkK1llpxakpExC6DspQvnOI6Vmw/exec";
 var TOKEN="";
@@ -322,7 +305,7 @@ function calcKPIs(){
   document.getElementById("kpiProductos").textContent = productosActivos;
   document.getElementById("kpiTasas").textContent = tasaValor;
   document.getElementById("kpiTasasDesc").textContent = tasaDesc;
-  debugLog("KPIs Totales",{pedidos:totalPedidos,clientesActivos:clientesActivos,productosActivos:productosActivos,tasa:tasaValor});
+  
 }
 function showKPIsPlaceholder(){
   document.getElementById("kpiPedidos").textContent="0";
@@ -355,30 +338,28 @@ function toggleStoreStatus(){
 }
 function init(){
   try{
-    debugLog("init() iniciado",{href:location.href});
+    
     var m=location.href.match(/[?&]t=([^&]+)/);
-    if(m){var t=decodeURIComponent(m[1]);localStorage.setItem("fb_token",t);sessionStorage.setItem("fb_token",t);debugLog("Token URL guardado",t.substring(0,20));}
+    if(m){var t=decodeURIComponent(m[1]);localStorage.setItem("fb_token",t);sessionStorage.setItem("fb_token",t);}
     TOKEN=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";
-    debugLog("Token actual",TOKEN?TOKEN.substring(0,20)+"...":"NINGUNO");
+    
     var ls=document.getElementById("loginScreen");
     ls.classList.remove("hidden");
-    if(!TOKEN){ls.style.display="flex";debugLog("Sin token, mostrando login",null);return;}
+    if(!TOKEN){ls.style.display="flex";return;}
     showLoad();
     apiPost({action:"validateToken",token:TOKEN}).then(function(r){
       hideLoad();
-      debugLog("validateToken respuesta",r);
+      
       if(r.success){showMain();}
       else{localStorage.removeItem("fb_token");ls.style.display="flex";document.getElementById("loginError").textContent="Sesion expirada";}
-    }).catch(function(e){hideLoad();ls.style.display="flex";document.getElementById("loginError").textContent="Error de red. Intente de nuevo.";debugLog("validateToken error",e.message);});
+    }).catch(function(e){hideLoad();ls.style.display="flex";document.getElementById("loginError").textContent="Error de red. Intente de nuevo.";});
   }catch(e){
-    debugLog("init() CRASH",e.message);
-    var dbg=document.getElementById("debugPanel");
-    if(dbg)dbg.innerHTML+='<div style="color:#ef4444;font-size:13px;font-weight:700">init() CRASH: '+e.message+'</div>';
+    console.error("init() CRASH:", e.message);
   }
 }
 document.getElementById("loginPass").addEventListener("keypress",function(e){if(e.key==="Enter")doLogin()});
 init();
 </script>
-<!--FastBurguer Admin v12.4 Dashboard. Asistencia: Kimi K2.6. Proyecto: Ing. Jesus Linares. Contacto: 0412-0639340-->
+<!--FastBurguer Admin v12.5 Dashboard. Asistencia: Kimi K2.6. Proyecto: Ing. Jesus Linares. Contacto: 0412-0639340-->
 </body>
 </html>
