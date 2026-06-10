@@ -65,27 +65,30 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#ff6b35;box-sh
   </div>
 </header>
 
-<main class="max-w-lg mx-auto px-4 pt-[100px] pb-32">
+<main class="max-w-lg mx-auto px-4 pt-[150px] pb-32">
 
-<!-- RESUMEN CARRITO SIEMPRE VISIBLE -->
+<!-- RESUMEN CARRITO COLAPSABLE -->
 <div class="mb-5 space-y-2">
-  <!-- Header del carrito -->
-  <div class="flex items-center justify-between">
+  <!-- Totales compactos siempre visibles -->
+  <div class="flex items-center justify-between text-xs text-gray-400 px-1 py-1">
+    <span class="min-w-[60px]">Subtotal <span id="sumSubtotal" class="text-white font-semibold ml-1">0.00</span></span>
+    <span class="min-w-[60px] text-center">Delivery <span id="sumDelivery" class="text-gray-300 ml-1">Gratis</span></span>
+    <span id="sumPropinaLine" class="hidden min-w-[60px] text-center">Propina <span id="sumPropina" class="text-gray-300 ml-1">0.00</span></span>
+    <span class="font-bold text-orange-400 min-w-[60px] text-right">Total <span id="sumTotal" class="ml-1">0.00</span></span>
+  </div>
+  <!-- Boton expandir detalle -->
+  <button id="toggleItemsBtn" onclick="toggleItems()" class="w-full glass rounded-xl px-4 py-3 flex items-center justify-between text-sm text-gray-300 hover:bg-white/10 transition border border-white/5">
     <div class="flex items-center gap-2">
-      <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-      <span class="text-sm font-semibold text-gray-300">Tu pedido (<span id="summaryCount">0</span>)</span>
+      <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+      <span class="font-semibold">Detalle del Pedido (<span id="summaryCount">0</span>)</span>
     </div>
-    <span id="summaryTotal" class="font-bold text-orange-400 text-sm"></span>
-  </div>
-  <!-- Items siempre visibles -->
-  <div id="summaryItems" class="space-y-1.5 max-h-40 overflow-y-auto scrollbar-hide"></div>
-  <!-- Totales compactos -->
-  <div class="flex items-center justify-between text-xs text-gray-400 pt-1 border-t border-white/10">
-    <span>Subtotal <span id="sumSubtotal" class="text-white font-semibold ml-1"></span></span>
-    <span>Delivery <span id="sumDelivery" class="text-gray-300 ml-1">Gratis</span></span>
-    <span id="sumPropinaLine" class="hidden">Propina <span id="sumPropina" class="text-gray-300 ml-1"></span></span>
-    <span class="font-bold text-orange-400">Total <span id="sumTotal" class="ml-1"></span></span>
-  </div>
+    <div class="flex items-center gap-2">
+      <span id="summaryTotal" class="font-bold text-orange-400 text-sm"></span>
+      <svg id="toggleItemsIcon" class="w-4 h-4 text-gray-500 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+    </div>
+  </button>
+  <!-- Items colapsables -->
+  <div id="summaryItems" class="hidden space-y-1.5 max-h-48 overflow-y-auto scrollbar-hide glass rounded-xl p-3 border border-white/5"></div>
 </div>
 
 <!-- PASO 1: SERVICIO -->
@@ -143,9 +146,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#ff6b35;box-sh
     <textarea id="orderComments" rows="2" class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-3 text-sm placeholder-gray-500 resize-none focus:border-orange-500 transition" placeholder="Ej: Sin salsa, sin cebolla..."></textarea>
   </div>
 
-  <button onclick="goStep2()" class="w-full btn-primary py-4 rounded-xl font-bold text-white text-lg transition mt-2 hover:scale-[1.02] active:scale-[0.98]">
-    Continuar
-  </button>
+  <div class="flex gap-3 mt-4">
+    <button onclick="goBack()" class="px-6 py-3.5 rounded-xl font-bold text-gray-400 bg-gray-800 border border-gray-700 transition hover:bg-gray-700">Atras</button>
+    <button onclick="goStep2()" class="flex-1 btn-primary py-3.5 rounded-xl font-bold text-white transition hover:scale-[1.02] active:scale-[0.98]">Continuar</button>
+  </div>
 </div>
 
 <!-- PASO 2: DATOS CLIENTE -->
@@ -251,10 +255,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#ff6b35;box-sh
 
   <!-- Totales -->
   <div class="glass rounded-xl p-4 space-y-2">
-    <div class="flex justify-between text-sm text-gray-400"><span>Subtotal</span><span id="paySubtotal" class="text-white font-semibold"></span></div>
+    <div class="flex justify-between text-sm text-gray-400"><span>Subtotal</span><span id="paySubtotal" class="text-white font-semibold">0.00</span></div>
     <div class="flex justify-between text-sm text-gray-400"><span>Delivery</span><span id="payDelivery" class="text-gray-300">Gratis</span></div>
-    <div id="payPropinaLine" class="hidden flex justify-between text-sm text-gray-400"><span>Propina</span><span id="payPropina" class="text-gray-300"></span></div>
-    <div class="flex justify-between text-lg font-black border-t border-white/10 pt-2"><span class="text-white">Total</span><span id="payTotal" class="text-orange-400"></span></div>
+    <div id="payPropinaLine" class="hidden flex justify-between text-sm text-gray-400"><span>Propina</span><span id="payPropina" class="text-gray-300">0.00</span></div>
+    <div class="flex justify-between text-lg font-black border-t border-white/10 pt-2"><span class="text-white">Total</span><span id="payTotal" class="text-orange-400">0.00</span></div>
   </div>
 
   <div class="flex gap-3 mt-4">
@@ -302,7 +306,7 @@ const API="https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5
 let cart=[],products=[],zones=[],paymentMethods=[],enSitioAreas=[],config={};
 let currentCurrency="T002",tasas={},simbolos={},desTasas={};
 let selectedService="",selectedZone=null,selectedMesa=null,propinaVal=0,propinaOn=false;
-let savedClient=null;
+let savedClient=null,selectedPaymentCodTasa="";
 
 async function init(){
   cart=JSON.parse(localStorage.getItem("fb_cart_v3")||"[]");
@@ -332,36 +336,59 @@ function fmt(v,cod){v=parseFloat(v)||0;let s=simbolos[cod]||"";if(s==="USD"||s==
 function recalcCart(){cart=cart.map(item=>{let p=products.find(x=>x.CodProducto===item.CodProducto);if(p){let np=convert(p.Precio||0,p.CodTasa||"T002",currentCurrency);return{...item,precioUnitario:np,subtotalItem:item.cantidad*np};}return item;});}
 
 function renderSummary(){
+  const displayCurrency=selectedPaymentCodTasa||currentCurrency;
   const count=cart.reduce((s,i)=>s+i.cantidad,0);
   const subtotal=cart.reduce((s,i)=>s+i.subtotalItem,0);
+  const subtotalDisplay=convert(subtotal,currentCurrency,displayCurrency);
   document.getElementById("summaryCount").textContent=count;
-  document.getElementById("summaryTotal").textContent=fmt(subtotal,currentCurrency);
-  document.getElementById("summaryItems").innerHTML=cart.map(i=>`
-    <div class="flex items-center gap-3 bg-gray-800/50 rounded-lg p-2">
-      <div class="flex-1 min-w-0"><p class="text-sm font-semibold text-white truncate">${i.DesProducto}</p><p class="text-xs text-gray-400">${i.cantidad}x ${fmt(i.precioUnitario,currentCurrency)}</p></div>
-      <span class="text-sm font-bold text-orange-400">${fmt(i.subtotalItem,currentCurrency)}</span>
-    </div>`).join('');
+  document.getElementById("summaryTotal").textContent=fmt(subtotalDisplay,displayCurrency);
+  document.getElementById("summaryItems").innerHTML=cart.map(i=>{
+    const puDisplay=convert(i.precioUnitario,currentCurrency,displayCurrency);
+    const stDisplay=convert(i.subtotalItem,currentCurrency,displayCurrency);
+    return `<div class="flex items-center gap-3 bg-gray-800/50 rounded-lg p-2">
+      <div class="flex-1 min-w-0"><p class="text-sm font-semibold text-white truncate">${i.DesProducto}</p><p class="text-xs text-gray-400">${i.cantidad}x ${fmt(puDisplay,displayCurrency)}</p></div>
+      <span class="text-sm font-bold text-orange-400">${fmt(stDisplay,displayCurrency)}</span>
+    </div>`;
+  }).join('');
   updateTotals();
 }
 
 function updateTotals(){
+  const displayCurrency=selectedPaymentCodTasa||currentCurrency;
   const subtotal=cart.reduce((s,i)=>s+i.subtotalItem,0);
   let delivery=0;
   if(selectedService==="delivery"&&selectedZone){delivery=convert(selectedZone.TarifaZona||0,selectedZone.CodTasa||"T002",currentCurrency);}
   let propina=0;
   if(selectedService==="sitio"&&selectedMesa&&propinaOn){propina=parseFloat(document.getElementById("propinaInput").value)||0;}
   const total=subtotal+delivery+propina;
-  document.getElementById("sumSubtotal").textContent=fmt(subtotal,currentCurrency);
-  document.getElementById("sumDelivery").textContent=delivery>0?fmt(delivery,currentCurrency):"Gratis";
-  document.getElementById("sumTotal").textContent=fmt(total,currentCurrency);
-  document.getElementById("paySubtotal").textContent=fmt(subtotal,currentCurrency);
-  document.getElementById("payDelivery").textContent=delivery>0?fmt(delivery,currentCurrency):"Gratis";
-  document.getElementById("payTotal").textContent=fmt(total,currentCurrency);
-  if(propina>0){document.getElementById("sumPropinaLine").classList.remove("hidden");document.getElementById("sumPropina").textContent=fmt(propina,currentCurrency);document.getElementById("payPropinaLine").classList.remove("hidden");document.getElementById("payPropina").textContent=fmt(propina,currentCurrency);}
+  const subtotalDisplay=convert(subtotal,currentCurrency,displayCurrency);
+  const deliveryDisplay=convert(delivery,currentCurrency,displayCurrency);
+  const propinaDisplay=convert(propina,currentCurrency,displayCurrency);
+  const totalDisplay=convert(total,currentCurrency,displayCurrency);
+  document.getElementById("sumSubtotal").textContent=fmt(subtotalDisplay,displayCurrency);
+  document.getElementById("sumDelivery").textContent=deliveryDisplay>0?fmt(deliveryDisplay,displayCurrency):"Gratis";
+  document.getElementById("sumTotal").textContent=fmt(totalDisplay,displayCurrency);
+  document.getElementById("paySubtotal").textContent=fmt(subtotalDisplay,displayCurrency);
+  document.getElementById("payDelivery").textContent=deliveryDisplay>0?fmt(deliveryDisplay,displayCurrency):"Gratis";
+  document.getElementById("payTotal").textContent=fmt(totalDisplay,displayCurrency);
+  if(propinaDisplay>0){document.getElementById("sumPropinaLine").classList.remove("hidden");document.getElementById("sumPropina").textContent=fmt(propinaDisplay,displayCurrency);document.getElementById("payPropinaLine").classList.remove("hidden");document.getElementById("payPropina").textContent=fmt(propinaDisplay,displayCurrency);}
   else{document.getElementById("sumPropinaLine").classList.add("hidden");document.getElementById("payPropinaLine").classList.add("hidden");}
 }
 
 function toggleField(checkId,boxId){document.getElementById(boxId).classList.toggle("hidden",!document.getElementById(checkId).checked);}
+
+function toggleItems(){
+  const itemsBox=document.getElementById("summaryItems");
+  const icon=document.getElementById("toggleItemsIcon");
+  const isHidden=itemsBox.classList.contains("hidden");
+  if(isHidden){
+    itemsBox.classList.remove("hidden");
+    icon.style.transform="rotate(180deg)";
+  }else{
+    itemsBox.classList.add("hidden");
+    icon.style.transform="rotate(0deg)";
+  }
+}
 
 // Step 1: SERVICIO
 function setupStep1(){
@@ -504,17 +531,27 @@ function updateStepIndicator(step){
 // Step 3: PAGO
 function setupStep3(){
   const pSel=document.getElementById("paymentSelect");
-  paymentMethods.forEach(pm=>{pSel.innerHTML+=`<option value="${pm.CodPago}" data-codtasa="${pm.CodTasa||''}" data-despago="${pm.DesPago}" data-datos="${pm.DatosTasa||''}">${pm.DesPago}</option>`;});
+  paymentMethods.forEach(pm=>{pSel.innerHTML+=`<option value="${pm.CodPago}" data-codtasa="${pm.CodTasa||''}" data-despago="${pm.DesPago}" data-datos="${pm.DatosTasa||''}" data-simbolo="${pm.SimboloTasa||''}">${pm.DesPago}</option>`;});
 }
 
 function updatePayment(){
   const opt=document.getElementById("paymentSelect").selectedOptions[0];
   const box=document.getElementById("paymentInfoBox");
-  if(opt&&opt.value&&opt.dataset.datos){
-    document.getElementById("paymentInfoTitle").textContent=opt.dataset.despago;
-    document.getElementById("paymentInfoData").textContent=opt.dataset.datos;
-    box.classList.remove("hidden");
-  }else{box.classList.add("hidden");}
+  if(opt&&opt.value){
+    selectedPaymentCodTasa=opt.dataset.codtasa||currentCurrency;
+    if(opt.dataset.datos){
+      document.getElementById("paymentInfoTitle").textContent=opt.dataset.despago;
+      document.getElementById("paymentInfoData").textContent=opt.dataset.datos;
+      box.classList.remove("hidden");
+    }else{box.classList.add("hidden");}
+    renderSummary();
+    updateTotals();
+  }else{
+    selectedPaymentCodTasa="";
+    box.classList.add("hidden");
+    renderSummary();
+    updateTotals();
+  }
 }
 
 function togglePropina(){
@@ -591,17 +628,18 @@ function showConfirmation(nro,label,datos,total,address,propina,payCodTasa){
   updateStepIndicator(4);
   document.getElementById("confNro").textContent=nro;
 
-  const totalDisplay=convert(total,currentCurrency,payCodTasa);
+  const displayCurrency=payCodTasa||selectedPaymentCodTasa||currentCurrency;
+  const totalDisplay=convert(total,currentCurrency,displayCurrency);
   let info=`<p class="font-bold text-white">${label}</p>`;
   if(datos)info+=`<p class="text-sm text-orange-400 font-mono mt-1">${datos}</p>`;
-  info+=`<p class="font-bold text-orange-400 mt-2">Total a transferir: ${fmt(totalDisplay,payCodTasa)}</p>`;
+  info+=`<p class="font-bold text-orange-400 mt-2">Total a transferir: ${fmt(totalDisplay,displayCurrency)}</p>`;
   document.getElementById("confPaymentInfo").innerHTML=info;
 
-  let itemsText=cart.map((item,idx)=>`${idx+1}. ${item.cantidad}x ${item.DesProducto} - ${fmt(item.subtotalItem,currentCurrency)}`).join("\n");
-  let msg=`¡Hola! Acabo de realizar el pedido *${nro}*.\n\n*Productos:*\n${itemsText}\n\n*Total:* ${fmt(totalDisplay,payCodTasa)}\n*Pago:* ${label}\n`;
+  let itemsText=cart.map((item,idx)=>`${idx+1}. ${item.cantidad}x ${item.DesProducto} - ${fmt(convert(item.subtotalItem,currentCurrency,displayCurrency),displayCurrency)}`).join("\n");
+  let msg=`¡Hola! Acabo de realizar el pedido *${nro}*.\n\n*Productos:*\n${itemsText}\n\n*Total:* ${fmt(totalDisplay,displayCurrency)}\n*Pago:* ${label}\n`;
   if(selectedService==="delivery"&&address)msg+=`*Direccion:* ${address}\n`;
   if(selectedService==="sitio"&&selectedMesa)msg+=`*Mesa:* ${selectedMesa.DesEnSitio}\n`;
-  if(propina>0)msg+=`*Propina:* ${fmt(propina,currentCurrency)}\n`;
+  if(propina>0)msg+=`*Propina:* ${fmt(convert(propina,currentCurrency,displayCurrency),displayCurrency)}\n`;
   const wa="58"+(config.WhatsAppNegocio||"").replace(/^0/,"");
   document.getElementById("waBtn").href=`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`;
 
@@ -628,4 +666,4 @@ document.addEventListener("DOMContentLoaded",init);
 </body>
 </html>
 <!-- CONTROL DE VERSION CHECKOUT
-var CHECKOUT_VERSION = "v1.2 - Carrito Siempre Visible"; -->
+var CHECKOUT_VERSION = "v1.7 - Fix conversion moneda: convert() en renderSummary y updateTotals"; -->
