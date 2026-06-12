@@ -118,11 +118,25 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
 .modalInput{width:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 14px;color:#fff;font-size:14px;outline:none;transition:0.3s;font-family:'Inter',sans-serif}
 .modalInput:focus{border-color:rgba(255,107,53,0.4);box-shadow:0 0 0 3px rgba(255,107,53,0.08)}
 .modalInput::placeholder{color:#4b5563}
+.modalInput:read-only{background:rgba(255,255,255,0.02);color:#6b7280}
 .modalTextarea{width:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 14px;color:#fff;font-size:14px;outline:none;resize:vertical;min-height:80px;font-family:'Inter',sans-serif}
 .modalTextarea:focus{border-color:rgba(255,107,53,0.4);box-shadow:0 0 0 3px rgba(255,107,53,0.08)}
 .modalTextarea::placeholder{color:#4b5563}
 .modalActions{display:flex;gap:10px;margin-top:20px}
 .modalActions .actionBtn{flex:1;margin-bottom:0}
+
+/* ===== SELECT NATIVO ESTILIZADO ===== */
+select.modalInput{
+  appearance:none;
+  -webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%239ca3af' viewBox='0 0 24 24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  padding-right:36px;
+  cursor:pointer;
+}
+select.modalInput option{background:#1a1a1a;color:#fff;padding:10px}
+select.modalInput option:disabled{color:#4b5563}
 
 /* ===== PREVIEW DIFF ===== */
 .diffPreview{display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;margin-bottom:14px}
@@ -135,6 +149,14 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(255,107,53,0.3);border-radius:4px}
+
+/* ===== STEP INDICATOR ===== */
+.stepBar{display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.stepDot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;border:2px solid rgba(255,255,255,0.1);color:#6b7280;transition:0.3s}
+.stepDot.active{border-color:#f7931e;color:#f7931e;background:rgba(247,147,30,0.1)}
+.stepDot.done{border-color:#22c55e;color:#22c55e;background:rgba(34,197,94,0.1)}
+.stepLine{flex:1;height:2px;background:rgba(255,255,255,0.06);border-radius:1px}
+.stepLine.done{background:rgba(34,197,94,0.4)}
 </style>
 </head>
 <body>
@@ -155,24 +177,61 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
 <!-- MODAL ABRIR TURNO -->
 <div class="modalOverlay" id="modalAbrir">
   <div class="modalBox">
+    <div class="stepBar">
+      <div class="stepDot active" id="step1">1</div>
+      <div class="stepLine" id="line1"></div>
+      <div class="stepDot" id="step2">2</div>
+      <div class="stepLine" id="line2"></div>
+      <div class="stepDot" id="step3">3</div>
+    </div>
     <div class="modalTitle">🔓 Abrir Turno</div>
-    <div class="modalSub">Ingrese los datos para abrir un nuevo turno de caja</div>
-    <div class="modalField">
-      <label class="modalLabel">Código de Usuario</label>
-      <input type="text" class="modalInput" id="abrirCodUsuario" placeholder="Ej: USR001">
+    <div class="modalSub" id="abrirSub">Seleccione turno e ingrese credenciales</div>
+
+    <!-- PASO 1: Turno -->
+    <div id="paso1">
+      <div class="modalField">
+        <label class="modalLabel">Turno Disponible <span style="color:#f7931e">*</span></label>
+        <select class="modalInput" id="abrirTurnoSelect">
+          <option value="">Cargando turnos...</option>
+        </select>
+        <div id="turnoLoadingMsg" style="font-size:11px;color:#6b7280;margin-top:4px">Consultando turnos disponibles...</div>
+      </div>
+      <button class="actionBtn primary" id="btnPaso1" onclick="avanzarPaso1()" type="button" disabled>Continuar</button>
     </div>
-    <div class="modalField">
-      <label class="modalLabel">Nombre de Usuario</label>
-      <input type="text" class="modalInput" id="abrirDesUsuario" placeholder="Ej: Maria Perez">
+
+    <!-- PASO 2: Usuario -->
+    <div id="paso2" class="hidden">
+      <div class="modalField">
+        <label class="modalLabel">Nombre de Usuario <span style="color:#f7931e">*</span></label>
+        <input type="text" class="modalInput" id="abrirNombreUsuario" placeholder="Ej: admin" autocomplete="off">
+      </div>
+      <div class="modalField">
+        <label class="modalLabel">Clave <span style="color:#f7931e">*</span></label>
+        <input type="password" class="modalInput" id="abrirClave" placeholder="••••••">
+      </div>
+      <div class="modalActions">
+        <button class="actionBtn secondary" onclick="retrocederPaso1()" type="button">Atrás</button>
+        <button class="actionBtn primary" id="btnPaso2" onclick="avanzarPaso2()" type="button">Validar</button>
+      </div>
     </div>
-    <div class="modalField">
-      <label class="modalLabel">Monto de Apertura</label>
-      <input type="number" class="modalInput" id="abrirMonto" placeholder="0.00" step="0.01">
+
+    <!-- PASO 3: Monto -->
+    <div id="paso3" class="hidden">
+      <div class="modalField">
+        <label class="modalLabel">Cajero Confirmado</label>
+        <input type="text" class="modalInput" id="abrirDesUsuario" readonly>
+      </div>
+      <div class="modalField">
+        <label class="modalLabel">Monto de Apertura <span style="color:#f7931e">*</span></label>
+        <input type="number" class="modalInput" id="abrirMonto" placeholder="0.00" step="0.01" inputmode="decimal">
+      </div>
+      <div class="modalActions">
+        <button class="actionBtn secondary" onclick="retrocederPaso2()" type="button">Atrás</button>
+        <button class="actionBtn success" id="btnConfirmarAbrir" onclick="submitAbrir()" type="button">Abrir Turno</button>
+      </div>
     </div>
-    <div class="modalActions">
-      <button class="actionBtn secondary" onclick="closeModal('modalAbrir')" type="button">Cancelar</button>
-      <button class="actionBtn primary" id="btnConfirmarAbrir" onclick="submitAbrir()" type="button">Abrir Turno</button>
-    </div>
+
+    <button class="actionBtn secondary" onclick="closeModal('modalAbrir')" type="button" style="margin-top:10px;margin-bottom:0">Cancelar</button>
   </div>
 </div>
 
@@ -195,7 +254,7 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
 
     <div class="modalField">
       <label class="modalLabel">Monto de Arqueo</label>
-      <input type="number" class="modalInput" id="cerrarMonto" placeholder="0.00" step="0.01" oninput="calcDiffCierre()">
+      <input type="number" class="modalInput" id="cerrarMonto" placeholder="0.00" step="0.01" inputmode="decimal" oninput="calcDiffCierre()">
     </div>
 
     <div class="diffPreview" style="margin-bottom:10px">
@@ -229,13 +288,12 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
 </div>
 
 <!-- CONTENT -->
-<div class="content" id="mainContent">
-  <!-- Render dinámico -->
-</div>
+<div class="content" id="mainContent"></div>
 
 <script>
 var API="https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9FoXBkMYwPD4xkK1llpxakpExC6DspQvnOI6Vmw/exec";
 var TURNO=null,RESUMEN=null;
+var DATOS_ABRIR={codTurno:"",nombreUsuario:"",clave:"",codUsuario:"",desUsuario:"",montoApertura:0};
 
 function showLoad(){document.getElementById("load").className="show"}
 function hideLoad(){document.getElementById("load").className=""}
@@ -266,9 +324,23 @@ function apiGet(action,params){var url=API+"?action="+action+"&_cb="+Date.now();
 function apiPost(d){return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)}).then(function(r){return r.json()})}
 
 function formatMoney(v){var val=parseFloat(v)||0;return "$"+val.toFixed(2)}
-function formatTime(h){if(!h)return"--:--";var s=String(h);if(s.indexOf(":")>-1)return s.substring(0,5);var n=parseFloat(s);if(!isNaN(n)){var hh=Math.floor(n*24);var mm=Math.round((n*24-hh)*60);return String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")}return"--:--"}
-function formatDate(d){if(!d)return"--/--/----";var s=String(d);if(s.indexOf("-")>-1){var p=s.split("-");if(p.length===3)return p[2]+"/"+p[1]+"/"+p[0]}return s}
+function formatTime(h){
+  if(!h)return"--:--";
+  var s=String(h);
+  if(s.indexOf(":")>-1)return s.substring(0,5);
+  var n=parseFloat(s);
+  if(!isNaN(n)&&n<1){var totalMinutes=Math.round(n*24*60);var hh=Math.floor(totalMinutes/60);var mm=totalMinutes%60;return String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0");}
+  if(!isNaN(n)&&n>1){var date=new Date((n-25569)*86400*1000);var hh=String(date.getHours()).padStart(2,"0");var mm=String(date.getMinutes()).padStart(2,"0");return hh+":"+mm;}
+  return"--:--";
+}
+function formatDate(d){
+  if(!d)return"--/--/----";
+  if(typeof d==="number"&&d>30000){var date=new Date((d-25569)*86400*1000);var tzOffset=date.getTimezoneOffset()*60000;date=new Date(date.getTime()+tzOffset);var dd=String(date.getDate()).padStart(2,"0");var mm=String(date.getMonth()+1).padStart(2,"0");var yyyy=date.getFullYear();return dd+"/"+mm+"/"+yyyy;}
+  if(d instanceof Date){var dd=String(d.getDate()).padStart(2,"0");var mm=String(d.getMonth()+1).padStart(2,"0");var yyyy=d.getFullYear();return dd+"/"+mm+"/"+yyyy;}
+  var s=String(d);if(s.indexOf("-")>-1){var p=s.split("-");if(p.length===3)return p[2]+"/"+p[1]+"/"+p[0]}return s;
+}
 
+/* ===== INICIALIZACIÓN ===== */
 function init(){
   showLoad();
   loadTurno().then(function(){
@@ -285,6 +357,7 @@ function loadResumen(){if(!TURNO||!TURNO.CodTurno)return Promise.resolve();retur
 
 function updateHeader(){var el=document.getElementById("headerSub");if(TURNO&&TURNO.CodTurno){el.textContent="Turno "+TURNO.CodTurno+" — Abierto"}else{el.textContent="Sin turno activo"}}
 
+/* ===== RENDER ===== */
 function render(){var container=document.getElementById("mainContent");if(TURNO&&TURNO.CodTurno){container.innerHTML=renderConTurno()}else{container.innerHTML=renderSinTurnoHTML()}attachEvents();}
 
 function renderSinTurnoHTML(){
@@ -348,7 +421,6 @@ function renderConTurno(){
 
   // Actions
   html+='<button class="actionBtn danger" id="btnCerrar" type="button">🔒 Cerrar Turno</button>';
-  html+='<button class="actionBtn secondary" id="btnVerPedidos" type="button">📋 Ver Pedidos del Turno</button>';
   html+='<button class="actionBtn secondary" id="btnBackMenu2" type="button">↩️ Regresar a Caja</button>';
 
   return html;
@@ -357,20 +429,155 @@ function renderConTurno(){
 function attachEvents(){
   document.getElementById("btnBack").addEventListener("click",function(){window.location.href="caja.html"});
   var btnAbrir=document.getElementById("btnAbrir");
-  if(btnAbrir)btnAbrir.addEventListener("click",function(){openModal("modalAbrir")});
+  if(btnAbrir)btnAbrir.addEventListener("click",function(){openModalAbrir()});
   var btnCerrar=document.getElementById("btnCerrar");
   if(btnCerrar)btnCerrar.addEventListener("click",function(){openModalCerrar()});
-  var btnVer=document.getElementById("btnVerPedidos");
-  if(btnVer)btnVer.addEventListener("click",function(){window.location.href="caja.html"});
   var b1=document.getElementById("btnBackMenu");
   if(b1)b1.addEventListener("click",function(){window.location.href="caja.html"});
   var b2=document.getElementById("btnBackMenu2");
   if(b2)b2.addEventListener("click",function(){window.location.href="caja.html"});
 }
 
-function openModal(id){document.getElementById(id).classList.add("show")}
-function closeModal(id){document.getElementById(id).classList.remove("show")}
+/* ===== MODAL ABRIR TURNO — PASO A PASO ===== */
+function openModalAbrir(){
+  // Reset
+  DATOS_ABRIR={codTurno:"",nombreUsuario:"",clave:"",codUsuario:"",desUsuario:"",montoApertura:0};
+  document.getElementById("abrirTurnoSelect").innerHTML='<option value="">Cargando...</option>';
+  document.getElementById("abrirNombreUsuario").value="";
+  document.getElementById("abrirClave").value="";
+  document.getElementById("abrirDesUsuario").value="";
+  document.getElementById("abrirMonto").value="";
+  document.getElementById("turnoLoadingMsg").textContent="Consultando turnos disponibles...";
+  document.getElementById("turnoLoadingMsg").style.color="#6b7280";
+  document.getElementById("btnPaso1").disabled=true;
 
+  // Mostrar paso 1, ocultar 2 y 3
+  document.getElementById("paso1").classList.remove("hidden");
+  document.getElementById("paso2").classList.add("hidden");
+  document.getElementById("paso3").classList.add("hidden");
+  updateSteps(1);
+
+  openModal("modalAbrir");
+  loadTurnosDisponibles();
+}
+
+function updateSteps(n){
+  var s1=document.getElementById("step1"),s2=document.getElementById("step2"),s3=document.getElementById("step3");
+  var l1=document.getElementById("line1"),l2=document.getElementById("line2");
+  s1.className="stepDot"+(n>=1?(n>1?" done":" active"):"");
+  s2.className="stepDot"+(n>=2?(n>2?" done":" active"):"");
+  s3.className="stepDot"+(n>=3?" active":"");
+  l1.className="stepLine"+(n>1?" done":"");
+  l2.className="stepLine"+(n>2?" done":"");
+}
+
+function loadTurnosDisponibles(){
+  var sel=document.getElementById("abrirTurnoSelect");
+  var msg=document.getElementById("turnoLoadingMsg");
+  var btn=document.getElementById("btnPaso1");
+  sel.innerHTML='<option value="">Cargando...</option>';
+  msg.textContent="Consultando turnos disponibles...";
+  msg.style.color="#6b7280";
+  btn.disabled=true;
+  apiGet("getTurnosDisponibles",{}).then(function(r){
+    if(r.success&&r.data&&r.data.length>0){
+      sel.innerHTML='<option value="">Seleccione turno</option>'+r.data.map(function(t){return'<option value="'+t.CodTurno+'">'+t.CodTurno+(t.DesTurno?" — "+t.DesTurno:"")+'</option>';}).join("");
+      msg.textContent=r.data.length+" turno(s) disponible(s).";
+      msg.style.color="#4ade80";
+      btn.disabled=false;
+    }else{
+      sel.innerHTML='<option value="">No hay turnos disponibles</option>';
+      msg.textContent="Todos los turnos están en uso o inactivos.";
+      msg.style.color="#f87171";
+      btn.disabled=true;
+    }
+  }).catch(function(e){
+    sel.innerHTML='<option value="">Error al cargar</option>';
+    msg.textContent="Error: "+e.message;
+    msg.style.color="#f87171";
+    btn.disabled=true;
+  });
+}
+
+function avanzarPaso1(){
+  var sel=document.getElementById("abrirTurnoSelect");
+  DATOS_ABRIR.codTurno=sel.value.trim();
+  if(!DATOS_ABRIR.codTurno){mostrarAlerta("error","Seleccione turno","Debe elegir un turno disponible.");return;}
+  document.getElementById("paso1").classList.add("hidden");
+  document.getElementById("paso2").classList.remove("hidden");
+  updateSteps(2);
+  document.getElementById("abrirNombreUsuario").focus();
+}
+
+function retrocederPaso1(){
+  document.getElementById("paso2").classList.add("hidden");
+  document.getElementById("paso1").classList.remove("hidden");
+  updateSteps(1);
+}
+
+function avanzarPaso2(){
+  var nombre=document.getElementById("abrirNombreUsuario").value.trim();
+  var clave=document.getElementById("abrirClave").value.trim();
+  if(!nombre){mostrarAlerta("error","Campo requerido","Ingrese el nombre de usuario.");return;}
+  if(!clave){mostrarAlerta("error","Campo requerido","Ingrese la clave.");return;}
+
+  var btn=document.getElementById("btnPaso2");
+  btn.disabled=true;
+  btn.textContent="Validando...";
+
+  apiPost({action:"validarUsuarioCaja",nombreUsuario:nombre,clave:clave}).then(function(v){
+    btn.disabled=false;
+    btn.textContent="Validar";
+    if(!v.success){
+      mostrarAlerta("error","Usuario inválido",v.error||"Nombre de usuario o clave incorrectos.");
+      return;
+    }
+    DATOS_ABRIR.nombreUsuario=nombre;
+    DATOS_ABRIR.clave=clave;
+    DATOS_ABRIR.codUsuario=v.usuario.CodUsuario||"";
+    DATOS_ABRIR.desUsuario=v.usuario.NombreUsuario||nombre;
+
+    document.getElementById("abrirDesUsuario").value=DATOS_ABRIR.desUsuario;
+    document.getElementById("paso2").classList.add("hidden");
+    document.getElementById("paso3").classList.remove("hidden");
+    updateSteps(3);
+    document.getElementById("abrirMonto").focus();
+  }).catch(function(e){
+    btn.disabled=false;
+    btn.textContent="Validar";
+    mostrarAlerta("error","Error de red",e.message);
+  });
+}
+
+function retrocederPaso2(){
+  document.getElementById("paso3").classList.add("hidden");
+  document.getElementById("paso2").classList.remove("hidden");
+  updateSteps(2);
+}
+
+function submitAbrir(){
+  var monto=parseFloat(document.getElementById("abrirMonto").value);
+  if(isNaN(monto)||monto<0){mostrarAlerta("error","Monto inválido","El monto de apertura no puede ser negativo.");return;}
+  DATOS_ABRIR.montoApertura=monto;
+
+  showLoad();
+  apiPost({
+    action:"abrirTurno",
+    codUsuario:DATOS_ABRIR.codUsuario||DATOS_ABRIR.nombreUsuario,
+    desUsuario:DATOS_ABRIR.desUsuario,
+    codTurno:DATOS_ABRIR.codTurno,
+    montoApertura:DATOS_ABRIR.montoApertura
+  }).then(function(r){
+    hideLoad();
+    if(r.success){
+      mostrarAlerta("success","Turno Abierto",r.message||"Turno "+r.codTurno+" abierto correctamente.",function(){closeModal("modalAbrir");init();},"Aceptar");
+    }else{
+      mostrarAlerta("error","Error",r.error||"No se pudo abrir el turno.");
+    }
+  }).catch(function(e){hideLoad();mostrarAlerta("error","Error de red",e.message)});
+}
+
+/* ===== MODAL CERRAR TURNO ===== */
 function openModalCerrar(){
   if(!TURNO||!TURNO.CodTurno)return;
   var r=RESUMEN||{};
@@ -397,24 +604,6 @@ function calcDiffCierre(){
   else{el.className="diffValue ok"}
 }
 
-function submitAbrir(){
-  var cod=document.getElementById("abrirCodUsuario").value.trim();
-  var des=document.getElementById("abrirDesUsuario").value.trim();
-  var monto=parseFloat(document.getElementById("abrirMonto").value)||0;
-  if(!cod){mostrarAlerta("error","Campo requerido","Ingrese el código de usuario.");return}
-  if(!des){mostrarAlerta("error","Campo requerido","Ingrese el nombre de usuario.");return}
-  if(monto<0){mostrarAlerta("error","Monto inválido","El monto de apertura no puede ser negativo.");return}
-  showLoad();
-  apiPost({action:"abrirTurno",codUsuario:cod,desUsuario:des,montoApertura:monto}).then(function(r){
-    hideLoad();
-    if(r.success){
-      mostrarAlerta("success","Turno Abierto",r.message||"Turno abierto correctamente.",function(){closeModal("modalAbrir");init();},"Aceptar");
-    }else{
-      mostrarAlerta("error","Error",r.error||"No se pudo abrir el turno.");
-    }
-  }).catch(function(e){hideLoad();mostrarAlerta("error","Error de red",e.message)});
-}
-
 function submitCerrar(){
   if(!TURNO||!TURNO.CodTurno){mostrarAlerta("error","Error","No hay turno activo.");return}
   var monto=parseFloat(document.getElementById("cerrarMonto").value);
@@ -433,8 +622,18 @@ function submitCerrar(){
   }).catch(function(e){hideLoad();mostrarAlerta("error","Error de red",e.message)});
 }
 
+/* ===== UTILIDADES MODAL ===== */
+function openModal(id){document.getElementById(id).classList.add("show")}
+function closeModal(id){document.getElementById(id).classList.remove("show")}
+
+/* ===== EVENTOS SELECT TURNO ===== */
+document.getElementById("abrirTurnoSelect").addEventListener("change",function(){
+  var val=this.value.trim();
+  document.getElementById("btnPaso1").disabled=!val;
+});
+
 document.addEventListener("DOMContentLoaded",init);
 </script>
-<!-- cajaturno.html v1.0.0 | 2026-06-08 | Resumen turno + modales abrir/cerrar sin token | Asistencia: Kimi K2.6 | Proyecto: Ing. Jesus Linares -->
+<!-- cajaturno.html v1.2.0 | 2026-06-11 | Rebuild completo: wizard 3 pasos, select nativo estilizado, validacion por NombreUsuario, sin bugs | Asistencia: Kimi K2.6 | Proyecto: Ing. Jesus Linares -->
 </body>
 </html>
