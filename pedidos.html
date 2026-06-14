@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>FastBurguer — Panel de Cajero</title>
+<title>FastBurguer — Gestión de Pedidos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
@@ -37,7 +37,7 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
 .content{padding:70px 14px 24px;min-height:100vh}
 
 /* KPIs */
-.kpiGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.kpiGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .kpiCard{background:linear-gradient(135deg,rgba(255,107,53,0.08),rgba(247,147,30,0.04));border:1px solid rgba(255,107,53,0.12);border-radius:14px;padding:12px 8px;text-align:center;backdrop-filter:blur(10px);position:relative;overflow:hidden;animation:kpiIn 0.5s ease both}
 .kpiCard:nth-child(1){animation-delay:0.05s}
 .kpiCard:nth-child(2){animation-delay:0.1s}
@@ -73,7 +73,7 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
  .content{max-width:1200px;margin:0 auto;padding-left:20px;padding-right:20px}
 }
 @media(min-width:1024px){
- .kanban{grid-template-columns:repeat(4,1fr);gap:12px}
+ .kanban{grid-template-columns:repeat(3,1fr);gap:12px}
 }
 
 .kanbanCol{background:rgba(17,17,17,0.6);border:1px solid rgba(255,255,255,0.04);border-radius:16px;padding:12px;backdrop-filter:blur(10px)}
@@ -91,7 +91,7 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
 .orderCard.large .orderClient{font-size:16px}
 .orderCard.large .orderPhone{font-size:13px}
 .orderCard.large .orderItems{font-size:13px;margin-bottom:10px}
-.orderCard.large .orderTotal{font-size:17px}
+
 .orderCard.large .orderType{font-size:11px;padding:4px 10px}
 .orderCard.large .cardActions{margin-top:10px;padding-top:10px}
 .orderCard.large .cardBtn{padding:8px 6px;font-size:12px}
@@ -110,7 +110,7 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
 .orderPhone{font-size:12px;color:#9ca3af;margin-bottom:6px;display:flex;align-items:center;gap:4px}
 .orderItems{font-size:12px;color:#9ca3af;margin-bottom:8px;line-height:1.4}
 .orderFooter{display:flex;justify-content:space-between;align-items:center}
-.orderTotal{font-size:15px;font-weight:800;color:#fff}
+
 .orderType{font-size:10px;font-weight:600;padding:3px 8px;border-radius:8px;text-transform:uppercase;letter-spacing:0.3px}
 .orderType.delivery{background:rgba(59,130,246,0.15);color:#60a5fa}
 .orderType.pickup{background:rgba(34,197,94,0.15);color:#4ade80}
@@ -146,16 +146,17 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
 .detailRow:not(:last-child){border-bottom:1px solid rgba(255,255,255,0.03)}
 .detailLabel{color:#9ca3af}
 .detailValue{color:#fff;font-weight:600}
-.detailValue.price{color:#f7931e;font-weight:800}
+
 
 /* Item list in detail */
+
 .itemRow{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
 .itemRow:last-child{border-bottom:none}
-.itemQty{width:24px;height:24px;border-radius:6px;background:rgba(255,107,53,0.15);color:#f7931e;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.itemQty{width:32px;height:32px;border-radius:8px;background:rgba(59,130,246,0.2);color:#60a5fa;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;border:1px solid rgba(59,130,246,0.3)}
 .itemInfo{flex:1}
 .itemName{font-size:13px;font-weight:600;color:#fff}
 .itemCat{font-size:11px;color:#9ca3af}
-.itemPrice{font-size:13px;font-weight:700;color:#f7931e;text-align:right;white-space:nowrap}
+
 
 /* Status badge */
 .statusBadge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
@@ -164,6 +165,13 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
 .statusBadge.listo{background:rgba(34,197,94,0.15);color:#4ade80}
 .statusBadge.entregado{background:rgba(107,114,128,0.15);color:#9ca3af}
 .statusBadge.cancelado{background:rgba(239,68,68,0.15);color:#f87171}
+.statusBadge.anulado{background:rgba(239,68,68,0.15);color:#f87171}
+/* Mejora 5: Badges descriptivos con iconos */
+.statusBadge.pendiente{background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.2)}
+.statusBadge.preparacion{background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.2)}
+.statusBadge.listo{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.2)}
+.statusBadge.entregado{background:rgba(107,114,128,0.15);color:#9ca3af;border:1px solid rgba(107,114,128,0.2)}
+.statusBadge.anulado{background:rgba(239,68,68,0.18);color:#f87171;border:1px solid rgba(239,68,68,0.25)}
 
 /* Action buttons in detail */
 .actionGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
@@ -179,9 +187,7 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
 .actionBtn.danger{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.2)}
 .actionBtn.danger:hover{background:rgba(239,68,68,0.25)}
 
-/* WhatsApp button */
-.waBtn{background:#25D366;color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;transition:0.2s;border:none;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
-.waBtn:hover{background:#1ebd5a;transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,211,102,0.3)}
+
 
 /* Notes textarea */
 .notesArea{width:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px;font-size:13px;color:#fff;outline:none;resize:none;min-height:60px;transition:0.3s}
@@ -313,16 +319,13 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
     </div>
     <div class="kpiCard">
       <div class="kpiValue" id="kpiPendiente">0</div>
-      <div class="kpiLabel"><span class="kpiDot preparacion"></span>Pendientes</div>
+      <div class="kpiLabel"><span class="kpiDot preparacion"></span>En Prep.</div>
     </div>
     <div class="kpiCard">
       <div class="kpiValue" id="kpiListo">0</div>
       <div class="kpiLabel"><span class="kpiDot listo"></span>Listos</div>
     </div>
-    <div class="kpiCard">
-      <div class="kpiValue" id="kpiVentas">$0</div>
-      <div class="kpiLabel"><span class="kpiDot entregado"></span>Ventas</div>
-    </div>
+    
   </div>
 
   <!-- Filtros -->
@@ -332,7 +335,7 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
     <button class="filterBtn" data-filter="En Preparacion" onclick="setFilter('En Preparacion')">En Prep.</button>
     <button class="filterBtn" data-filter="Listo" onclick="setFilter('Listo')">Listos</button>
     <button class="filterBtn" data-filter="Entregado" onclick="setFilter('Entregado')">Entregados</button>
-    <button class="filterBtn" data-filter="Cancelado" onclick="setFilter('Cancelado')">Cancelados</button>
+    <button class="filterBtn" data-filter="Anulado" onclick="setFilter('Anulado')">Anulados</button>
   </div>
 
   <!-- Search -->
@@ -367,11 +370,11 @@ var SOUND_ON=true;
 var CONFIG={};
 
 var ESTADOS={
-  "Pendiente":{label:"Pendiente",color:"#f7931e",bg:"rgba(247,147,30,0.15)",text:"#fbbf24",next:["En Preparacion","Cancelado"]},
-  "En Preparacion":{label:"En Prep.",color:"#3b82f6",bg:"rgba(59,130,246,0.15)",text:"#60a5fa",next:["Listo","Cancelado"]},
-  "Listo":{label:"Listo",color:"#22c55e",bg:"rgba(34,197,94,0.15)",text:"#4ade80",next:["Entregado","Cancelado"]},
-  "Entregado":{label:"Entregado",color:"#6b7280",bg:"rgba(107,114,128,0.15)",text:"#9ca3af",next:[]},
-  "Cancelado":{label:"Cancelado",color:"#ef4444",bg:"rgba(239,68,68,0.15)",text:"#f87171",next:[]}
+  "Pendiente":{label:"Pendientes",color:"#f7931e",bg:"rgba(247,147,30,0.15)",text:"#fbbf24",next:["Anulado"],icon:"🍳"},
+  "En Preparacion":{label:"En Prep.",color:"#3b82f6",bg:"rgba(59,130,246,0.15)",text:"#60a5fa",next:["Listo","Anulado"],icon:"👨‍🍳"},
+  "Listo":{label:"Listo",color:"#22c55e",bg:"rgba(34,197,94,0.15)",text:"#4ade80",next:["Entregado","Anulado"],icon:"✅"},
+  "Entregado":{label:"Entregado",color:"#6b7280",bg:"rgba(107,114,128,0.15)",text:"#9ca3af",next:[],icon:"📦"},
+  "Anulado":{label:"Anulado",color:"#ef4444",bg:"rgba(239,68,68,0.15)",text:"#f87171",next:[],icon:"🚫"}
 };
 
 function showLoad(){document.getElementById("load").className="show"}
@@ -388,7 +391,6 @@ function apiPost(d){
 }
 
 function formatTime(hora){if(!hora)return"--:--";var h=String(hora);if(h.indexOf(":")>-1)return h.substring(0,5);var n=parseFloat(hora);if(!isNaN(n)){var hh=Math.floor(n*24);var mm=Math.round((n*24-hh)*60);return String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")}return"--:--"}
-function formatMoney(val,codTasa){var v=parseFloat(val)||0;var s="";if(codTasa==="T001"||codTasa==="T006")s="Bs ";else if(codTasa==="T002")s="$";else if(codTasa==="T003")s="€";else if(codTasa==="T004")s="BN";return s+v.toFixed(2)}
 function getTipoLabel(tipo){tipo=String(tipo||"").toLowerCase();if(tipo==="delivery")return"Delivery";if(tipo==="pickup")return"Pick Up";if(tipo==="sitio")return"En Sitio";return tipo||"N/A"}
 function getTipoClass(tipo){tipo=String(tipo||"").toLowerCase();if(tipo==="delivery")return"delivery";if(tipo==="pickup")return"pickup";if(tipo==="sitio")return"sitio";return"pickup"}
 
@@ -397,27 +399,12 @@ function toggleSound(){SOUND_ON=!SOUND_ON;var btn=document.getElementById("sound
 
 function init(){
   TOKEN=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";
-  if(!TOKEN){window.location.href="admin.html";return}
+  // Sin validacion de token. Cualquiera entra.
   showLoad();
-  apiPost({action:"validateToken",token:TOKEN}).then(function(r){
-    hideLoad();
-    if(r.success){
-      if(r.user&&r.user.Rol&&r.user.Rol!=="cajero"&&r.user.Rol!=="gerente"&&r.user.Rol!=="administrador"){
-        toast("Acceso restringido","err");
-        setTimeout(function(){window.location.href="admin.html"},2000);
-        return;
-      }
-      loadConfig();
-      loadPedidos();
-      startAutoRefresh();
-    }else{
-      localStorage.removeItem("fb_token");
-      window.location.href="admin.html";
-    }
-  }).catch(function(e){
-    hideLoad();
-    toast("Error de conexion: "+e.message,"err");
-  });
+  loadConfig();
+  loadPedidos();
+  startAutoRefresh();
+  hideLoad();
 }
 
 function loadConfig(){
@@ -428,7 +415,7 @@ function loadConfig(){
 
 function loadPedidos(){
   document.getElementById("refreshIndicator").classList.add("show");
-  apiGet("getAllPedidos",{fecha:getToday()}).then(function(r){
+  apiGet("getAllPedidos",{}).then(function(r){
     document.getElementById("refreshIndicator").classList.remove("show");
     if(r.success){
       var nuevoCount=r.data?r.data.length:0;
@@ -475,7 +462,7 @@ function renderKanban(){
     });
     html+='<div class="kanbanCol">';
     html+='<div class="kanbanHeader">';
-    html+='<div class="kanbanTitle" style="color:'+cfg.text+'"><span style="width:8px;height:8px;border-radius:50%;background:'+cfg.color+'"></span>'+cfg.label+'</div>';
+    html+='<div class="kanbanTitle" style="color:'+cfg.text+'"><span style="width:8px;height:8px;border-radius:50%;background:'+cfg.color+'"></span>'+(cfg.icon?cfg.icon+" ":"")+cfg.label+'</div>';
     html+='<div class="kanbanCount">'+pedidosFiltrados.length+'</div>';
     html+='</div>';
     html+='<div class="kanbanList singleCol">';
@@ -504,7 +491,7 @@ function renderKanban(){
       var cfg=ESTADOS[estado]||ESTADOS["Pendiente"];
       html+='<div class="kanbanCol">';
       html+='<div class="kanbanHeader">';
-      html+='<div class="kanbanTitle" style="color:'+cfg.text+'"><span style="width:8px;height:8px;border-radius:50%;background:'+cfg.color+'"></span>'+cfg.label+'</div>';
+      html+='<div class="kanbanTitle" style="color:'+cfg.text+'"><span style="width:8px;height:8px;border-radius:50%;background:'+cfg.color+'"></span>'+(cfg.icon?cfg.icon+" ":"")+cfg.label+'</div>';
       html+='<div class="kanbanCount">'+pedidosFiltrados.length+'</div>';
       html+='</div>';
       html+='<div class="kanbanList">';
@@ -515,15 +502,15 @@ function renderKanban(){
       }
       html+='</div></div>';
     });
-    var cancelados=PEDIDOS.filter(function(p){return String(p.EstadoPedido||p.Estado||"").trim()==="Cancelado"});
-    if(cancelados.length>0){
+    var anulados=PEDIDOS.filter(function(p){return String(p.EstadoPedido||p.Estado||"").trim()==="Anulado"});
+    if(anulados.length>0){
       html+='<div class="kanbanCol">';
       html+='<div class="kanbanHeader">';
-      html+='<div class="kanbanTitle" style="color:#f87171"><span style="width:8px;height:8px;border-radius:50%;background:#ef4444"></span>Cancelados</div>';
-      html+='<div class="kanbanCount">'+cancelados.length+'</div>';
+      html+='<div class="kanbanTitle" style="color:#f87171"><span style="width:8px;height:8px;border-radius:50%;background:#ef4444"></span>Anulados</div>';
+      html+='<div class="kanbanCount">'+anulados.length+'</div>';
       html+='</div>';
       html+='<div class="kanbanList">';
-      cancelados.forEach(function(p){html+=renderOrderCard(p,false)});
+      anulados.forEach(function(p){html+=renderOrderCard(p,false)});
       html+='</div></div>';
     }
   }
@@ -536,7 +523,7 @@ function renderOrderCard(p,isLarge){
   var tipoLabel=getTipoLabel(p.TipoServicio);
   var tipoClass=getTipoClass(p.TipoServicio);
   var hora=formatTime(p.HoraPedido);
-  var total=formatMoney(p.TotalPedido,p.CodTasa);
+  
   var itemsPreview="";
   var maxPreview=isLarge?3:2;
   if(PEDIDOS_DETALLE[p.NroPedido]&&PEDIDOS_DETALLE[p.NroPedido].items){
@@ -555,7 +542,7 @@ function renderOrderCard(p,isLarge){
   html+='<div class="orderPhone">📱 '+(p.Telefono||"N/A")+'</div>';
   if(itemsPreview) html+='<div class="orderItems">'+itemsPreview+'</div>';
   html+='<div class="orderFooter">';
-  html+='<div class="orderTotal">'+total+'</div>';
+
   html+='<div class="orderType '+tipoClass+'">'+tipoLabel+'</div>';
   html+='</div>';
   var nextActions=cfg.next||[];
@@ -563,10 +550,11 @@ function renderOrderCard(p,isLarge){
     html+='<div class="cardActions">';
     nextActions.forEach(function(nextEstado){
       var btnClass="primary";
-      if(nextEstado==="Cancelado") btnClass="danger";
+      if(nextEstado==="Anulado") btnClass="danger";
       else if(nextEstado==="Listo") btnClass="success";
       else if(nextEstado==="Entregado") btnClass="success";
-      var btnLabel=nextEstado==="Cancelado"?"Eliminar":nextEstado;
+      var btnLabel=nextEstado==="Anulado"?"Anular":nextEstado;
+      if(nextEstado==="Pendiente") btnLabel="Liberar";
       if(nextEstado==="En Preparacion") btnLabel="Preparar";
       html+='<button class="cardBtn '+btnClass+'" onclick="event.stopPropagation();cambiarEstado(\''+p.NroPedido+'\',\''+nextEstado+'\')">'+btnLabel+'</button>';
     });
@@ -578,13 +566,13 @@ function renderOrderCard(p,isLarge){
 
 function updateKPIs(){
   var total=PEDIDOS.length;
-  var pendientes=PEDIDOS.filter(function(p){return String(p.EstadoPedido||p.Estado||"").trim()==="Pendiente"}).length;
+  var pendientes=PEDIDOS.filter(function(p){var e=String(p.EstadoPedido||p.Estado||"").trim();return e==="Pendiente";}).length;
   var listos=PEDIDOS.filter(function(p){return String(p.EstadoPedido||p.Estado||"").trim()==="Listo"}).length;
-  var ventas=PEDIDOS.filter(function(p){return String(p.EstadoPedido||p.Estado||"").trim()==="Entregado"}).reduce(function(s,p){return s+(parseFloat(p.TotalPedido)||0)},0);
+  
   document.getElementById("kpiTotal").textContent=total;
   document.getElementById("kpiPendiente").textContent=pendientes;
   document.getElementById("kpiListo").textContent=listos;
-  document.getElementById("kpiVentas").textContent="$"+ventas.toFixed(0);
+  
   document.getElementById("headerBadge").textContent=pendientes;
 }
 
@@ -607,7 +595,8 @@ function openDetail(nroPedido){
   document.getElementById("detailHora").textContent=formatTime(pedido.HoraPedido)+" — "+getTipoLabel(pedido.TipoServicio);
   var statusEl=document.getElementById("detailStatus");
   var estado=String(pedido.EstadoPedido||pedido.Estado||"").trim();
-  statusEl.textContent=ESTADOS[estado]?ESTADOS[estado].label:estado;
+  var cfg=ESTADOS[estado];
+  statusEl.textContent=(cfg?cfg.icon+" ":"")+(cfg?cfg.label:estado);
   statusEl.className="statusBadge "+(estado.toLowerCase().replace(/\s/g,""));
   if(!PEDIDOS_DETALLE[nroPedido]){
     showLoad();
@@ -632,44 +621,6 @@ function openDetail(nroPedido){
 
 function renderDetailBody(pedido,detalle){
   var html="";
-  html+='<div class="detailSection">';
-  html+='<div class="detailSectionTitle">👤 Cliente</div>';
-  html+='<div class="detailRow"><span class="detailLabel">Nombre</span><span class="detailValue">'+(pedido.Cliente||"N/A")+'</span></div>';
-  html+='<div class="detailRow"><span class="detailLabel">Telefono</span><span class="detailValue">'+(pedido.Telefono||"N/A")+'</span></div>';
-  if(pedido.CedulaRifCliente) html+='<div class="detailRow"><span class="detailLabel">Cedula/RIF</span><span class="detailValue">'+pedido.CedulaRifCliente+'</span></div>';
-  if(pedido.EmailCliente) html+='<div class="detailRow"><span class="detailLabel">Email</span><span class="detailValue">'+pedido.EmailCliente+'</span></div>';
-  if(pedido.DirCliente) html+='<div class="detailRow"><span class="detailLabel">Direccion</span><span class="detailValue">'+pedido.DirCliente+'</span></div>';
-  html+='</div>';
-  html+='<div class="detailSection">';
-  html+='<div class="detailSectionTitle">🍔 Productos</div>';
-  if(detalle&&detalle.items&&detalle.items.length>0){
-    detalle.items.forEach(function(item){
-      html+='<div class="itemRow">';
-      html+='<div class="itemQty">'+(item.Cantidad||1)+'</div>';
-      html+='<div class="itemInfo">';
-      html+='<div class="itemName">'+(item.DesProducto||"Producto")+'</div>';
-      html+='<div class="itemCat">'+(item.DesCategoria||"")+'</div>';
-      html+='</div>';
-      html+='<div class="itemPrice">'+formatMoney(item.SubtotalItem||0,pedido.CodTasa)+'</div>';
-      html+='</div>';
-    });
-  }else{
-    html+='<div style="text-align:center;color:#6b7280;padding:10px;font-size:13px">'+(detalle?'Sin items':'Cargando items...')+'</div>';
-  }
-  html+='</div>';
-  html+='<div class="detailSection">';
-  html+='<div class="detailSectionTitle">💰 Totales</div>';
-  html+='<div class="detailRow"><span class="detailLabel">Subtotal</span><span class="detailValue">'+formatMoney(pedido.SubTotal||0,pedido.CodTasa)+'</span></div>';
-  if(parseFloat(pedido.Delivery||0)>0) html+='<div class="detailRow"><span class="detailLabel">Delivery</span><span class="detailValue">'+formatMoney(pedido.Delivery,pedido.CodTasa)+'</span></div>';
-  if(parseFloat(pedido.Propina||0)>0) html+='<div class="detailRow"><span class="detailLabel">Propina</span><span class="detailValue">'+formatMoney(pedido.Propina,pedido.CodTasa)+'</span></div>';
-  html+='<div class="detailRow" style="border-top:1px solid rgba(255,255,255,0.08);padding-top:8px;margin-top:8px"><span class="detailLabel" style="font-weight:700;color:#fff">TOTAL</span><span class="detailValue price">'+formatMoney(pedido.TotalPedido||0,pedido.CodTasa)+'</span></div>';
-  html+='</div>';
-  html+='<div class="detailSection">';
-  html+='<div class="detailSectionTitle">💳 Pago</div>';
-  html+='<div class="detailRow"><span class="detailLabel">Metodo</span><span class="detailValue">'+(pedido.DesPago||"N/A")+'</span></div>';
-  html+='<div class="detailRow"><span class="detailLabel">Estado</span><span class="detailValue">'+(pedido.EstadoPago||"N/A")+'</span></div>';
-  if(pedido.CodTurno) html+='<div class="detailRow"><span class="detailLabel">Turno</span><span class="detailValue">'+pedido.CodTurno+'</span></div>';
-  html+='</div>';
   if(pedido.ObservacionesCliente||pedido.Observaciones){
     html+='<div class="detailSection">';
     html+='<div class="detailSectionTitle">📝 Notas</div>';
@@ -677,6 +628,35 @@ function renderDetailBody(pedido,detalle){
     if(pedido.Observaciones) html+='<div style="font-size:12px;color:#6b7280">'+(pedido.Observaciones)+'</div>';
     html+='</div>';
   }
+  html+='<div class="detailSection">';
+  html+='<div class="detailSectionTitle">🍔 Productos</div>';
+  if(detalle&&detalle.items&&detalle.items.length>0){
+    detalle.items.forEach(function(item){
+      html+='<div class="itemRow">';
+      html+='<div class="itemQty">'+(parseInt(item.Cantidad)>0?parseInt(item.Cantidad):1)+'</div>';
+      html+='<div class="itemInfo">';
+      html+='<div class="itemName">'+(item.DesProducto||"Producto")+'</div>';
+      html+='<div class="itemCat">'+(item.DesCategoria||"")+'</div>';
+      html+='</div>';
+      
+      html+='</div>';
+    });
+  }else{
+    html+='<div style="text-align:center;color:#6b7280;padding:10px;font-size:13px">'+(detalle?'Sin items':'Cargando items...')+'</div>';
+  }
+  html+='</div>';
+  html+='<div class="detailSection">';
+  html+='<div class="detailSectionTitle">🚚 Retiro</div>';
+  html+='<div class="detailRow"><span class="detailLabel">Tipo</span><span class="detailValue">'+getTipoLabel(pedido.TipoServicio)+'</span></div>';
+  html+='</div>';
+      html+='<div class="detailSection">';
+  html+='<div class="detailSectionTitle">👤 Cliente</div>';
+  html+='<div class="detailRow"><span class="detailLabel">Nombre</span><span class="detailValue">'+(pedido.Cliente||"N/A")+'</span></div>';
+  html+='<div class="detailRow"><span class="detailLabel">Telefono</span><span class="detailValue">'+(pedido.Telefono||"N/A")+'</span></div>';
+  if(pedido.CedulaRifCliente) html+='<div class="detailRow"><span class="detailLabel">Cedula/RIF</span><span class="detailValue">'+pedido.CedulaRifCliente+'</span></div>';
+  if(pedido.EmailCliente) html+='<div class="detailRow"><span class="detailLabel">Email</span><span class="detailValue">'+pedido.EmailCliente+'</span></div>';
+  if(pedido.DirCliente) html+='<div class="detailRow"><span class="detailLabel">Direccion</span><span class="detailValue">'+pedido.DirCliente+'</span></div>';
+  html+='</div>';
   html+='<div class="detailSection">';
   html+='<div class="detailSectionTitle">✏️ Nota Interna</div>';
   html+='<textarea class="notesArea" id="notaInterna" placeholder="Agregar nota para el equipo...">'+(pedido.Observaciones||"")+'</textarea>';
@@ -688,21 +668,23 @@ function renderDetailBody(pedido,detalle){
   var footerHtml="";
   if(cfg&&cfg.next.length>0){
     footerHtml+='<div class="actionGrid">';
-    cfg.next.forEach(function(nextEstado){
+    if(estado==="Pendiente"){
+      footerHtml+='<button class="actionBtn secondary" onclick="closeDetail()">Regresar</button>';
+      footerHtml+='<button class="actionBtn danger" onclick="cambiarEstado(\''+pedido.NroPedido+'\',\'Anulado\')">Anular</button>';
+    }else{
+      cfg.next.forEach(function(nextEstado){
       var btnClass="primary";
-      if(nextEstado==="Cancelado") btnClass="danger";
+      if(nextEstado==="Anulado") btnClass="danger";
       else if(nextEstado==="Listo"||nextEstado==="Entregado") btnClass="success";
-      var btnLabel=nextEstado==="Cancelado"?"Eliminar":nextEstado;
+      var btnLabel=nextEstado==="Anulado"?"Anular":nextEstado;
+      if(nextEstado==="Pendiente") btnLabel="Liberar";
       if(nextEstado==="En Preparacion") btnLabel="En Preparacion";
       footerHtml+='<button class="actionBtn '+btnClass+'" onclick="cambiarEstado(\''+pedido.NroPedido+'\',\''+nextEstado+'\')">'+btnLabel+'</button>';
     });
+    }
     footerHtml+='</div>';
   }
-  if(pedido.Telefono){
-    var waMsg="Hola "+(pedido.Cliente||"")+", tu pedido "+(pedido.NroPedido||"")+" esta "+(cfg?cfg.label:estado)+". ¡Gracias por elegir FastBurguer! 🍔";
-    var waLink="https://wa.me/58"+String(pedido.Telefono).replace(/^0/,"")+"?text="+encodeURIComponent(waMsg);
-    footerHtml+='<a href="'+waLink+'" target="_blank" class="waBtn" style="width:100%;margin-top:10px;justify-content:center"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Enviar WhatsApp</a>';
-  }
+  
   document.getElementById("detailFooter").innerHTML=footerHtml||'<div style="text-align:center;color:#6b7280;font-size:13px">Pedido finalizado</div>';
 }
 
@@ -752,8 +734,8 @@ function closeInputModal(){
 function executeInputModal(){
   var val=document.getElementById("inputField").value;
   if(_inputCallback){
-    _inputCallback(val);
-    closeInputModal();
+    var result=_inputCallback(val);
+    if(result!==false) closeInputModal();
   }
 }
 
@@ -761,21 +743,21 @@ function cambiarEstado(nroPedido,nuevoEstado){
   var pedido=PEDIDOS.find(function(p){return p.NroPedido===nroPedido});
   if(!pedido){return}
 
-  // REGLA SAGRADA: Cancelar SIEMPRE requiere confirmacion
-  if(nuevoEstado==="Cancelado"){
+  // REGLA SAGRADA: Anular SIEMPRE requiere confirmacion
+  if(nuevoEstado==="Anulado"){
     showConfirm(
-      "Eliminar Pedido",
-      "¿Estas seguro de eliminar el pedido "+nroPedido+"? Esta accion no se puede deshacer.",
+      "Anular Pedido",
+      "¿Estas seguro de anular el pedido "+nroPedido+"? Esta accion no se puede deshacer.",
       "danger",
       "Ejecutar",
       "danger",
       function(){
         showInputModal(
-          "Motivo de Eliminación",
-          "El pedido "+nroPedido+" será eliminado. Indica el motivo obligatorio para continuar.",
+          "Motivo de Anulación",
+          "El pedido "+nroPedido+" será anulado. Indica el motivo obligatorio para continuar.",
           "Ejecutar",
           function(obs){
-            if(!obs||!obs.trim()){toast("Eliminación abortada: se requiere motivo","err");return;}
+            if(!obs||!obs.trim()){toast("Anulación abortada: se requiere motivo","err");return false;}
             _doCambiarEstado(nroPedido,nuevoEstado,obs.trim());
           }
         );
@@ -784,11 +766,24 @@ function cambiarEstado(nroPedido,nuevoEstado){
     return;
   }
 
-  // Confirmacion para otros cambios de estado (opcional pero profesional)
+  // Confirmacion para Listo (cocina termino de preparar)
+  if(nuevoEstado==="Listo"){
+    showConfirm(
+      "Pedido Listo",
+      "¿Confirmar que el pedido "+nroPedido+" está listo para entrega?",
+      "warning",
+      "Ejecutar",
+      "success",
+      function(){_doCambiarEstado(nroPedido,nuevoEstado,"");}
+    );
+    return;
+  }
+
+  // Confirmacion para Entregar
   if(nuevoEstado==="Entregado"){
     showConfirm(
       "Entregar Pedido",
-      "¿Confirmar entrega del pedido "+nroPedido+"? Se marcara como pagado.",
+      "¿Confirmar entrega del pedido "+nroPedido+"? ",
       "warning",
       "Ejecutar",
       "primary",
@@ -797,7 +792,7 @@ function cambiarEstado(nroPedido,nuevoEstado){
     return;
   }
 
-  // Estados intermedios sin confirmacion (Preparar, Listo)
+  // En Preparacion: sin confirmacion (cocina comienza a preparar)
   _doCambiarEstado(nroPedido,nuevoEstado,"");
 }
 
@@ -811,7 +806,7 @@ function _doCambiarEstado(nroPedido,nuevoEstado,obs){
       if(pedido){
         pedido.EstadoPedido=nuevoEstado;
         pedido.Estado=nuevoEstado;
-        if(nuevoEstado==="Entregado"){pedido.EstadoPago="Pagado";}
+        
       }
       renderKanban();
       updateKPIs();
@@ -866,6 +861,6 @@ document.addEventListener("DOMContentLoaded",init);
     </div>
   </div>
 </div>
-<!--FastBurguer Panel de Cajero v1.3.3 | Fecha: 2026-06-05 | Cambios: +Eliminado panel diagnóstico (⚙️) | Asistencia: Kimi K2.6 | Proyecto: Ing. Jesus Linares | Contacto: 0412-0639340 | Asistencia: Kimi K2.6 | Proyecto: Ing. Jesus Linares | Contacto: 0412-0639340-->
+<!--FastBurguer Panel de Pedidos v1.4.2 | Fecha: 2026-06-12 | v11.0: Pendiente solo Anulable en pedidos.html, Cajero exclusivo para pasar a En Preparacion | Asistencia: Kimi K2.6 | Proyecto: Ing. Jesus Linares | Contacto: 0412-0639340-->
 </body>
 </html>
