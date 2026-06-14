@@ -8,7 +8,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 
-#load{position:fixed;inset:0;background:rgba(10,10,10,0.9);display:none;justify-content:center;align-items:center;z-index:9999;flex-direction:column;gap:12px}
+#load{position:fixed;inset:0;background:rgba(10,10,10,0.95);display:none;justify-content:center;align-items:center;z-index:9999;flex-direction:column;gap:12px}
 #load.show{display:flex}
 .spin{width:36px;height:36px;border:3px solid rgba(255,255,255,0.1);border-top-color:#f7931e;border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -48,90 +48,81 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .hTitle{font-size:15px;font-weight:700;color:#f7931e}
 .hRegresar{background:#ef4444!important;color:#fff!important;padding:0 14px!important;width:auto!important;font-size:13px;font-weight:600}
 
-.searchBar{position:fixed;top:54px;left:0;right:0;padding:10px 12px;background:rgba(10,10,10,0.95);border-bottom:1px solid rgba(255,255,255,0.06);z-index:99;display:flex;align-items:center;gap:8px}
-.searchIcon{color:#6b7280;width:18px;height:18px;flex-shrink:0}
-.searchInput{flex:1;background:rgba(26,26,26,0.8);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;padding:10px 12px;font-size:14px;outline:none;transition:0.3s}
-.searchInput:focus{border-color:#ff6b35}
-.searchInput::placeholder{color:#4b5563}
-.searchClear{color:#6b7280;font-size:12px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:0.2s}
-.searchClear:hover{color:#ef4444}
-.filterSelect{background:rgba(26,26,26,0.8);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;padding:10px 8px;font-size:13px;outline:none;transition:0.3s;flex-shrink:0}
-.filterSelect:focus{border-color:#ff6b35}
+.mainArea{padding:70px 16px 90px;max-width:480px;margin:0 auto}
 
-.cardsArea{padding:120px 12px 90px}
-.tableWrap{background:#111;border:1.5px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden}
-.tableHeader{display:flex;background:linear-gradient(135deg,rgba(255,107,53,0.2),rgba(247,147,30,0.1));border-bottom:1.5px solid rgba(255,107,53,0.3);padding:12px 14px;font-size:11px;font-weight:700;color:#f7931e;text-transform:uppercase;letter-spacing:0.5px}
-.th{flex:1;padding:0 4px}
-.th:first-child{flex:0.7}
-.th:last-child{flex:0.5;text-align:right}
-.thCheck{flex:0;width:30px;padding:0;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-.tableRow{display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:0.2s;position:relative}
-.tableRow:last-child{border-bottom:none}
-.tableRow:hover{background:rgba(255,107,53,0.03)}
-.tableRow.sel{background:rgba(255,107,53,0.08)}
-.tableRow.sel::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#ff6b35}
-.rowCheck{width:20px;height:20px;border:2px solid rgba(255,255,255,0.2);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:0.2s;margin-right:10px}
-.tableRow.sel .rowCheck{border-color:#ff6b35;background:#ff6b35}
-.rowCheck svg{width:12px;height:12px;color:#fff;display:none}
-.tableRow.sel .rowCheck svg{display:block}
-.td{flex:1;padding:0 4px;font-size:14px;color:#fff}
-.td:first-child{flex:0.7;font-family:monospace;font-size:13px;color:#9ca3af}
-.td:last-child{flex:0.5;text-align:right;color:#f7931e;font-weight:700}
-.rowToggle{width:36px;height:20px;background:#ef4444;border-radius:10px;position:relative;cursor:pointer;transition:0.3s;flex-shrink:0;margin-left:8px}
-.rowToggle.on{background:#22c55e}
-.rowToggle::after{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:2px;left:2px;transition:0.3s;box-shadow:0 2px 6px rgba(0,0,0,0.3)}
-.rowToggle.on::after{left:18px}
-.actionBar{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.06);padding:12px 16px;display:flex;gap:10px;z-index:97}
-.actionBtn{flex:1;padding:12px;border:none;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;transition:0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
-.actionBtn:disabled{opacity:0.4;cursor:not-allowed}
-.btnEdit{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff}
-.btnEdit:active{transform:scale(0.97)}
+.sectionCard{background:#111;border:1.5px solid rgba(255,255,255,0.06);border-radius:16px;padding:18px;margin-bottom:14px}
+.sectionTitle{font-size:13px;font-weight:700;color:#f7931e;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sectionTitle svg{width:18px;height:18px;color:#f7931e}
 
-#modalOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;display:none;justify-content:center;align-items:center;padding:16px}
-#modalOverlay.show{display:flex}
-.modalCard{background:#1a1a1a;border:1px solid rgba(255,255,255,0.08);border-radius:20px;width:100%;max-width:400px;max-height:85vh;overflow-y:auto;animation:modalIn 0.3s ease}
-@keyframes modalIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
-.modalHeader{padding:20px 20px 0;display:flex;justify-content:space-between;align-items:center}
-.modalTitle{font-size:18px;font-weight:800;color:#f7931e}
-.modalClose{width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,0.05);border:none;color:#9ca3af;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:0.2s}
-.modalClose:hover{background:rgba(255,255,255,0.1);color:#fff}
-.modalBody{padding:16px 20px 20px}
-.fLabel{display:block;font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;margin-top:14px}
-.fLabel:first-child{margin-top:0}
-.codeLabel{background:linear-gradient(135deg,rgba(255,107,53,0.15),rgba(247,147,30,0.08));border:1.5px solid rgba(255,107,53,0.25);color:#f7931e;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:10px 16px;border-radius:10px;text-align:center;margin-bottom:16px;font-family:monospace}
+.fLabel{display:block;font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
 .fInput{width:100%;background:rgba(17,17,17,0.9);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;padding:12px 14px;font-size:14px;outline:none;transition:0.3s}
 .fInput:focus{border-color:#ff6b35;box-shadow:0 0 0 3px rgba(255,107,53,0.12)}
 .fInput::placeholder{color:#4b5563}
-.fInput:disabled{background:rgba(10,10,10,0.6);color:#6b7280;cursor:not-allowed}
-.fInput.invalid{border-color:#ef4444!important}
-.modalToggleWrap{display:flex;align-items:center;gap:10px;margin-top:4px}
-.modalToggle{width:48px;height:26px;background:#ef4444;border-radius:13px;position:relative;cursor:pointer;transition:0.3s}
-.modalToggle.on{background:#22c55e}
-.modalToggle::after{content:'';position:absolute;width:22px;height:22px;background:#fff;border-radius:50%;top:2px;left:2px;transition:0.3s;box-shadow:0 2px 6px rgba(0,0,0,0.3)}
-.modalToggle.on::after{left:24px}
-.modalToggleTxt{font-size:13px;font-weight:500}
-.modalBtns{display:flex;gap:10px;margin-top:20px}
-.modalBtns button{flex:1;padding:12px;border:none;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;transition:0.2s}
-.btnSave{background:#22c55e;color:#fff}
-.btnSave:active{transform:scale(0.97)}
+
+.fSelect{width:100%;background:rgba(17,17,17,0.9);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;padding:12px 14px;font-size:14px;outline:none;transition:0.3s;appearance:none;-webkit-appearance:none}
+.fSelect:focus{border-color:#ff6b35;box-shadow:0 0 0 3px rgba(255,107,53,0.12)}
+.fSelect option{background:#1a1a1a;color:#fff}
+
+.fieldGroup{margin-bottom:16px}
+.fieldGroup:last-child{margin-bottom:0}
+
+.dayRow{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.dayRow:last-child{border-bottom:none;padding-bottom:0}
+.dayRow:first-child{padding-top:0}
+.dayName{font-size:14px;font-weight:500;color:#d1d5db}
+.dayToggle{width:44px;height:24px;background:#ef4444;border-radius:12px;position:relative;cursor:pointer;transition:0.3s;flex-shrink:0}
+.dayToggle.on{background:#22c55e}
+.dayToggle::after{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:2px;left:2px;transition:0.3s;box-shadow:0 2px 6px rgba(0,0,0,0.3)}
+.dayToggle.on::after{left:22px}
+
+.timePickerWrap{display:flex;align-items:center;gap:8px;justify-content:center;padding:8px 0}
+.timeSelect{width:72px;padding:10px 8px;font-size:15px;font-weight:600;text-align:center;background:rgba(17,17,17,0.9);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;outline:none;transition:0.3s;appearance:none;-webkit-appearance:none}
+.timeSelect:focus{border-color:#ff6b35;box-shadow:0 0 0 3px rgba(255,107,53,0.12)}
+.timeSelect option{background:#1a1a1a;color:#fff}
+.timeSep{font-size:18px;font-weight:700;color:#6b7280}
+.timeLabel{text-align:center;font-size:11px;color:#6b7280;margin-top:4px}
+
+.statusBadge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700}
+.statusBadge.abierto{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#22c55e}
+.statusBadge.cerrado{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444}
+.statusDot{width:8px;height:8px;border-radius:50%;background:currentColor;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+.actionBar{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.06);padding:12px 16px;display:flex;gap:10px;z-index:97}
+.actionBtn{flex:1;padding:13px;border:none;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;transition:0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.actionBtn:disabled{opacity:0.4;cursor:not-allowed}
+.btnEdit{background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff;border:none}
+.btnEdit:active{transform:scale(0.97)}
 .btnCan{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#9ca3af}
 .btnCan:active{transform:scale(0.97)}
-.modalToggle.disabled{cursor:not-allowed;opacity:0.5}
-.emptyState{text-align:center;padding:60px 20px;color:#6b7280}
-.emptyStateIcon{font-size:48px;margin-bottom:12px;opacity:0.5}
+
 .errorState{text-align:center;padding:40px 20px;color:#ef4444}
-.errorStateIcon{font-size:40px;margin-bottom:12px}
 .retryBtn{margin-top:16px;padding:10px 20px;background:rgba(255,107,53,0.15);border:1px solid rgba(255,107,53,0.3);color:#ff6b35;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600}
+
+.readView{display:none}
+.readView.active{display:block}
+.readField{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.readField:last-child{border-bottom:none}
+.readLabel{font-size:12px;color:#9ca3af;font-weight:500}
+.readValue{font-size:14px;color:#fff;font-weight:600}
+.readValue.accent{color:#f7931e}
+.readValue.green{color:#22c55e}
+.readValue.red{color:#ef4444}
+
+.editView{display:none}
+.editView.active{display:block}
+
 #confirmOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:300;display:none;justify-content:center;align-items:center;padding:16px;backdrop-filter:blur(8px)}
 #confirmOverlay.show{display:flex}
 .confirmCard{background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;width:100%;max-width:340px;padding:24px;text-align:center;animation:modalIn 0.3s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
 .confirmTitle{font-size:18px;font-weight:800;color:#f7931e;margin-bottom:12px}
 .confirmMsg{font-size:14px;color:#d1d5db;margin-bottom:24px;line-height:1.5}
 .confirmBtns{display:flex;gap:12px}
 .btnConfirmCan{flex:1;padding:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#9ca3af;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;transition:0.2s}
 .btnConfirmCan:hover{background:rgba(255,255,255,0.1);color:#fff}
-.btnConfirmDel{flex:1;padding:12px;background:linear-gradient(135deg,#ef4444,#dc2626);border:none;color:#fff;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;transition:0.2s}
-.btnConfirmDel:active{transform:scale(0.97)}
+.btnConfirmSave{flex:1;padding:12px;background:linear-gradient(135deg,#22c55e,#16a34a);border:none;color:#fff;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;transition:0.2s}
+.btnConfirmSave:active{transform:scale(0.97)}
 </style>
 </head>
 <body>
@@ -174,257 +165,505 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <button class="hBtn hRegresar" onclick="location.href='admin.html'">Regresar</button>
 </div>
 
-<div class="searchBar">
-  <svg class="searchIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-  </svg>
-  <input type="text" id="searchInput" class="searchInput" placeholder="Buscar..." autocomplete="off">
-  <span class="searchClear" id="searchClear" onclick="clearSearch()">X</span>
-  <select id="filterField" class="filterSelect" onchange="render()">
-    <option value="all">Todo</option>
-    <option value="ID_Control">ID</option>
-    <option value="Estado">Estado</option>
-  </select>
-</div>
-
-<div class="cardsArea" id="main"></div>
-
-<div class="actionBar">
-  <button class="actionBtn btnEdit" id="btnEdit" onclick="openEditModal()" disabled>Editar Configuracion</button>
-</div>
-
-<div id="modalOverlay" onclick="closeModal(event)">
-  <div class="modalCard" onclick="event.stopPropagation()">
-    <div class="modalHeader">
-      <div class="modalTitle" id="modalTitle">Editar Configuracion</div>
-      <button class="modalClose" onclick="closeModal()">
-        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-      </button>
-    </div>
-    <div class="modalBody">
-      <div class="codeLabel" id="codeLabel">ID 001</div>
-
-      <div class="fLabel">Estado de la Tienda</div>
-      <select id="fTienda" class="fInput">
-        <option value="Abierto">Abierto</option>
-        <option value="Cerrado">Cerrado</option>
-      </select>
-
-      <div class="fLabel">Horario de Apertura</div>
-      <input type="text" id="fAper" class="fInput" placeholder="10:00">
-
-      <div class="fLabel">Horario de Cierre</div>
-      <input type="text" id="fCierre" class="fInput" placeholder="22:00">
-
-      <div class="fLabel">WhatsApp Negocio</div>
-      <input type="text" id="fWhats" class="fInput" placeholder="Ej: 0414-6862189">
-
-      <div class="fLabel">Imagenes Key</div>
-      <input type="text" id="fImg" class="fInput" placeholder="key...">
-
-      <div class="fLabel">Data URL</div>
-      <input type="text" id="fUrl" class="fInput" placeholder="https://...">
-
-      <div class="fLabel">Estado</div>
-      <div class="modalToggleWrap">
-        <div class="modalToggle on" id="fToggle" onclick="toggleFormState()"></div>
-        <span class="modalToggleTxt" id="fToggleTxt">Activo</span>
+<div class="mainArea" id="main">
+  <div class="readView active" id="readView">
+    <div class="sectionCard">
+      <div class="sectionTitle">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Estado del Negocio
       </div>
+      <div class="readField">
+        <span class="readLabel">Estado Tienda</span>
+        <span class="readValue" id="rEstadoTienda">-</span>
+      </div>
+      <div class="readField">
+        <span class="readLabel">Pago en Caja</span>
+        <span class="readValue" id="rPagoCaja">-</span>
+      </div>
+    </div>
 
-      <div class="modalBtns">
-        <button class="btnSave" onclick="save()">Guardar</button>
-        <button class="btnCan" onclick="closeModal()">Cancelar</button>
+    <div class="sectionCard">
+      <div class="sectionTitle">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Horario de Atencion
+      </div>
+      <div class="readField">
+        <span class="readLabel">Apertura</span>
+        <span class="readValue accent" id="rApertura">-</span>
+      </div>
+      <div class="readField">
+        <span class="readLabel">Cierre</span>
+        <span class="readValue accent" id="rCierre">-</span>
+      </div>
+      <div style="margin-top:12px">
+        <div class="readLabel" style="margin-bottom:8px">Dias de Operacion</div>
+        <div id="rDias" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+      </div>
+    </div>
+
+    <div class="sectionCard">
+      <div class="sectionTitle">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+        Contacto y Configuracion
+      </div>
+      <div class="readField">
+        <span class="readLabel">WhatsApp</span>
+        <span class="readValue" id="rWhatsApp">-</span>
+      </div>
+      <div class="readField">
+        <span class="readLabel">ImgKey</span>
+        <span class="readValue" id="rImgKey" style="font-size:11px;font-family:monospace">-</span>
+      </div>
+      <div class="readField">
+        <span class="readLabel">Data URL</span>
+        <span class="readValue" id="rDataURL" style="font-size:11px;word-break:break-all">-</span>
+      </div>
+      <div class="readField">
+        <span class="readLabel">Moneda por Defecto</span>
+        <span class="readValue accent" id="rCodTasa">-</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="editView" id="editView">
+    <div class="sectionCard">
+      <div class="sectionTitle">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Estado del Negocio
+      </div>
+      <div class="fieldGroup">
+        <div class="fLabel">Estado de la Tienda</div>
+        <select id="eTienda" class="fSelect">
+          <option value="Abierto">Abierto</option>
+          <option value="Cerrado">Cerrado</option>
+        </select>
+      </div>
+      <div class="fieldGroup">
+        <div class="fLabel">Pago en Caja Obligatorio</div>
+        <select id="ePagoCaja" class="fSelect">
+          <option value="Activo">Activo</option>
+          <option value="Inactivo">Inactivo</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sectionCard">
+      <div class="sectionTitle">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Horario de Atencion
+      </div>
+      <div class="fieldGroup">
+        <div class="fLabel">Hora de Apertura</div>
+        <div class="timePickerWrap">
+          <select id="aHora" class="timeSelect"></select>
+          <span class="timeSep">:</span>
+          <select id="aMin" class="timeSelect"></select>
+          <select id="aAmpm" class="timeSelect">
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+          </select>
+        </div>
+        <div class="timeLabel">Hora : Minuto AM/PM</div>
+      </div>
+      <div class="fieldGroup">
+        <div class="fLabel">Hora de Cierre</div>
+        <div class="timePickerWrap">
+          <select id="cHora" class="timeSelect"></select>
+          <span class="timeSep">:</span>
+          <select id="cMin" class="timeSelect"></select>
+          <select id="cAmpm" class="timeSelect">
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+          </select>
+        </div>
+        <div class="timeLabel">Hora : Minuto AM/PM</div>
+      </div>
+      <div class="fieldGroup">
+        <div class="fLabel">Dias de Operacion</div>
+        <div id="dayToggles"></div>
+      </div>
+    </div>
+
+    <div class="sectionCard">
+      <div class="sectionTitle">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+        Contacto y Configuracion
+      </div>
+      <div class="fieldGroup">
+        <div class="fLabel">WhatsApp Negocio</div>
+        <input type="text" id="eWhats" class="fInput" placeholder="Ej: 0414-6862189">
+      </div>
+      <div class="fieldGroup">
+        <div class="fLabel">Imagenes Key</div>
+        <input type="text" id="eImg" class="fInput" placeholder="key...">
+      </div>
+      <div class="fieldGroup">
+        <div class="fLabel">Data URL</div>
+        <input type="text" id="eUrl" class="fInput" placeholder="https://...">
+      </div>
+      <div class="fieldGroup">
+        <div class="fLabel">Moneda por Defecto</div>
+        <select id="eCodTasa" class="fSelect"></select>
       </div>
     </div>
   </div>
 </div>
 
+<div class="actionBar" id="actionBar">
+  <button class="actionBtn btnEdit" id="btnEdit" onclick="doEdit()">Editar Configuracion</button>
+</div>
+
 <div id="confirmOverlay" onclick="closeConfirm(event)">
   <div class="confirmCard" onclick="event.stopPropagation()">
-    <div class="confirmTitle">&#9888; Confirmar eliminacion</div>
-    <div class="confirmMsg" id="confirmMsg">Desea eliminar este registro?</div>
+    <div class="confirmTitle">&#9888; Confirmar cambios</div>
+    <div class="confirmMsg" id="confirmMsg">Desea guardar los cambios en la configuracion?</div>
     <div class="confirmBtns">
       <button class="btnConfirmCan" onclick="closeConfirm()">Cancelar</button>
-      <button class="btnConfirmDel" onclick="confirmDel()">Eliminar</button>
+      <button class="btnConfirmSave" onclick="confirmSave()">Guardar</button>
     </div>
   </div>
 </div>
 
 <script>
 var API="https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9FoXBkMYwPD4xkK1llpxakpExC6DspQvnOI6Vmw/exec";
-var ROWS=[];var SEL=null;var FORM_STATE=true;var MODAL_MODE="edit";var SHOW_INACTIVOS=false;
+var CONFIG=null;
+var TASAS=[];
+var IS_EDITING=false;
+var PENDING_PAYLOAD=null;
+var DIAS_SHEETS=["Lunes","Martes","Miercoles","Jueves","Viernes","Sabado","Domingo"];
+var DIAS_LABEL=["Lunes","Martes","Miercoles","Jueves","Viernes","Sabado","Domingo"];
 
 function showLoad(){document.getElementById("load").className="show"}
 function hideLoad(){document.getElementById("load").className=""}
 function toast(m,ok){var t=document.getElementById("toast");t.textContent=m;t.className=ok?"ok":"err";t.style.display="block";setTimeout(function(){t.style.display="none"},3000)}
 
-function apiGet(action,params){var url=API+"?action="+action+"&_cb="+Date.now();if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);return fetch(url).then(function(r){return r.json()})}
-function apiPost(d){return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.text();}).then(function(t){try{return JSON.parse(t);}catch(e){throw new Error("Respuesta no es JSON: "+t.substring(0,200));}})}
-
-function normalize(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
+function apiGet(action,params){
+  var url=API+"?action="+action+"&_cb="+Date.now();
+  if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);
+  return fetch(url).then(function(r){return r.json()});
+}
+function apiPost(d){
+  return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)})
+  .then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.text();})
+  .then(function(t){try{return JSON.parse(t);}catch(e){throw new Error("JSON invalido: "+t.substring(0,200));}});
+}
 
 function openMenu(){document.getElementById("menuPanel").className="open";document.getElementById("menuOverlay").className="show"}
 function closeMenu(){document.getElementById("menuPanel").className="";document.getElementById("menuOverlay").className=""}
 function logout(){location.href="admin.html"}
 
+function initTimeSelects(){
+  var horaOpts="";
+  for(var i=1;i<=12;i++){var v=i<10?"0"+i:""+i;horaOpts+='<option value="'+v+'">'+v+"</option>";}
+  var minOpts="";
+  var mins=["00","15","30","45"];
+  for(var i=0;i<mins.length;i++){minOpts+='<option value="'+mins[i]+'">'+mins[i]+"</option>";}
+  document.getElementById("aHora").innerHTML=horaOpts;
+  document.getElementById("aMin").innerHTML=minOpts;
+  document.getElementById("cHora").innerHTML=horaOpts;
+  document.getElementById("cMin").innerHTML=minOpts;
+}
+
+function initDayToggles(){
+  var wrap=document.getElementById("dayToggles");
+  var html="";
+  for(var i=0;i<DIAS_LABEL.length;i++){
+    html+='<div class="dayRow" onclick="toggleDay('+i+')">';
+    html+='<span class="dayName">'+DIAS_LABEL[i]+'</span>';
+    html+='<div class="dayToggle" id="dayToggle_'+i+'"></div>';
+    html+='</div>';
+  }
+  wrap.innerHTML=html;
+}
+
+function toggleDay(idx){
+  var t=document.getElementById("dayToggle_"+idx);
+  if(t.classList.contains("on")){t.classList.remove("on");}else{t.classList.add("on");}
+}
+function setDayToggle(idx,active){
+  var t=document.getElementById("dayToggle_"+idx);
+  if(active){t.classList.add("on");}else{t.classList.remove("on");}
+}
+function getDayStates(){
+  var out={};
+  for(var i=0;i<DIAS_SHEETS.length;i++){
+    var key=DIAS_SHEETS[i];
+    var t=document.getElementById("dayToggle_"+i);
+    out[key]=t.classList.contains("on")?"Activo":"Inactivo";
+  }
+  return out;
+}
+
+function parseTimeString(str){
+  var s=String(str||"").trim();
+  var m1=s.match(/^(\d{1,2}):(\d{2}):(\d{2})\s*(AM|PM)$/i);
+  if(m1){
+    var h=parseInt(m1[1]); var hStr=h<10?"0"+h:""+h;
+    return {hora:hStr,min:m1[2],ampm:m1[4].toUpperCase()};
+  }
+  var m2=s.match(/^(\d{1,2}):(\d{2}):(\d{2})\s*([ap])\.?\s*\.?\s*m\.?$/i);
+  if(m2){
+    var h=parseInt(m2[1]); var hStr=h<10?"0"+h:""+h;
+    var ampm=m2[4].toLowerCase()==="a"?"AM":"PM";
+    return {hora:hStr,min:m2[2],ampm:ampm};
+  }
+  return {hora:"06",min:"00",ampm:"AM"};
+}
+function buildTimeString(hora,min,ampm){
+  return hora+":"+min+":00 "+ampm;
+}
+function formatTimeDisplay(str){
+  var s=String(str||"").trim();
+  if(!s) return "-";
+  var m1=s.match(/^(\d{1,2}):(\d{2}):(\d{2})\s*(AM|PM)$/i);
+  if(m1) return m1[1]+":"+m1[2]+" "+m1[4].toUpperCase();
+  var m2=s.match(/^(\d{1,2}):(\d{2}):(\d{2})\s*([ap])\.?\s*\.?\s*m\.?$/i);
+  if(m2) return m2[1]+":"+m2[2]+" "+(m2[4].toLowerCase()==="a"?"AM":"PM");
+  return s;
+}
+
+function getTasaLabel(cod){
+  for(var i=0;i<TASAS.length;i++){
+    if(TASAS[i].CodTasa===cod) return TASAS[i].DesTasa+" ("+TASAS[i].SimboloTasa+")";
+  }
+  return cod||"-";
+}
+
+function buildTasaOptions(){
+  var sel=document.getElementById("eCodTasa");
+  var html='<option value="">-- Seleccione --</option>';
+  for(var i=0;i<TASAS.length;i++){
+    var t=TASAS[i];
+    html+='<option value="'+t.CodTasa+'">'+t.CodTasa+" - "+t.DesTasa+" ("+t.SimboloTasa+")</option>";
+  }
+  sel.innerHTML=html;
+}
+
 function init(){
-showLoad();
-loadData();
+  showLoad();
+  initTimeSelects();
+  initDayToggles();
+  loadData();
 }
 
 function loadData(){
-showLoad();
-apiGet("adminData",{method:"GET",sheetName:"Control"})
-.then(function(r){
- hideLoad();
- if(r.success){ROWS=r.data||[];render()}
- else{showError(r.error||"Error al cargar datos")}
-})
-.catch(function(e){hideLoad();showError("Error de red al cargar configuracion")});
+  showLoad();
+  apiGet("adminData",{method:"GET",sheetName:"Control"})
+  .then(function(r){
+    if(r.success && r.data && r.data.length>0){
+      CONFIG=r.data[0];
+      return apiGet("get",{sheetName:"Tasas"});
+    } else {
+      throw new Error(r.error||"No se encontro configuracion");
+    }
+  })
+  .then(function(r2){
+    hideLoad();
+    if(r2.success && r2.data){
+      TASAS=[];
+      for(var i=0;i<r2.data.length;i++){
+        var t=r2.data[i];
+        if(String(t.Estado||"").trim()==="Activo"){
+          TASAS.push(t);
+        }
+      }
+      TASAS.sort(function(a,b){return parseInt(a.OrdenTasa||0)-parseInt(b.OrdenTasa||0);});
+    }
+    renderRead();
+  })
+  .catch(function(e){hideLoad();showError("Error: "+e.message);});
 }
 
 function showError(msg){
-var m=document.getElementById("main");
-m.innerHTML='<div class="errorState"><div class="errorStateIcon">&#9888;</div><div>'+msg+'</div><button class="retryBtn" onclick="loadData()">Reintentar</button></div>';
+  document.getElementById("main").innerHTML='<div class="errorState"><div style="font-size:40px;margin-bottom:12px">&#9888;</div><div>'+msg+'</div><button class="retryBtn" onclick="loadData()">Reintentar</button></div>';
+  document.getElementById("actionBar").style.display="none";
 }
 
-function render(){
-var m=document.getElementById("main");
-m.innerHTML="";
-var filtered=getVisibleRows();
-if(filtered.length===0){
- m.innerHTML='<div class="emptyState"><div class="emptyStateIcon">&#128202;</div>No se encontro configuracion</div>';
- return;
-}
-var wrap=document.createElement("div");wrap.className="tableWrap";
-var header=document.createElement("div");header.className="tableHeader";
-header.innerHTML='<div class="th thCheck">&#128203;</div><div class="th">ID</div><div class="th">Estado</div><div class="th">Tienda</div><div class="th">Horario</div><div class="th">WhatsApp</div>';
-wrap.appendChild(header);
-for(var i=0;i<filtered.length;i++){
-var r=filtered[i];
-var st=r.Estado==="Activo";
-var isSel=SEL&&SEL.ID_Control===r.ID_Control;
-var row=document.createElement("div");
-row.className="tableRow"+(isSel?" sel":"")+(st?"":" inact");
-row.onclick=function(idx){return function(){selectCard(idx)}}(i);
-row.innerHTML='<div class="rowCheck"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div><div class="td">'+(r.ID_Control||"")+'</div><div class="td">'+(r.Estado||"")+'</div><div class="td">'+(r.EstadoTienda||"")+'</div><div class="td">'+(r.HorarioApertura||"")+'-'+(r.HorarioCierre||"")+'</div><div class="td">'+(r.WhatsAppNegocio||"")+'</div>';
-wrap.appendChild(row);
-}
-m.appendChild(wrap);
-updateActionButtons();
+function renderRead(){
+  var c=CONFIG;
+  if(!c){showError("CONFIG es null");return;}
+
+  var estadoTienda=String(c.EstadoTienda||"").trim();
+  var pagoCaja=String(c.PedidoconPagoCaja||"").trim();
+  document.getElementById("rEstadoTienda").textContent=estadoTienda||"-";
+  document.getElementById("rEstadoTienda").className="readValue "+(estadoTienda==="Abierto"?"green":"red");
+  document.getElementById("rPagoCaja").textContent=pagoCaja||"-";
+  document.getElementById("rPagoCaja").className="readValue "+(pagoCaja==="Activo"?"accent":"");
+
+  document.getElementById("rApertura").textContent=formatTimeDisplay(c.HorarioApertura);
+  document.getElementById("rCierre").textContent=formatTimeDisplay(c.HorarioCierre);
+
+  var diasWrap=document.getElementById("rDias");
+  var diasHtml="";
+  for(var i=0;i<DIAS_SHEETS.length;i++){
+    var diaVal=String(c[DIAS_SHEETS[i]]||"").trim();
+    var isActive=diaVal==="Activo";
+    var badgeClass=isActive?"statusBadge abierto":"statusBadge cerrado";
+    var dot=isActive?'<span class="statusDot"></span>':'';
+    diasHtml+='<span class="'+badgeClass+'">'+dot+DIAS_LABEL[i]+'</span>';
+  }
+  diasWrap.innerHTML=diasHtml;
+
+  document.getElementById("rWhatsApp").textContent=c.WhatsAppNegocio||"-";
+  document.getElementById("rImgKey").textContent=c.ImgKey||"-";
+  document.getElementById("rDataURL").textContent=c.DataURL||"-";
+  document.getElementById("rCodTasa").textContent=getTasaLabel(c.CodTasa);
+
+  document.getElementById("readView").classList.add("active");
+  document.getElementById("editView").classList.remove("active");
+
+  var btn=document.getElementById("btnEdit");
+  btn.textContent="Editar Configuracion";
+  btn.onclick=doEdit;
+  btn.disabled=false;
+
+  var can=document.getElementById("btnCancel");
+  if(can) can.remove();
+
+  IS_EDITING=false;
 }
 
-function getVisibleRows(){
-var q=normalize(document.getElementById("searchInput").value);
-var field=document.getElementById("filterField").value;
-var out=ROWS;
-if(!SHOW_INACTIVOS){
- out=out.filter(function(r){return r.Estado==="Activo";});
-}else{
- out=out.filter(function(r){return r.Estado==="Inactivo";});
-}
-if(!q)return out;
-return out.filter(function(r){
-if(field==="all"){return normalize(r.ID_Control).indexOf(q)!==-1||normalize(r.Estado).indexOf(q)!==-1}
-if(field==="ID_Control")return normalize(r.ID_Control).indexOf(q)!==-1;
-if(field==="Estado")return normalize(r.Estado).indexOf(q)!==-1;
-return false;
-});
-}
+function renderEdit(){
+  var c=CONFIG;
+  if(!c){toast("No hay configuracion cargada",false);return;}
 
-function selectCard(i){
-var filtered=getVisibleRows();
-var clicked=filtered[i];
-if(SEL&&SEL.ID_Control===clicked.ID_Control){SEL=null}else{SEL=clicked}
-render();
-}
+  buildTasaOptions();
 
-function updateActionButtons(){
-var btnEdit=document.getElementById("btnEdit");
-if(ROWS.length>0){btnEdit.disabled=false;}else{btnEdit.disabled=true;}
-}
+  document.getElementById("eTienda").value=String(c.EstadoTienda||"Abierto").trim();
+  document.getElementById("ePagoCaja").value=String(c.PedidoconPagoCaja||"Inactivo").trim();
 
-function openEditModal(){
-if(!SEL){toast("Cargue la configuracion primero",false);return}
-MODAL_MODE="edit";FORM_STATE=SEL.Estado==="Activo";
-document.getElementById("modalTitle").textContent="Editar Configuracion";
-document.getElementById("codeLabel").textContent="ID "+(SEL.ID_Control||"");
-document.getElementById("fTienda").value=SEL.EstadoTienda||"Abierto";
-document.getElementById("fAper").value=SEL.HorarioApertura||"";
-document.getElementById("fCierre").value=SEL.HorarioCierre||"";
-document.getElementById("fWhats").value=SEL.WhatsAppNegocio||"";
-document.getElementById("fImg").value=SEL.ImgKey||"";
-document.getElementById("fUrl").value=SEL.DataURL||"";
-var ft=document.getElementById("fToggle");
-if(FORM_STATE){
-ft.className="modalToggle on disabled";
-ft.onclick=null;
-document.getElementById("fToggleTxt").textContent="Activo (bloqueado)";
-}else{
-ft.className="modalToggle";
-ft.onclick=toggleFormState;
-document.getElementById("fToggleTxt").textContent="Inactivo (puede activar)";
-}
-document.getElementById("modalOverlay").className="show";
-closeMenu();
+  var aObj=parseTimeString(c.HorarioApertura);
+  document.getElementById("aHora").value=aObj.hora;
+  document.getElementById("aMin").value=aObj.min;
+  document.getElementById("aAmpm").value=aObj.ampm;
+
+  var cObj=parseTimeString(c.HorarioCierre);
+  document.getElementById("cHora").value=cObj.hora;
+  document.getElementById("cMin").value=cObj.min;
+  document.getElementById("cAmpm").value=cObj.ampm;
+
+  for(var i=0;i<DIAS_SHEETS.length;i++){
+    var diaVal=String(c[DIAS_SHEETS[i]]||"").trim();
+    setDayToggle(i,diaVal==="Activo");
+  }
+
+  document.getElementById("eWhats").value=c.WhatsAppNegocio||"";
+  document.getElementById("eImg").value=c.ImgKey||"";
+  document.getElementById("eUrl").value=c.DataURL||"";
+  document.getElementById("eCodTasa").value=c.CodTasa||"";
+
+  document.getElementById("readView").classList.remove("active");
+  document.getElementById("editView").classList.add("active");
+
+  var btn=document.getElementById("btnEdit");
+  btn.textContent="Guardar Cambios";
+  btn.onclick=showConfirm;
+  btn.disabled=false;
+
+  var bar=document.getElementById("actionBar");
+  if(!document.getElementById("btnCancel")){
+    var can=document.createElement("button");
+    can.id="btnCancel";
+    can.className="actionBtn btnCan";
+    can.textContent="Cancelar";
+    can.onclick=cancelEdit;
+    bar.insertBefore(can,btn);
+  }
+
+  IS_EDITING=true;
+  closeMenu();
 }
 
-function closeModal(e){
-if(e&&e.target!==document.getElementById("modalOverlay"))return;
-document.getElementById("modalOverlay").className="";
+function doEdit(){
+  if(!CONFIG){toast("Cargue la configuracion primero",false);return;}
+  renderEdit();
 }
 
-function toggleFormState(){
-FORM_STATE=!FORM_STATE;
-var t=document.getElementById("fToggle");
-var txt=document.getElementById("fToggleTxt");
-if(FORM_STATE){t.className="modalToggle on";txt.textContent="Activo";}else{t.className="modalToggle";txt.textContent="Inactivo";}
+function cancelEdit(){
+  renderRead();
 }
 
-function doEdit(){openEditModal()}
+function showConfirm(){
+  var aHora=document.getElementById("aHora").value;
+  var aMin=document.getElementById("aMin").value;
+  var aAmpm=document.getElementById("aAmpm").value;
+  var cHora=document.getElementById("cHora").value;
+  var cMin=document.getElementById("cMin").value;
+  var cAmpm=document.getElementById("cAmpm").value;
 
-function save(){
-var d={
-EstadoTienda:document.getElementById("fTienda").value,
-HorarioApertura:document.getElementById("fAper").value.trim(),
-HorarioCierre:document.getElementById("fCierre").value.trim(),
-WhatsAppNegocio:document.getElementById("fWhats").value.trim(),
-ImgKey:document.getElementById("fImg").value.trim(),
-DataURL:document.getElementById("fUrl").value.trim(),
-Estado:FORM_STATE?"Activo":"Inactivo"
-};
-showLoad();
-d.ID_Control=SEL.ID_Control;
-apiPost({action:"adminData",method:"PUT",sheetName:"Control",data:d})
-.then(function(r){
- hideLoad();
- if(r.success){toast("Configuracion guardada",true);SEL=null;closeModal();loadData();}
- else{toast(r.error||"Error",false);}
-})
-.catch(function(e){hideLoad();toast("Error de red",false);});
+  var aperturaStr=buildTimeString(aHora,aMin,aAmpm);
+  var cierreStr=buildTimeString(cHora,cMin,cAmpm);
+
+  PENDING_PAYLOAD={
+    action:"adminData",
+    method:"PUT",
+    sheetName:"Control",
+    data:{
+      ID_Control:CONFIG.ID_Control,
+      EstadoTienda:document.getElementById("eTienda").value,
+      PedidoconPagoCaja:document.getElementById("ePagoCaja").value,
+      HorarioApertura:aperturaStr,
+      HorarioCierre:cierreStr,
+      WhatsAppNegocio:document.getElementById("eWhats").value.trim(),
+      ImgKey:document.getElementById("eImg").value.trim(),
+      DataURL:document.getElementById("eUrl").value.trim(),
+      CodTasa:document.getElementById("eCodTasa").value,
+      Estado:"Activo"
+    }
+  };
+
+  var dayStates=getDayStates();
+  for(var key in dayStates){
+    if(dayStates.hasOwnProperty(key)){
+      PENDING_PAYLOAD.data[key]=dayStates[key];
+    }
+  }
+
+  document.getElementById("confirmOverlay").className="show";
 }
 
-function clearSearch(){document.getElementById("searchInput").value="";render();}
+function closeConfirm(e){
+  if(e && e.target!==document.getElementById("confirmOverlay")) return;
+  document.getElementById("confirmOverlay").className="";
+  PENDING_PAYLOAD=null;
+}
 
-document.getElementById("searchInput").addEventListener("input",render);
+function confirmSave(){
+  if(!PENDING_PAYLOAD){closeConfirm();return;}
+  document.getElementById("confirmOverlay").className="";
+  executeSave(PENDING_PAYLOAD);
+}
+
+function executeSave(payload){
+  showLoad();
+  apiPost(payload)
+  .then(function(r){
+    hideLoad();
+    if(r.success){
+      toast("Configuracion guardada",true);
+      var can=document.getElementById("btnCancel");
+      if(can) can.remove();
+      loadData();
+    } else {
+      toast(r.error||"Error al guardar",false);
+    }
+  })
+  .catch(function(e){hideLoad();toast("Error de red: "+e.message,false);});
+}
 
 document.addEventListener("keydown",function(e){
-if(e.key==="Escape"){closeMenu();closeModal();}
+  if(e.key==="Escape"){closeMenu();closeConfirm();if(IS_EDITING) cancelEdit();}
 });
 
 init();
 </script>
-
 <!--
-FastBurguer Admin v9.13
-Modulo: negocio.html
-Version: 9.13
-Fecha: 2026-06-08
-Asistencia: Generado con IA
-Proyecto: Ing. Jesus Linares
-Contacto: 0412-0639340
+FastBurguer Negocio v10.7
+- Agregado: dropdown CodTasa (moneda por defecto) leyendo de hoja Tasas
+- Fix: keys de dias capitalizadas (Lunes, Martes, Miercoles...) para coincidir con headers del Sheet
+- Sin debug box
+- Backend v12.2 compatible
+Fecha: 2026-06-14
 -->
 </body>
 </html>
