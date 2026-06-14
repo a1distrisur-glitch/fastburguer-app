@@ -326,7 +326,9 @@ function apiPost(d){return fetch(API,{method:"POST",headers:{"Content-Type":"tex
 function formatMoney(v){var val=parseFloat(v)||0;return "$"+val.toFixed(2)}
 function formatTime(h){
   if(!h)return"--:--";
-  var s=String(h);
+  var s=String(h).trim();
+  // ISO string: 2026-06-13T07:00:00.000Z
+  if(s.indexOf("T")>-1){var date=new Date(s);if(!isNaN(date.getTime())){var hh=String(date.getHours()).padStart(2,"0");var mm=String(date.getMinutes()).padStart(2,"0");return hh+":"+mm;}}
   if(s.indexOf(":")>-1)return s.substring(0,5);
   var n=parseFloat(s);
   if(!isNaN(n)&&n<1){var totalMinutes=Math.round(n*24*60);var hh=Math.floor(totalMinutes/60);var mm=totalMinutes%60;return String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0");}
@@ -335,6 +337,10 @@ function formatTime(h){
 }
 function formatDate(d){
   if(!d)return"--/--/----";
+  var s=String(d).trim();
+  // ISO string: 2026-06-13T07:00:00.000Z
+  if(s.indexOf("T")>-1){var date=new Date(s);if(!isNaN(date.getTime())){var dd=String(date.getDate()).padStart(2,"0");var mm=String(date.getMonth()+1).padStart(2,"0");var yyyy=date.getFullYear();return dd+"/"+mm+"/"+yyyy;}}
+  // Excel serial
   if(typeof d==="number"&&d>30000){var date=new Date((d-25569)*86400*1000);var tzOffset=date.getTimezoneOffset()*60000;date=new Date(date.getTime()+tzOffset);var dd=String(date.getDate()).padStart(2,"0");var mm=String(date.getMonth()+1).padStart(2,"0");var yyyy=date.getFullYear();return dd+"/"+mm+"/"+yyyy;}
   if(d instanceof Date){var dd=String(d.getDate()).padStart(2,"0");var mm=String(d.getMonth()+1).padStart(2,"0");var yyyy=d.getFullYear();return dd+"/"+mm+"/"+yyyy;}
   var s=String(d);if(s.indexOf("-")>-1){var p=s.split("-");if(p.length===3)return p[2]+"/"+p[1]+"/"+p[0]}return s;
@@ -390,14 +396,13 @@ function renderConTurno(){
   html+='<div class="turnoRow"><span class="turnoLabel">Cajero</span><span class="turnoValue">'+(t.DesUsuario||t.CodUsuario||"N/A")+'</span></div>';
   html+='<div class="turnoRow"><span class="turnoLabel">Fecha Apertura</span><span class="turnoValue">'+fecha+' '+hora+'</span></div>';
   html+='<div class="turnoRow"><span class="turnoLabel">Monto Apertura</span><span class="turnoValue">'+formatMoney(montoApertura)+'</span></div>';
+  html+='<div class="turnoRow"><span class="turnoLabel">En Caja</span><span class="turnoValue">'+formatMoney(totalGeneral+montoApertura)+'</span></div>';
   html+='</div>';
 
   // KPIs
   html+='<div class="kpiRow">';
   html+='<div class="kpiChip"><div class="kpiValue">'+formatMoney(totalGeneral)+'</div><div class="kpiLabel">Total Cobrado</div></div>';
   html+='<div class="kpiChip"><div class="kpiValue">'+cantidadPagos+'</div><div class="kpiLabel">Pagos</div></div>';
-  html+='<div class="kpiChip"><div class="kpiValue">'+formatMoney(montoApertura)+'</div><div class="kpiLabel">Apertura</div></div>';
-  html+='<div class="kpiChip"><div class="kpiValue">'+formatMoney(totalGeneral+montoApertura)+'</div><div class="kpiLabel">En Caja</div></div>';
   html+='</div>';
 
   // Resumen por forma de pago
@@ -634,6 +639,6 @@ document.getElementById("abrirTurnoSelect").addEventListener("change",function()
 
 document.addEventListener("DOMContentLoaded",init);
 </script>
-<!-- cajaturno.html v1.2.0 | 2026-06-11 | Rebuild completo: wizard 3 pasos, select nativo estilizado, validacion por NombreUsuario, sin bugs | Asistencia: Kimi K2.6 | Proyecto: Ing. Jesus Linares -->
+<!-- cajaturno.html v1.3.0 | 2026-06-13 | Fix fecha ISO, En Caja en tarjeta, KPIs reducidos a 2 | Rebuild completo: wizard 3 pasos, select nativo estilizado, validacion por NombreUsuario, sin bugs | Asistencia: Kimi K2.6 | Proyecto: Ing. Jesus Linares -->
 </body>
 </html>
