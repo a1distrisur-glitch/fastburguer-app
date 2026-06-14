@@ -117,7 +117,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
  .content{max-width:800px;margin:0 auto}
 }
 </style>
-<base target="_blank">
 </head>
 <body>
 <div id="load"><div class="spin"></div><div style="color:#9ca3af;font-size:13px">Cargando...</div></div>
@@ -189,14 +188,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <button id="loginBtn" class="btnLogin" onclick="doLogin()"><span id="btnText">Ingresar</span></button>
 <button class="btnBack" onclick="location.href='index.html'"><svg style="width:16px;height:16px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>Volver al menu</button>
 </div>
-<div class="version">FastBurguer Admin v12.5</div>
+<div class="version">FastBurguer Admin v12.6</div>
 
 </div>
 
 <div id="mainScreen">
 <div class="header">
 <button class="hBtn" onclick="openMenu()"><svg style="width:20px;height:20px;color:#f7931e" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
-<div class="hTitle">Dashboard</div>
+<div class="hTitle">Panel Administrativo</div>
 <button class="hBtn" onclick="location.href='index.html'" title="Volver al menu"><svg style="width:20px;height:20px;color:#f7931e" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg></button>
 </div>
 <div class="content">
@@ -237,6 +236,19 @@ function xorBase64(s){var k="FB2025Secret",r="";for(var i=0;i<s.length;i++){r+=S
 function apiPost(d){return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)}).then(function(r){return r.json()})}
 function apiGet(action,params){var url=API+"?action="+action+"&_cb="+Date.now();if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);return fetch(url).then(function(r){return r.json()})}
 function openMenu(){document.getElementById("menuPanel").className="open";document.getElementById("menuOverlay").className="show"}
+function formatHorario(h){
+  if(!h)return"--:--";
+  var s=String(h).trim();
+  // Remove leading apostrofo (text prefix from Sheets)
+  if(s.charAt(0)==="'")s=s.substring(1);
+  // ISO date string: extract HH:MM
+  if(s.indexOf("T")>-1){var d=new Date(s);if(!isNaN(d.getTime())){return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");}}
+  // Already HH:MM format
+  if(s.indexOf(":")>-1){var p=s.split(":");if(p.length>=2)return p[0].padStart(2,"0")+":"+p[1].substring(0,2).padStart(2,"0");}
+  // Excel time serial
+  var n=parseFloat(s);if(!isNaN(n)){var totalMinutes=Math.round(n*24*60);var hh=Math.floor(totalMinutes/60);var mm=totalMinutes%60;return String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0");}
+  return"--:--";
+}
 function closeMenu(){document.getElementById("menuPanel").className="";document.getElementById("menuOverlay").className=""}
 function toggleSection(el){var arrow=el.querySelector(".sectionArrow");var content=el.nextElementSibling;if(content.className==="menuSectionContent open"){content.className="menuSectionContent";el.className="menuSectionTitle";}else{content.className="menuSectionContent open";el.className="menuSectionTitle open";}}
 function goTo(page){var t=localStorage.getItem("fb_token")||sessionStorage.getItem("fb_token")||"";if(t){window.location.href=page+".html?t="+encodeURIComponent(t);}else{toast("Inicie sesion primero",false);}}
@@ -323,7 +335,7 @@ function renderStoreStatus(){
   var knob=document.getElementById("storeToggleKnob");
   if(abierto){sw.className="toggleSwitch on";knob.style.left="24px";}
   else{sw.className="toggleSwitch";knob.style.left="2px";}
-  document.getElementById("storeHours").textContent="Horario: "+(CONFIG.HorarioApertura||"--:--")+" - "+(CONFIG.HorarioCierre||"--:--");
+  document.getElementById("storeHours").textContent="Horario: "+formatHorario(CONFIG.HorarioApertura)+" - "+formatHorario(CONFIG.HorarioCierre);
 }
 function toggleStoreStatus(){
   if(!CONFIG.EstadoTienda){toast("No hay configuracion",false);return;}
@@ -360,6 +372,6 @@ function init(){
 document.getElementById("loginPass").addEventListener("keypress",function(e){if(e.key==="Enter")doLogin()});
 init();
 </script>
-<!--FastBurguer Admin v12.5 Dashboard. Asistencia: Kimi K2.6. Proyecto: Ing. Jesus Linares. Contacto: 0412-0639340-->
+<!--FastBurguer Admin v12.6 Dashboard. Asistencia: Kimi K2.6. Proyecto: Ing. Jesus Linares. Contacto: 0412-0639340-->
 </body>
 </html>
