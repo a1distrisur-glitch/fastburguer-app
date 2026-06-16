@@ -3,146 +3,198 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Clientes - FastBurguer</title>
+<title>Clientes — FastBurguer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
+:root{
+  --bg:#0a0a0a;--bg-elevated:#111;--bg-card:#141414;--bg-hover:#1a1a1a;--bg-active:#1e1e1e;
+  --border:rgba(255,255,255,0.06);--border-strong:rgba(255,255,255,0.1);
+  --text-primary:#fff;--text-secondary:#9ca3af;--text-muted:#6b7280;
+  --orange:#ff6b35;--orange-light:#f7931e;--orange-glow:rgba(255,107,53,0.15);
+  --green:#22c55e;--green-glow:rgba(34,197,94,0.15);--red:#ef4444;--red-glow:rgba(239,68,68,0.15);
+  --radius-sm:10px;--radius-md:14px;--radius-lg:18px;--radius-xl:24px;
+  --shadow-sm:0 2px 8px rgba(0,0,0,0.3);--shadow-md:0 8px 32px rgba(0,0,0,0.4);
+}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
 
-#load{position:fixed;inset:0;background:rgba(10,10,10,0.9);display:none;justify-content:center;align-items:center;z-index:9999;flex-direction:column;gap:12px}
+/* ===== LOADER ===== */
+#load{position:fixed;inset:0;background:rgba(10,10,10,0.92);backdrop-filter:blur(12px);display:none;justify-content:center;align-items:center;z-index:9999;flex-direction:column;gap:16px}
 #load.show{display:flex}
-.spin{width:36px;height:36px;border:3px solid rgba(255,255,255,0.1);border-top-color:#f7931e;border-radius:50%;animation:spin 1s linear infinite}
+.spin{width:40px;height:40px;border:3px solid rgba(255,255,255,0.06);border-top-color:var(--orange);border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-#toast{position:fixed;top:16px;right:16px;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;display:none;backdrop-filter:blur(10px)}
-#toast.ok{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#22c55e}
-#toast.err{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444}
+/* ===== TOAST ===== */
+#toast{position:fixed;top:20px;right:20px;padding:14px 22px;border-radius:var(--radius-md);font-size:13px;font-weight:600;z-index:9999;display:none;backdrop-filter:blur(16px);box-shadow:var(--shadow-md);transform:translateX(120%);transition:transform 0.4s cubic-bezier(0.16,1,0.3,1)}
+#toast.ok{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);color:var(--green)}
+#toast.err{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.25);color:var(--red)}
+#toast.show{display:block;transform:translateX(0)}
 
-#menuOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:998;opacity:0;transition:opacity 0.3s;pointer-events:none}
+/* ===== MENU ===== */
+#menuOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);z-index:998;opacity:0;transition:opacity 0.35s ease;pointer-events:none}
 #menuOverlay.show{opacity:1;pointer-events:auto}
-#menuPanel{position:fixed;left:0;top:0;width:260px;height:100vh;background:#111;z-index:999;border-right:1px solid rgba(255,107,53,0.3);transform:translateX(-100%);transition:transform 0.3s ease;padding:20px 0 80px;overflow-y:auto}
+#menuPanel{position:fixed;left:0;top:0;width:280px;height:100vh;background:linear-gradient(180deg,#111 0%,#0d0d0d 100%);z-index:999;border-right:1px solid var(--border);transform:translateX(-100%);transition:transform 0.35s cubic-bezier(0.16,1,0.3,1);padding:24px 0 100px;overflow-y:auto}
 #menuPanel.open{transform:translateX(0)}
-
-.menuHeader{padding:0 20px 16px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.menuTitle{font-size:18px;font-weight:900;background:linear-gradient(135deg,#ff6b35,#f7931e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px}
-.menuCloseBtn{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.2s;background:transparent;border:none;color:#f7931e}
-.menuCloseBtn:hover{background:rgba(255,107,53,0.1);color:#ff6b35}
-.menuCloseBtn:active{transform:scale(0.93)}
-.menuSubtitle{font-size:12px;color:#22c55e;font-weight:600;margin-top:2px}
-
-.menuItem{padding:13px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:0.2s;border-radius:0}
+.menuHeader{padding:0 24px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.menuTitle{font-size:20px;font-weight:900;letter-spacing:-0.5px;background:linear-gradient(135deg,var(--orange),var(--orange-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.menuSubtitle{font-size:12px;color:var(--green);font-weight:600;margin-top:4px;letter-spacing:0.3px}
+.menuCloseBtn{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.25s;background:rgba(255,255,255,0.04);border:none;color:var(--text-secondary)}
+.menuCloseBtn:hover{background:rgba(255,107,53,0.1);color:var(--orange)}
+.menuCloseBtn:active{transform:scale(0.92)}
+.menuItem{padding:14px 24px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:0.2s;border-radius:0;position:relative}
+.menuItem::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:0;background:var(--orange);border-radius:0 3px 3px 0;transition:height 0.25s ease}
 .menuItem:hover{background:rgba(255,255,255,0.03)}
-.menuItem:hover .mIcon{color:#ff6b35}
-.menuItem:hover .mLabel{color:#fff}
-.mIcon{width:20px;height:20px;color:#6b7280;transition:0.2s;flex-shrink:0}
-.mLabel{font-size:14px;font-weight:500;color:#d1d5db;transition:0.2s}
+.menuItem:hover::before{height:24px}
+.menuItem:hover .mIcon{color:var(--orange)}
+.menuItem:hover .mLabel{color:var(--text-primary)}
+.mIcon{width:20px;height:20px;color:var(--text-muted);transition:0.2s;flex-shrink:0}
+.mLabel{font-size:14px;font-weight:500;color:var(--text-secondary);transition:0.2s}
+.menuFooter{padding:16px 24px;border-top:1px solid var(--border);margin-top:8px}
+.btnLogout{width:100%;padding:14px 20px;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);color:var(--red);border-radius:var(--radius-md);cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;gap:12px;transition:0.25s}
+.btnLogout:hover{background:rgba(239,68,68,0.12)}
 
-.menuFooter{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.05);margin-top:8px}
-.btnLogout{width:100%;padding:13px 20px;background:transparent;border:none;color:#ef4444;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;gap:12px;transition:0.2s}
-.btnLogout:hover{background:rgba(239,68,68,0.08)}
-.btnLogout:hover .mIcon{color:#ef4444}
-.btnLogout .mIcon{color:#ef4444;width:20px;height:20px;flex-shrink:0}
+/* ===== HEADER ===== */
+.header{position:fixed;top:0;left:0;right:0;height:60px;background:rgba(10,10,10,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:100}
+.hBtn{width:40px;height:40px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.25s;background:rgba(255,255,255,0.04);border:none;color:var(--text-primary)}
+.hBtn:hover{background:rgba(255,107,53,0.1);color:var(--orange)}
+.hBtn:active{transform:scale(0.93)}
+.hTitle{font-size:16px;font-weight:800;color:var(--orange-light);letter-spacing:-0.3px}
+.hRegresar{background:rgba(239,68,68,0.12)!important;border:1px solid rgba(239,68,68,0.2)!important;color:var(--red)!important;padding:0 16px!important;width:auto!important;font-size:13px;font-weight:600;border-radius:var(--radius-sm)!important}
+.hRegresar:hover{background:rgba(239,68,68,0.2)!important}
 
-.header{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(10,10,10,0.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:100}
-.hBtn{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.2s;background:rgba(255,255,255,0.05);border:none;color:#fff}
-.hBtn:active{transform:scale(0.93);background:rgba(255,107,53,0.15)}
-.hTitle{font-size:15px;font-weight:700;color:#f7931e}
-.hRegresar{background:#ef4444!important;color:#fff!important;padding:0 14px!important;width:auto!important;font-size:13px;font-weight:600}
+/* ===== SEARCH BAR ===== */
+.searchBar{position:fixed;top:60px;left:0;right:0;padding:12px 16px;background:rgba(10,10,10,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);z-index:99;display:flex;align-items:center;gap:10px}
+.searchWrap{flex:1;position:relative}
+.searchIcon{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--text-muted);pointer-events:none}
+.searchInput{width:100%;background:var(--bg-card);border:1.5px solid var(--border);color:var(--text-primary);border-radius:var(--radius-md);padding:11px 14px 11px 42px;font-size:14px;outline:none;transition:0.3s}
+.searchInput:focus{border-color:rgba(255,107,53,0.4);box-shadow:0 0 0 4px var(--orange-glow)}
+.searchInput::placeholder{color:var(--text-muted)}
+.searchClear{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:11px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:0.2s;font-weight:700}
+.searchClear:hover{color:var(--red);background:rgba(239,68,68,0.1)}
+.filterSelect{background:var(--bg-card);border:1.5px solid var(--border);color:var(--text-primary);border-radius:var(--radius-md);padding:11px 10px;font-size:13px;outline:none;transition:0.3s;flex-shrink:0;cursor:pointer}
+.filterSelect:focus{border-color:rgba(255,107,53,0.4)}
 
-.searchBar{position:fixed;top:54px;left:0;right:0;padding:10px 12px;background:rgba(10,10,10,0.95);border-bottom:1px solid rgba(255,255,255,0.06);z-index:99;display:flex;align-items:center;gap:8px}
-.searchIcon{color:#6b7280;width:18px;height:18px;flex-shrink:0}
-.searchInput{flex:1;background:rgba(26,26,26,0.8);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;padding:10px 12px;font-size:14px;outline:none;transition:0.3s}
-.searchInput:focus{border-color:#ff6b35}
-.searchInput::placeholder{color:#4b5563}
-.searchClear{color:#6b7280;font-size:12px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:0.2s}
-.searchClear:hover{color:#ef4444}
-.filterSelect{background:rgba(26,26,26,0.8);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;padding:10px 8px;font-size:13px;outline:none;transition:0.3s;flex-shrink:0}
-.filterSelect:focus{border-color:#ff6b35}
+/* ===== STATS BAR ===== */
+.statsBar{position:fixed;top:118px;left:0;right:0;padding:0 16px;z-index:98;display:flex;gap:10px;overflow-x:auto;scrollbar-width:none}
+.statsBar::-webkit-scrollbar{display:none}
+.statCard{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 16px;min-width:100px;flex-shrink:0}
+.statValue{font-size:18px;font-weight:800;color:var(--orange);line-height:1}
+.statLabel{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px}
 
-.cardsArea{padding:120px 12px 90px}
-.tableWrap{background:#111;border:1.5px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden}
-.tableHeader{display:flex;background:linear-gradient(135deg,rgba(255,107,53,0.2),rgba(247,147,30,0.1));border-bottom:1.5px solid rgba(255,107,53,0.3);padding:12px 14px;font-size:11px;font-weight:700;color:#f7931e;text-transform:uppercase;letter-spacing:0.5px}
-.th{flex:1;padding:0 4px}
-.th:first-child{flex:0.7}
-.th:last-child{flex:0.5;text-align:right}
-.thCheck{flex:0;width:30px;padding:0;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-.tableRow{display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:0.2s;position:relative}
-.tableRow:last-child{border-bottom:none}
-.tableRow:hover{background:rgba(255,107,53,0.03)}
-.tableRow.sel{background:rgba(255,107,53,0.08)}
-.tableRow.sel::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#ff6b35}
-.rowCheck{width:20px;height:20px;border:2px solid rgba(255,255,255,0.2);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:0.2s;margin-right:10px}
-.tableRow.sel .rowCheck{border-color:#ff6b35;background:#ff6b35}
-.rowCheck svg{width:12px;height:12px;color:#fff;display:none}
-.tableRow.sel .rowCheck svg{display:block}
-.td{flex:1;padding:0 4px;font-size:14px;color:#fff}
-.td:first-child{flex:0.7;font-family:monospace;font-size:13px;color:#9ca3af}
-.td:last-child{flex:0.5;text-align:right;color:#f7931e;font-weight:700}
-.rowToggle{width:36px;height:20px;background:#ef4444;border-radius:10px;position:relative;cursor:pointer;transition:0.3s;flex-shrink:0;margin-left:8px}
-.rowToggle.on{background:#22c55e}
-.rowToggle::after{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:2px;left:2px;transition:0.3s;box-shadow:0 2px 6px rgba(0,0,0,0.3)}
-.rowToggle.on::after{left:18px}
-.actionBar{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.06);padding:12px 16px;display:flex;gap:10px;z-index:97}
-.actionBtn{flex:1;padding:12px;border:none;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;transition:0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
-.actionBtn:disabled{opacity:0.4;cursor:not-allowed}
-.btnAdd{background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff}
-.btnAdd:active{transform:scale(0.97)}
-.btnEdit{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff}
-.btnEdit:active{transform:scale(0.97)}
-.btnDel{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444}
-.btnDel:active{transform:scale(0.97)}
+/* ===== CLIENT CARDS ===== */
+.cardsArea{padding:180px 16px 100px}
+.clientCard{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:0;overflow:hidden;transition:0.3s ease;cursor:pointer;position:relative;margin-bottom:10px}
+.clientCard:hover{border-color:rgba(255,107,53,0.2);box-shadow:0 4px 24px rgba(255,107,53,0.06);transform:translateY(-1px)}
+.clientCard.sel{border-color:rgba(255,107,53,0.35);box-shadow:0 0 0 3px var(--orange-glow),0 4px 24px rgba(255,107,53,0.1)}
+.clientCard.sel::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--orange),var(--orange-light));border-radius:0 3px 3px 0}
+.clientCard.inact{opacity:0.55}
+.clientCard.inact .cardStatus{filter:grayscale(1)}
 
-#modalOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;display:none;justify-content:center;align-items:center;padding:16px}
-#modalOverlay.show{display:flex}
-.modalCard{background:#1a1a1a;border:1px solid rgba(255,255,255,0.08);border-radius:20px;width:100%;max-width:400px;max-height:85vh;overflow-y:auto;animation:modalIn 0.3s ease}
-@keyframes modalIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
-.modalHeader{padding:20px 20px 0;display:flex;justify-content:space-between;align-items:center}
-.modalTitle{font-size:18px;font-weight:800;color:#f7931e}
-.modalClose{width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,0.05);border:none;color:#9ca3af;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:0.2s}
-.modalClose:hover{background:rgba(255,255,255,0.1);color:#fff}
-.modalBody{padding:16px 20px 20px}
-.fLabel{display:block;font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;margin-top:14px}
-.fLabel:first-child{margin-top:0}
+.cardHeader{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px}
+.cardCode{font-family:'SF Mono',monospace;font-size:12px;font-weight:700;color:var(--text-muted);letter-spacing:0.5px;background:rgba(255,255,255,0.04);padding:4px 10px;border-radius:6px}
+.cardStatus{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;padding:5px 12px;border-radius:20px}
+.cardStatus.on{background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,0.2)}
+.cardStatus.off{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.cardStatusDot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+.cardBody{padding:0 18px 16px}
+.cardName{font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:10px;line-height:1.3}
+.cardMeta{display:flex;flex-wrap:wrap;gap:12px}
+.cardMetaItem{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary)}
+.cardMetaItem svg{width:14px;height:14px;color:var(--text-muted);flex-shrink:0}
+.cardMetaItem .metaValue{color:var(--text-primary);font-weight:500}
+.cardMetaItem .metaPhone{font-family:'SF Mono',monospace;color:var(--orange-light);font-weight:600;letter-spacing:0.3px}
+
+.cardDivider{height:1px;background:var(--border);margin:0 18px}
+
+.cardFooter{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;background:rgba(255,255,255,0.015)}
+.cardFooterLeft{display:flex;gap:16px}
+.cardFooterItem{font-size:11px;color:var(--text-muted);font-weight:500}
+.cardFooterItem span{color:var(--text-secondary)}
+
+/* ===== EMPTY / ERROR ===== */
+.emptyState{text-align:center;padding:80px 24px}
+.emptyStateIcon{font-size:56px;margin-bottom:16px;opacity:0.4}
+.emptyStateTitle{font-size:16px;font-weight:700;color:var(--text-secondary);margin-bottom:6px}
+.emptyStateDesc{font-size:13px;color:var(--text-muted)}
+.retryBtn{margin-top:20px;padding:12px 24px;background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.2);color:var(--orange);border-radius:var(--radius-md);cursor:pointer;font-size:13px;font-weight:600;transition:0.25s}
+.retryBtn:hover{background:rgba(255,107,53,0.18)}
+
+/* ===== ACTION BAR ===== */
+.actionBar{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,0.92);backdrop-filter:blur(20px);border-top:1px solid var(--border);padding:14px 16px;display:flex;gap:10px;z-index:97}
+.actionBtn{flex:1;padding:14px;border:none;border-radius:var(--radius-md);cursor:pointer;font-size:13px;font-weight:700;transition:0.25s;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:0.2px}
+.actionBtn:disabled{opacity:0.35;cursor:not-allowed;transform:none!important}
+.actionBtn:active:not(:disabled){transform:scale(0.97)}
+.btnAdd{background:linear-gradient(135deg,var(--orange),var(--orange-light));color:#fff;box-shadow:0 4px 16px rgba(255,107,53,0.25)}
+.btnAdd:hover:not(:disabled){box-shadow:0 6px 24px rgba(255,107,53,0.35);transform:translateY(-1px)}
+.btnEdit{background:var(--bg-card);border:1.5px solid var(--border-strong);color:var(--text-primary)}
+.btnEdit:hover:not(:disabled){border-color:rgba(255,107,53,0.3);background:var(--bg-hover)}
+.btnDel{background:rgba(239,68,68,0.1);border:1.5px solid rgba(239,68,68,0.2);color:var(--red)}
+.btnDel:hover:not(:disabled){background:rgba(239,68,68,0.18);border-color:rgba(239,68,68,0.35)}
+
+/* ===== MODAL ===== */
+#modalOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);z-index:200;display:none;justify-content:center;align-items:flex-end;padding:0;opacity:0;transition:opacity 0.3s ease}
+#modalOverlay.show{display:flex;opacity:1}
+.modalCard{background:linear-gradient(180deg,#1a1a1a 0%,#141414 100%);border:1px solid var(--border);border-radius:var(--radius-xl) var(--radius-xl) 0 0;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;animation:modalUp 0.35s cubic-bezier(0.16,1,0.3,1);box-shadow:0 -20px 60px rgba(0,0,0,0.5)}
+@keyframes modalUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modalDrag{height:4px;width:40px;background:rgba(255,255,255,0.1);border-radius:2px;margin:12px auto 0}
+.modalHeader{padding:20px 24px 0;display:flex;justify-content:space-between;align-items:center}
+.modalTitle{font-size:18px;font-weight:800;color:var(--orange-light);letter-spacing:-0.3px}
+.modalClose{width:36px;height:36px;border-radius:var(--radius-sm);background:rgba(255,255,255,0.04);border:none;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:0.25s}
+.modalClose:hover{background:rgba(255,255,255,0.08);color:var(--text-primary)}
+.modalBody{padding:20px 24px 28px}
+
+.codeBadge{background:linear-gradient(135deg,rgba(255,107,53,0.1),rgba(247,147,30,0.05));border:1.5px solid rgba(255,107,53,0.2);color:var(--orange);font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:12px 16px;border-radius:var(--radius-md);text-align:center;margin-bottom:20px;font-family:'SF Mono',monospace}
+
+.fLabel{display:block;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;margin-top:18px}
 .fLabel:first-of-type{margin-top:0}
-.codeLabel{background:linear-gradient(135deg,rgba(255,107,53,0.15),rgba(247,147,30,0.08));border:1.5px solid rgba(255,107,53,0.25);color:#f7931e;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:10px 16px;border-radius:10px;text-align:center;margin-bottom:16px;font-family:monospace}
-.fInput{width:100%;background:rgba(17,17,17,0.9);border:1.5px solid rgba(255,255,255,0.08);color:#fff;border-radius:10px;padding:12px 14px;font-size:14px;outline:none;transition:0.3s}
-.fInput:focus{border-color:#ff6b35;box-shadow:0 0 0 3px rgba(255,107,53,0.12)}
-.fInput::placeholder{color:#4b5563}
-.fInput:disabled{background:rgba(10,10,10,0.6);color:#6b7280;cursor:not-allowed}
-.fInput.invalid{border-color:#ef4444!important}
-.modalToggleWrap{display:flex;align-items:center;gap:10px;margin-top:4px}
-.modalToggle{width:48px;height:26px;background:#ef4444;border-radius:13px;position:relative;cursor:pointer;transition:0.3s}
-.modalToggle.on{background:#22c55e}
-.modalToggle::after{content:'';position:absolute;width:22px;height:22px;background:#fff;border-radius:50%;top:2px;left:2px;transition:0.3s;box-shadow:0 2px 6px rgba(0,0,0,0.3)}
-.modalToggle.on::after{left:24px}
-.modalToggleTxt{font-size:13px;font-weight:500}
-.modalBtns{display:flex;gap:10px;margin-top:20px}
-.modalBtns button{flex:1;padding:12px;border:none;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;transition:0.2s}
-.btnSave{background:#22c55e;color:#fff}
+.fInput{width:100%;background:var(--bg);border:1.5px solid var(--border);color:var(--text-primary);border-radius:var(--radius-md);padding:13px 16px;font-size:15px;outline:none;transition:0.3s}
+.fInput:focus{border-color:rgba(255,107,53,0.4);box-shadow:0 0 0 4px var(--orange-glow)}
+.fInput::placeholder{color:var(--text-muted);font-weight:400}
+.fInput.invalid{border-color:var(--red)!important;box-shadow:0 0 0 4px var(--red-glow)!important}
+.fHint{font-size:11px;color:var(--text-muted);margin-top:4px;font-weight:500}
+.fHint.err{color:var(--red)}
+
+.phoneWrap{display:flex;gap:10px}
+.phonePrefix{width:90px;flex-shrink:0;background:var(--bg);border:1.5px solid var(--border);color:var(--text-primary);border-radius:var(--radius-md);padding:13px 12px;font-size:15px;outline:none;transition:0.3s;cursor:pointer;font-weight:600;font-family:'SF Mono',monospace}
+.phonePrefix:focus{border-color:rgba(255,107,53,0.4);box-shadow:0 0 0 4px var(--orange-glow)}
+
+.modalToggleWrap{display:flex;align-items:center;gap:12px;margin-top:4px}
+.modalToggle{width:52px;height:28px;background:var(--red);border-radius:14px;position:relative;cursor:pointer;transition:0.3s;box-shadow:inset 0 2px 8px rgba(0,0,0,0.3)}
+.modalToggle.on{background:var(--green);box-shadow:inset 0 2px 8px rgba(0,0,0,0.2)}
+.modalToggle::after{content:'';position:absolute;width:22px;height:22px;background:#fff;border-radius:50%;top:3px;left:3px;transition:0.3s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+.modalToggle.on::after{left:27px}
+.modalToggleTxt{font-size:14px;font-weight:600;color:var(--text-secondary)}
+.modalToggle.on + .modalToggleTxt{color:var(--green)}
+
+.modalBtns{display:flex;gap:12px;margin-top:28px}
+.modalBtns button{flex:1;padding:14px;border:none;border-radius:var(--radius-md);cursor:pointer;font-size:14px;font-weight:700;transition:0.25s;letter-spacing:0.2px}
+.btnSave{background:linear-gradient(135deg,var(--orange),var(--orange-light));color:#fff;box-shadow:0 4px 16px rgba(255,107,53,0.25)}
+.btnSave:hover{box-shadow:0 6px 24px rgba(255,107,53,0.35);transform:translateY(-1px)}
 .btnSave:active{transform:scale(0.97)}
-.btnCan{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#9ca3af}
-.btnCan:active{transform:scale(0.97)}
-.modalToggle.disabled{cursor:not-allowed;opacity:0.5}
-.rowToggle.noclick{cursor:default;pointer-events:none}
-.emptyState{text-align:center;padding:60px 20px;color:#6b7280}
-.emptyStateIcon{font-size:48px;margin-bottom:12px;opacity:0.5}
-.errorState{text-align:center;padding:40px 20px;color:#ef4444}
-.errorStateIcon{font-size:40px;margin-bottom:12px}
-.retryBtn{margin-top:16px;padding:10px 20px;background:rgba(255,107,53,0.15);border:1px solid rgba(255,107,53,0.3);color:#ff6b35;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600}
-#confirmOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:300;display:none;justify-content:center;align-items:center;padding:16px;backdrop-filter:blur(8px)}
-#confirmOverlay.show{display:flex}
-.confirmCard{background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;width:100%;max-width:340px;padding:24px;text-align:center;animation:modalIn 0.3s ease}
-.confirmTitle{font-size:18px;font-weight:800;color:#f7931e;margin-bottom:12px}
-.confirmMsg{font-size:14px;color:#d1d5db;margin-bottom:24px;line-height:1.5}
+.btnCan{background:var(--bg-card);border:1.5px solid var(--border);color:var(--text-secondary)}
+.btnCan:hover{border-color:var(--border-strong);color:var(--text-primary);background:var(--bg-hover)}
+
+/* ===== CONFIRM MODAL ===== */
+#confirmOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(12px);z-index:300;display:none;justify-content:center;align-items:center;padding:16px;opacity:0;transition:opacity 0.3s ease}
+#confirmOverlay.show{display:flex;opacity:1}
+.confirmCard{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xl);width:100%;max-width:360px;padding:28px;text-align:center;box-shadow:var(--shadow-md);animation:modalIn 0.3s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
+.confirmIcon{width:56px;height:56px;border-radius:50%;background:var(--red-glow);border:1px solid rgba(239,68,68,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px}
+.confirmTitle{font-size:18px;font-weight:800;color:var(--text-primary);margin-bottom:8px}
+.confirmMsg{font-size:14px;color:var(--text-secondary);margin-bottom:24px;line-height:1.5}
 .confirmBtns{display:flex;gap:12px}
-.btnConfirmCan{flex:1;padding:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#9ca3af;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;transition:0.2s}
-.btnConfirmCan:hover{background:rgba(255,255,255,0.1);color:#fff}
-.btnConfirmDel{flex:1;padding:12px;background:linear-gradient(135deg,#ef4444,#dc2626);border:none;color:#fff;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;transition:0.2s}
+.btnConfirmCan{flex:1;padding:13px;background:var(--bg-hover);border:1.5px solid var(--border);color:var(--text-secondary);border-radius:var(--radius-md);cursor:pointer;font-size:13px;font-weight:700;transition:0.25s}
+.btnConfirmCan:hover{background:var(--bg-active);color:var(--text-primary)}
+.btnConfirmDel{flex:1;padding:13px;background:linear-gradient(135deg,var(--red),#dc2626);border:none;color:#fff;border-radius:var(--radius-md);cursor:pointer;font-size:13px;font-weight:700;transition:0.25s;box-shadow:0 4px 16px rgba(239,68,68,0.25)}
+.btnConfirmDel:hover{box-shadow:0 6px 24px rgba(239,68,68,0.35);transform:translateY(-1px)}
 .btnConfirmDel:active{transform:scale(0.97)}
 </style>
 </head>
 <body>
 
-<div id="load"><div class="spin"></div><div style="color:#9ca3af;font-size:13px">Cargando...</div></div>
+<div id="load"><div class="spin"></div><div style="color:var(--text-muted);font-size:13px;font-weight:500">Cargando...</div></div>
 <div id="toast"></div>
 
 <div id="menuOverlay" onclick="closeMenu()"></div>
@@ -169,7 +221,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
       <span class="mLabel">Borrar</span>
     </div>
-    <div class="menuItem" style="border-top:1px solid rgba(255,255,255,0.05);margin-top:8px" onclick="toggleViewInactivos()">
+    <div class="menuItem" style="border-top:1px solid var(--border);margin-top:8px" onclick="toggleViewInactivos()">
       <svg class="mIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
       <span class="mLabel">Ver Inactivos</span>
       <div class="modalToggle" id="menuToggle" style="pointer-events:none;margin-left:auto"></div>
@@ -185,26 +237,39 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <div class="header">
   <button class="hBtn" onclick="openMenu()">
-    <svg style="width:20px;height:20px;color:#f7931e" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-    </svg>
+    <svg style="width:20px;height:20px;color:var(--orange-light)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
   </button>
   <div class="hTitle">Clientes</div>
   <button class="hBtn hRegresar" onclick="location.href='admin.html'">Regresar</button>
 </div>
 
 <div class="searchBar">
-  <svg class="searchIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-  </svg>
-  <input type="text" id="searchInput" class="searchInput" placeholder="Buscar..." autocomplete="off">
-  <span class="searchClear" id="searchClear" onclick="clearSearch()">X</span>
+  <div class="searchWrap">
+    <svg class="searchIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+    <input type="text" id="searchInput" class="searchInput" placeholder="Buscar cliente..." autocomplete="off">
+    <span class="searchClear" id="searchClear" onclick="clearSearch()">X</span>
+  </div>
   <select id="filterField" class="filterSelect" onchange="render()">
     <option value="all">Todo</option>
     <option value="CodCliente">Codigo</option>
     <option value="DesCliente">Nombre</option>
     <option value="TelCliente">Telefono</option>
   </select>
+</div>
+
+<div class="statsBar" id="statsBar">
+  <div class="statCard">
+    <div class="statValue" id="statTotal">0</div>
+    <div class="statLabel">Total</div>
+  </div>
+  <div class="statCard">
+    <div class="statValue" id="statActivos">0</div>
+    <div class="statLabel">Activos</div>
+  </div>
+  <div class="statCard">
+    <div class="statValue" id="statInactivos">0</div>
+    <div class="statLabel">Inactivos</div>
+  </div>
 </div>
 
 <div class="cardsArea" id="main"></div>
@@ -217,25 +282,46 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <div id="modalOverlay" onclick="closeModal(event)">
   <div class="modalCard" onclick="event.stopPropagation()">
+    <div class="modalDrag"></div>
     <div class="modalHeader">
       <div class="modalTitle" id="modalTitle">Nuevo Cliente</div>
       <button class="modalClose" onclick="closeModal()">
-        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
     <div class="modalBody">
-      <div class="codeLabel" id="codeLabel">CÓDIGO CLI002</div>
+      <div class="codeBadge" id="codeLabel">CODIGO AUTO</div>
 
-      <div class="fLabel">Nombre</div>
+      <div class="fLabel">Nombre completo <span style="color:var(--orange)">*</span></div>
       <input type="text" id="fDesc" class="fInput" placeholder="Ej: Juan Perez">
 
-      <div class="fLabel">Telefono</div>
-      <input type="text" id="fTel" class="fInput" placeholder="Ej: 04141234567">
+      <div class="fLabel">Telefono <span style="color:var(--orange)">*</span></div>
+      <div class="phoneWrap">
+        <select id="fTelPrefix" class="phonePrefix">
+          <option value="0412">0412</option>
+          <option value="0414">0414</option>
+          <option value="0416">0416</option>
+          <option value="0422">0422</option>
+          <option value="0424">0424</option>
+          <option value="0426">0426</option>
+        </select>
+        <input type="tel" id="fTelNum" class="fInput" placeholder="1234567" maxlength="7" inputmode="numeric">
+      </div>
+      <div class="fHint" id="fTelHint">Formato: 041X + 7 digitos</div>
 
-      <div class="fLabel">Telefono 2</div>
-      <input type="text" id="fTel2" class="fInput" placeholder="Ej: 04149876543 (opcional)">
+      <div class="fLabel">Telefono 2 (opcional)</div>
+      <div class="phoneWrap">
+        <select id="fTel2Prefix" class="phonePrefix">
+          <option value="">—</option>
+          <option value="0412">0412</option>
+          <option value="0414">0414</option>
+          <option value="0416">0416</option>
+          <option value="0422">0422</option>
+          <option value="0424">0424</option>
+          <option value="0426">0426</option>
+        </select>
+        <input type="tel" id="fTel2Num" class="fInput" placeholder="1234567" maxlength="7" inputmode="numeric">
+      </div>
 
       <div class="fLabel">Direccion</div>
       <input type="text" id="fDir" class="fInput" placeholder="Ej: Av. Principal, Casa 123">
@@ -243,8 +329,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="fLabel">Cedula / RIF</div>
       <input type="text" id="fCedula" class="fInput" placeholder="Ej: V12345678">
 
-      <div class="fLabel">Email</div>
-      <input type="text" id="fEmail" class="fInput" placeholder="Ej: juan@gmail.com (opcional)">
+      <div class="fLabel">Email (opcional)</div>
+      <input type="email" id="fEmail" class="fInput" placeholder="Ej: juan@gmail.com">
 
       <div class="fLabel">Estado</div>
       <div class="modalToggleWrap">
@@ -262,7 +348,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <div id="confirmOverlay" onclick="closeConfirm(event)">
   <div class="confirmCard" onclick="event.stopPropagation()">
-    <div class="confirmTitle">&#9888; Confirmar eliminacion</div>
+    <div class="confirmIcon">&#9888;</div>
+    <div class="confirmTitle">Confirmar eliminacion</div>
     <div class="confirmMsg" id="confirmMsg">Desea eliminar este registro?</div>
     <div class="confirmBtns">
       <button class="btnConfirmCan" onclick="closeConfirm()">Cancelar</button>
@@ -273,14 +360,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <script>
 var API="https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9FoXBkMYwPD4xkK1llpxakpExC6DspQvnOI6Vmw/exec";
-var ROWS=[];var SEL=null;var FORM_STATE=true;var MODAL_MODE="add";var SHOW_INACTIVOS=false;
+var ROWS=[],SEL=null,FORM_STATE=true,MODAL_MODE="add",SHOW_INACTIVOS=false;
 
 function showLoad(){document.getElementById("load").className="show"}
 function hideLoad(){document.getElementById("load").className=""}
-function toast(m,ok){var t=document.getElementById("toast");t.textContent=m;t.className=ok?"ok":"err";t.style.display="block";setTimeout(function(){t.style.display="none"},3000)}
+function toast(m,ok){
+  var t=document.getElementById("toast");
+  t.textContent=m;t.className=ok?"ok":"err";
+  t.classList.add("show");
+  setTimeout(function(){t.classList.remove("show")},3500);
+}
 
-function apiGet(action,params){var url=API+"?action="+action+"&_cb="+Date.now();if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);return fetch(url).then(function(r){return r.json()})}
-function apiPost(d){return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.text();}).then(function(t){try{return JSON.parse(t);}catch(e){throw new Error("Respuesta no es JSON: "+t.substring(0,200));}})}
+function apiGet(action,params){
+  var url=API+"?action="+action+"&_cb="+Date.now();
+  if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);
+  return fetch(url).then(function(r){return r.json()});
+}
+function apiPost(d){
+  return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)})
+    .then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.text();})
+    .then(function(t){try{return JSON.parse(t);}catch(e){throw new Error("Respuesta no es JSON: "+t.substring(0,200));}});
+}
 
 function normalize(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
 
@@ -288,268 +388,337 @@ function openMenu(){document.getElementById("menuPanel").className="open";docume
 function closeMenu(){document.getElementById("menuPanel").className="";document.getElementById("menuOverlay").className=""}
 function logout(){location.href="admin.html"}
 
-function init(){
-showLoad();
-loadData();
-}
+function init(){showLoad();loadData();}
 
 function loadData(){
-showLoad();
-apiGet("adminData",{method:"GET",sheetName:"Clientes"})
-.then(function(r){
- hideLoad();
- if(r.success){ROWS=r.data||[];render()}
- else{showError(r.error||"Error al cargar datos")}
-})
-.catch(function(e){hideLoad();showError("Error de red al cargar clientes")});
+  showLoad();
+  apiGet("adminData",{method:"GET",sheetName:"Clientes"})
+  .then(function(r){
+    hideLoad();
+    if(r.success){ROWS=r.data||[];render();updateStats();}
+    else{showError(r.error||"Error al cargar datos");}
+  })
+  .catch(function(e){hideLoad();showError("Error de red al cargar clientes");});
 }
 
 function showError(msg){
-var m=document.getElementById("main");
-m.innerHTML='<div class="errorState"><div class="errorStateIcon">&#9888;</div><div>'+msg+'</div><button class="retryBtn" onclick="loadData()">Reintentar</button></div>';
+  document.getElementById("main").innerHTML=
+    '<div class="emptyState"><div class="emptyStateIcon">&#9888;</div>'+
+    '<div class="emptyStateTitle">Error de carga</div>'+
+    '<div class="emptyStateDesc">'+msg+'</div>'+
+    '<button class="retryBtn" onclick="loadData()">Reintentar</button></div>';
+}
+
+function updateStats(){
+  var total=ROWS.length;
+  var activos=ROWS.filter(function(r){return r.Estado==="Activo"}).length;
+  var inactivos=ROWS.filter(function(r){return r.Estado==="Inactivo"}).length;
+  document.getElementById("statTotal").textContent=total;
+  document.getElementById("statActivos").textContent=activos;
+  document.getElementById("statInactivos").textContent=inactivos;
 }
 
 function render(){
-var m=document.getElementById("main");
-m.innerHTML="";
-var filtered=getVisibleRows();
-if(filtered.length===0){
- m.innerHTML='<div class="emptyState"><div class="emptyStateIcon">&#128100;</div>No se encontraron clientes</div>';
- return;
+  var m=document.getElementById("main");
+  m.innerHTML="";
+  var filtered=getVisibleRows();
+  if(filtered.length===0){
+    m.innerHTML='<div class="emptyState"><div class="emptyStateIcon">&#128100;</div><div class="emptyStateTitle">No se encontraron clientes</div><div class="emptyStateDesc">Intenta con otra busqueda</div></div>';
+    return;
+  }
+  for(var i=0;i<filtered.length;i++){
+    m.appendChild(buildCard(filtered[i]));
+  }
+  updateActionButtons();
 }
-var wrap=document.createElement("div");wrap.className="tableWrap";
-var header=document.createElement("div");header.className="tableHeader";
-header.innerHTML='<div class="th">Codigo</div><div class="th">Nombre</div><div class="th">Telefono</div><div class="th">Estado</div>';
-wrap.appendChild(header);
-for(var i=0;i<filtered.length;i++){
-var r=filtered[i];
-var st=r.Estado==="Activo";
-var isSel=SEL&&SEL.CodCliente===r.CodCliente;
-var row=document.createElement("div");
-row.className="tableRow"+(isSel?" sel":"")+(st?"":" inact");
-row.onclick=function(idx){return function(){selectCard(idx)}}(i);
-row.innerHTML='<div class="rowCheck"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div><div class="td">'+(r.CodCliente||"")+'</div><div class="td">'+(r.DesCliente||"")+'</div><div class="td">'+(r.TelCliente||"")+'</div><div class="rowToggle '+(st?"on":"")+' noclick"></div>';
-wrap.appendChild(row);
-}
-m.appendChild(wrap);
-updateActionButtons();
+
+function buildCard(r){
+  var st=r.Estado==="Activo";
+  var isSel=SEL&&SEL.CodCliente===r.CodCliente;
+  var card=document.createElement("div");
+  card.className="clientCard"+(isSel?" sel":"")+(st?"":" inact");
+  card.onclick=function(){selectCard(r)};
+
+  var tel=r.TelCliente||"";
+  var tel2=r.TelCliente2||"";
+  var dir=r.DirCliente||"";
+  var ced=r.CedulaRifCliente||"";
+  var email=r.EmailCliente||"";
+
+  card.innerHTML=
+    '<div class="cardHeader">'+
+      '<div class="cardCode">'+(r.CodCliente||"—")+'</div>'+
+      '<div class="cardStatus '+(st?"on":"off")+'">'+
+        '<div class="cardStatusDot"></div>'+(st?"Activo":"Inactivo")+
+      '</div>'+
+    '</div>'+
+    '<div class="cardBody">'+
+      '<div class="cardName">'+(r.DesCliente||"Sin nombre")+'</div>'+
+      '<div class="cardMeta">'+
+        (tel?'<div class="cardMetaItem"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg><span class="metaValue metaPhone">'+tel+'</span></div>':'')+
+        (tel2?'<div class="cardMetaItem"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg><span class="metaValue">'+tel2+'</span></div>':'')+
+        (dir?'<div class="cardMetaItem"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg><span class="metaValue">'+dir+'</span></div>':'')+
+        (ced?'<div class="cardMetaItem"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/></svg><span class="metaValue">'+ced+'</span></div>':'')+
+        (email?'<div class="cardMetaItem"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg><span class="metaValue">'+email+'</span></div>':'')+
+      '</div>'+
+    '</div>';
+  return card;
 }
 
 function getVisibleRows(){
-var q=normalize(document.getElementById("searchInput").value);
-var field=document.getElementById("filterField").value;
-var out=ROWS;
-if(!SHOW_INACTIVOS){
- out=out.filter(function(r){return r.Estado==="Activo";});
-}else{
- out=out.filter(function(r){return r.Estado==="Inactivo";});
-}
-if(!q)return out;
-return out.filter(function(r){
-if(field==="all"){return normalize(r.CodCliente).indexOf(q)!==-1||normalize(r.DesCliente).indexOf(q)!==-1||normalize(r.TelCliente).indexOf(q)!==-1}
-if(field==="CodCliente")return normalize(r.CodCliente).indexOf(q)!==-1;
-if(field==="DesCliente")return normalize(r.DesCliente).indexOf(q)!==-1;
-if(field==="TelCliente")return normalize(r.TelCliente).indexOf(q)!==-1;
-return false;
-});
+  var q=normalize(document.getElementById("searchInput").value);
+  var field=document.getElementById("filterField").value;
+  var out=ROWS;
+  if(!SHOW_INACTIVOS){
+    out=out.filter(function(r){return r.Estado==="Activo";});
+  }else{
+    out=out.filter(function(r){return r.Estado==="Inactivo";});
+  }
+  if(!q)return out;
+  return out.filter(function(r){
+    if(field==="all"){
+      return normalize(r.CodCliente).indexOf(q)!==-1||
+             normalize(r.DesCliente).indexOf(q)!==-1||
+             normalize(r.TelCliente).indexOf(q)!==-1;
+    }
+    if(field==="CodCliente")return normalize(r.CodCliente).indexOf(q)!==-1;
+    if(field==="DesCliente")return normalize(r.DesCliente).indexOf(q)!==-1;
+    if(field==="TelCliente")return normalize(r.TelCliente).indexOf(q)!==-1;
+    return false;
+  });
 }
 
-function selectCard(i){
-var filtered=getVisibleRows();
-var clicked=filtered[i];
-if(SEL&&SEL.CodCliente===clicked.CodCliente){SEL=null}else{SEL=clicked}
-render();
+function selectCard(r){
+  if(SEL&&SEL.CodCliente===r.CodCliente){SEL=null;}else{SEL=r;}
+  render();
 }
 
 function updateActionButtons(){
-var btnAdd=document.getElementById("btnAdd");
-var btnEdit=document.getElementById("btnEdit");
-var btnDel=document.getElementById("btnDel");
-if(SHOW_INACTIVOS){
- btnAdd.disabled=true;
-}else{
- btnAdd.disabled=false;
-}
-if(SEL){
- btnEdit.disabled=false;
- btnDel.disabled=SEL.Estado==="Inactivo";
-}else{
- btnEdit.disabled=true;btnDel.disabled=true;
-}
+  var btnAdd=document.getElementById("btnAdd");
+  var btnEdit=document.getElementById("btnEdit");
+  var btnDel=document.getElementById("btnDel");
+  btnAdd.disabled=SHOW_INACTIVOS;
+  if(SEL){
+    btnEdit.disabled=false;
+    btnDel.disabled=SEL.Estado==="Inactivo";
+  }else{
+    btnEdit.disabled=true;btnDel.disabled=true;
+  }
 }
 
-function generateNextCode(currentCode){
-  var prefix=currentCode.replace(/[0-9]/g,"");
-  var numStr=currentCode.replace(/\D/g,"");
-  var num=parseInt(numStr)+1;
-  var newNumStr=String(num).padStart(numStr.length,"0");
-  return prefix+newNumStr;
+/* ===== PHONE VALIDATION ===== */
+function validatePhone(prefixId,numId,hintId,required){
+  var prefix=document.getElementById(prefixId).value;
+  var num=document.getElementById(numId).value.trim().replace(/\D/g,"");
+  var hint=document.getElementById(hintId);
+  var input=document.getElementById(numId);
+  if(required&&(!prefix||num.length!==7)){
+    input.classList.add("invalid");
+    hint.className="fHint err";
+    hint.textContent="Telefono invalido. Debe ser 041X/042X + 7 digitos";
+    return null;
+  }
+  if(!required&&(!prefix||!num))return "";
+  if(!required&&num.length!==7){
+    input.classList.add("invalid");
+    hint.className="fHint err";
+    hint.textContent="Telefono 2 invalido";
+    return null;
+  }
+  input.classList.remove("invalid");
+  hint.className="fHint";
+  hint.textContent=required?"Formato: 041X + 7 digitos":"Opcional";
+  return prefix+num;
 }
-function fetchNextCode(codeField){
-  return apiGet("get",{sheetName:"Correlativos"})
-  .then(function(r){
-    if(r.success&&r.data&&r.data.length>0){
-      var currentCode=String(r.data[0][codeField]||"").trim();
-      if(currentCode)return generateNextCode(currentCode);
-    }
-    return"Auto";
-  }).catch(function(){return"Auto";});
+
+function setupPhoneInputs(){
+  var num1=document.getElementById("fTelNum");
+  var num2=document.getElementById("fTel2Num");
+  num1.oninput=function(){this.value=this.value.replace(/\D/g,"").slice(0,7);this.classList.remove("invalid");};
+  num2.oninput=function(){this.value=this.value.replace(/\D/g,"").slice(0,7);this.classList.remove("invalid");};
 }
+
+/* ===== MODAL ===== */
 function openAddModal(){
-MODAL_MODE="add";FORM_STATE=true;
-document.getElementById("modalTitle").textContent="Nuevo Cliente";
-document.getElementById("codeLabel").textContent="CÓDIGO ...";
-fetchNextCode("CodCliente").then(function(nextCode){
-  document.getElementById("codeLabel").textContent="CÓDIGO "+nextCode;
-});
-document.getElementById("fDesc").value="";
-document.getElementById("fTel").value="";
-document.getElementById("fTel2").value="";
-document.getElementById("fDir").value="";
-document.getElementById("fCedula").value="";
-document.getElementById("fEmail").value="";
-document.getElementById("fToggle").className="modalToggle on";
-document.getElementById("fToggleTxt").textContent="Activo";
-document.getElementById("fToggle").onclick=toggleFormState;
-document.getElementById("modalOverlay").className="show";
-closeMenu();
+  MODAL_MODE="add";FORM_STATE=true;
+  document.getElementById("modalTitle").textContent="Nuevo Cliente";
+  document.getElementById("codeLabel").textContent="CODIGO AUTO";
+  document.getElementById("fDesc").value="";
+  document.getElementById("fTelPrefix").value="0412";
+  document.getElementById("fTelNum").value="";
+  document.getElementById("fTelNum").classList.remove("invalid");
+  document.getElementById("fTelHint").className="fHint";
+  document.getElementById("fTelHint").textContent="Formato: 041X + 7 digitos";
+  document.getElementById("fTel2Prefix").value="";
+  document.getElementById("fTel2Num").value="";
+  document.getElementById("fDir").value="";
+  document.getElementById("fCedula").value="";
+  document.getElementById("fEmail").value="";
+  document.getElementById("fToggle").className="modalToggle on";
+  document.getElementById("fToggleTxt").textContent="Activo";
+  document.getElementById("fToggle").onclick=toggleFormState;
+  document.getElementById("modalOverlay").className="show";
+  closeMenu();
+  setupPhoneInputs();
 }
 
 function openEditModal(){
-if(!SEL){toast("Seleccione un cliente",false);return}
-MODAL_MODE="edit";FORM_STATE=SEL.Estado==="Activo";
-document.getElementById("modalTitle").textContent="Editar Cliente";
-document.getElementById("codeLabel").textContent="CÓDIGO "+(SEL.CodCliente||"");
-document.getElementById("fDesc").value=SEL.DesCliente||"";
-document.getElementById("fTel").value=SEL.TelCliente||"";
-document.getElementById("fTel2").value=SEL.TelCliente2||"";
-document.getElementById("fDir").value=SEL.DirCliente||"";
-document.getElementById("fCedula").value=SEL.CedulaRifCliente||"";
-document.getElementById("fEmail").value=SEL.EmailCliente||"";
-var ft=document.getElementById("fToggle");
-if(FORM_STATE){
-ft.className="modalToggle on disabled";
-ft.onclick=null;
-document.getElementById("fToggleTxt").textContent="Activo (bloqueado)";
-}else{
-ft.className="modalToggle";
-ft.onclick=toggleFormState;
-document.getElementById("fToggleTxt").textContent="Inactivo (puede activar)";
-}
-document.getElementById("modalOverlay").className="show";
-closeMenu();
+  if(!SEL){toast("Seleccione un cliente",false);return;}
+  MODAL_MODE="edit";FORM_STATE=SEL.Estado==="Activo";
+  document.getElementById("modalTitle").textContent="Editar Cliente";
+  document.getElementById("codeLabel").textContent="CODIGO "+(SEL.CodCliente||"");
+  document.getElementById("fDesc").value=SEL.DesCliente||"";
+
+  // Parse phone
+  var tel=SEL.TelCliente||"";
+  var m=tel.match(/^(0412|0414|0416|0422|0424|0426)(\d{7})$/);
+  if(m){
+    document.getElementById("fTelPrefix").value=m[1];
+    document.getElementById("fTelNum").value=m[2];
+  }else{
+    document.getElementById("fTelPrefix").value="0412";
+    document.getElementById("fTelNum").value=tel;
+  }
+  document.getElementById("fTelNum").classList.remove("invalid");
+
+  var tel2=SEL.TelCliente2||"";
+  var m2=tel2.match(/^(0412|0414|0416|0422|0424|0426)(\d{7})$/);
+  if(m2){
+    document.getElementById("fTel2Prefix").value=m2[1];
+    document.getElementById("fTel2Num").value=m2[2];
+  }else{
+    document.getElementById("fTel2Prefix").value="";
+    document.getElementById("fTel2Num").value=tel2;
+  }
+
+  document.getElementById("fDir").value=SEL.DirCliente||"";
+  document.getElementById("fCedula").value=SEL.CedulaRifCliente||"";
+  document.getElementById("fEmail").value=SEL.EmailCliente||"";
+
+  var ft=document.getElementById("fToggle");
+  if(FORM_STATE){
+    ft.className="modalToggle on disabled";
+    ft.onclick=null;
+    document.getElementById("fToggleTxt").textContent="Activo (bloqueado)";
+  }else{
+    ft.className="modalToggle";
+    ft.onclick=toggleFormState;
+    document.getElementById("fToggleTxt").textContent="Inactivo (puede activar)";
+  }
+  document.getElementById("modalOverlay").className="show";
+  closeMenu();
+  setupPhoneInputs();
 }
 
 function closeModal(e){
-if(e&&e.target!==document.getElementById("modalOverlay"))return;
-document.getElementById("modalOverlay").className="";
+  if(e&&e.target!==document.getElementById("modalOverlay"))return;
+  document.getElementById("modalOverlay").className="";
 }
 
 function toggleFormState(){
-if(MODAL_MODE==="edit"&&SEL&&SEL.Estado==="Activo")return;
-FORM_STATE=!FORM_STATE;
-var t=document.getElementById("fToggle");
-var txt=document.getElementById("fToggleTxt");
-if(FORM_STATE){t.className="modalToggle on";txt.textContent="Activo";}else{t.className="modalToggle";txt.textContent="Inactivo";}
+  if(MODAL_MODE==="edit"&&SEL&&SEL.Estado==="Activo")return;
+  FORM_STATE=!FORM_STATE;
+  var t=document.getElementById("fToggle");
+  var txt=document.getElementById("fToggleTxt");
+  if(FORM_STATE){t.className="modalToggle on";txt.textContent="Activo";}
+  else{t.className="modalToggle";txt.textContent="Inactivo";}
 }
 
-function doAdd(){openAddModal()}
-function doEdit(){openEditModal()}
+function doAdd(){openAddModal();}
+function doEdit(){openEditModal();}
 
+/* ===== DELETE ===== */
 var PENDING_DEL=null;
-
 function doDel(){
-if(!SEL){toast("Seleccione un cliente",false);closeMenu();return}
-PENDING_DEL=SEL;
-document.getElementById("confirmMsg").textContent='Desea eliminar "'+(SEL.CodCliente||"")+" - "+(SEL.DesCliente||"")+'"? ';
-document.getElementById("confirmOverlay").className="show";
-closeMenu();
+  if(!SEL){toast("Seleccione un cliente",false);closeMenu();return;}
+  PENDING_DEL=SEL;
+  document.getElementById("confirmMsg").textContent='Eliminar "'+(SEL.DesCliente||SEL.CodCliente||"cliente")+'"? Esta accion no se puede deshacer.';
+  document.getElementById("confirmOverlay").className="show";
+  closeMenu();
 }
-
 function closeConfirm(e){
-if(e&&e.target!==document.getElementById("confirmOverlay"))return;
-document.getElementById("confirmOverlay").className="";
-PENDING_DEL=null;
+  if(e&&e.target!==document.getElementById("confirmOverlay"))return;
+  document.getElementById("confirmOverlay").className="";
+  PENDING_DEL=null;
 }
-
 function confirmDel(){
-if(!PENDING_DEL){closeConfirm();return}
-var delItem=PENDING_DEL;
-closeConfirm();
-showLoad();
-apiPost({action:"adminData",method:"DELETE",sheetName:"Clientes",data:{CodCliente:delItem.CodCliente}})
-.then(function(r){
- hideLoad();
- if(r.success){toast("Eliminado",true);SEL=null;loadData();}
- else{toast(r.error||"Error",false);}
-})
-.catch(function(e){hideLoad();toast("Error de red",false);});
+  if(!PENDING_DEL){closeConfirm();return;}
+  var delItem=PENDING_DEL;
+  closeConfirm();showLoad();
+  apiPost({action:"adminData",method:"DELETE",sheetName:"Clientes",data:{CodCliente:delItem.CodCliente}})
+  .then(function(r){
+    hideLoad();
+    if(r.success){toast("Cliente eliminado",true);SEL=null;loadData();}
+    else{toast(r.error||"Error",false);}
+  })
+  .catch(function(e){hideLoad();toast("Error de red",false);});
 }
 
+/* ===== SAVE ===== */
 function save(){
-var d={
-DesCliente:document.getElementById("fDesc").value.trim(),
-TelCliente:document.getElementById("fTel").value.trim(),
-TelCliente2:document.getElementById("fTel2").value.trim(),
-DirCliente:document.getElementById("fDir").value.trim(),
-CedulaRifCliente:document.getElementById("fCedula").value.trim(),
-EmailCliente:document.getElementById("fEmail").value.trim(),
-Estado:FORM_STATE?"Activo":"Inactivo"
-};
-if(!d.DesCliente||!d.TelCliente){toast("Nombre y Telefono requeridos",false);return;}
-showLoad();
-if(MODAL_MODE==="edit"&&SEL){
-d.CodCliente=SEL.CodCliente;
-apiPost({action:"adminData",method:"PUT",sheetName:"Clientes",data:d})
-.then(function(r){
- hideLoad();
- if(r.success){toast("Guardado",true);SEL=null;closeModal();loadData();}
- else{toast(r.error||"Error",false);}
-})
-.catch(function(e){hideLoad();toast("Error de red",false);});
-}else{
-apiPost({action:"adminData",method:"POST",sheetName:"Clientes",data:d})
-.then(function(r){
- hideLoad();
- if(r.success){toast("Creado: "+r.code,true);SEL=null;closeModal();loadData();}
- else{toast(r.error||"Error",false);}
-})
-.catch(function(e){hideLoad();toast("Error de red",false);});
-}
+  var desc=document.getElementById("fDesc").value.trim();
+  var tel=validatePhone("fTelPrefix","fTelNum","fTelHint",true);
+  var tel2=validatePhone("fTel2Prefix","fTel2Num","fTel2Hint",false);
+  var dir=document.getElementById("fDir").value.trim();
+  var ced=document.getElementById("fCedula").value.trim();
+  var email=document.getElementById("fEmail").value.trim();
+
+  if(!desc){toast("Nombre requerido",false);document.getElementById("fDesc").focus();return;}
+  if(tel===null){toast("Telefono invalido",false);return;}
+
+  var d={
+    DesCliente:desc,
+    TelCliente:tel,
+    TelCliente2:tel2,
+    DirCliente:dir,
+    CedulaRifCliente:ced,
+    EmailCliente:email,
+    Estado:FORM_STATE?"Activo":"Inactivo"
+  };
+
+  showLoad();
+  if(MODAL_MODE==="edit"&&SEL){
+    d.CodCliente=SEL.CodCliente;
+    apiPost({action:"adminData",method:"PUT",sheetName:"Clientes",data:d})
+    .then(function(r){
+      hideLoad();
+      if(r.success){toast("Guardado",true);SEL=null;closeModal();loadData();}
+      else{toast(r.error||"Error",false);}
+    })
+    .catch(function(e){hideLoad();toast("Error de red",false);});
+  }else{
+    apiPost({action:"adminData",method:"POST",sheetName:"Clientes",data:d})
+    .then(function(r){
+      hideLoad();
+      if(r.success){toast("Creado: "+r.code,true);SEL=null;closeModal();loadData();}
+      else{toast(r.error||"Error",false);}
+    })
+    .catch(function(e){hideLoad();toast("Error de red",false);});
+  }
 }
 
 function toggleViewInactivos(){
-SHOW_INACTIVOS=!SHOW_INACTIVOS;
-var t=document.getElementById("menuToggle");
-if(SHOW_INACTIVOS){
- t.className="modalToggle on";
-}else{
- t.className="modalToggle";
-}
-closeMenu();
-SEL=null;
-render();
+  SHOW_INACTIVOS=!SHOW_INACTIVOS;
+  var t=document.getElementById("menuToggle");
+  t.className=SHOW_INACTIVOS?"modalToggle on":"modalToggle";
+  closeMenu();SEL=null;render();
 }
 
 function clearSearch(){document.getElementById("searchInput").value="";render();}
 
 document.getElementById("searchInput").addEventListener("input",render);
-
-document.addEventListener("keydown",function(e){
-if(e.key==="Escape"){closeMenu();closeModal();}
-});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeMenu();closeModal();closeConfirm();}});
 
 init();
 </script>
-
 <!--
-FastBurguer Admin v9.13
-Modulo: clientes.html
-Version: 9.13
-Fecha: 2026-06-08
-Asistencia: Generado con IA
-Proyecto: Ing. Jesus Linares
-Contacto: 0412-0639340
+FastBurguer Clientes v10.0
+Correcciones:
+- Correlativo: frontend ya no genera codigo, muestra "AUTO", backend genera real
+- Telefono: validacion estricta 041X/042X + 7 digitos, prefix+numero separados
+- UI: cards ultramodernas sin checkbox, columnas alineadas, stats bar, animaciones fluidas
+- UX: modal bottom sheet, drag indicator, toggle switches premium, toast animado
+Fecha: 2026-06-15
 -->
 </body>
 </html>
