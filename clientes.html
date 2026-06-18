@@ -75,15 +75,8 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 .filterSelect{background:var(--bg-card);border:1.5px solid var(--border);color:var(--text-primary);border-radius:var(--radius-md);padding:11px 10px;font-size:13px;outline:none;transition:0.3s;flex-shrink:0;cursor:pointer}
 .filterSelect:focus{border-color:rgba(255,107,53,0.4)}
 
-/* ===== STATS BAR ===== */
-.statsBar{position:fixed;top:118px;left:0;right:0;padding:0 16px;z-index:98;display:flex;gap:10px;overflow-x:auto;scrollbar-width:none}
-.statsBar::-webkit-scrollbar{display:none}
-.statCard{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 16px;min-width:100px;flex-shrink:0}
-.statValue{font-size:18px;font-weight:800;color:var(--orange);line-height:1}
-.statLabel{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px}
-
 /* ===== CLIENT CARDS ===== */
-.cardsArea{padding:180px 16px 100px}
+.cardsArea{padding:118px 16px 100px}
 .clientCard{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:0;overflow:hidden;transition:0.3s ease;cursor:pointer;position:relative;margin-bottom:10px}
 .clientCard:hover{border-color:rgba(255,107,53,0.2);box-shadow:0 4px 24px rgba(255,107,53,0.06);transform:translateY(-1px)}
 .clientCard.sel{border-color:rgba(255,107,53,0.35);box-shadow:0 0 0 3px var(--orange-glow),0 4px 24px rgba(255,107,53,0.1)}
@@ -257,20 +250,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
   </select>
 </div>
 
-<div class="statsBar" id="statsBar">
-  <div class="statCard">
-    <div class="statValue" id="statTotal">0</div>
-    <div class="statLabel">Total</div>
-  </div>
-  <div class="statCard">
-    <div class="statValue" id="statActivos">0</div>
-    <div class="statLabel">Activos</div>
-  </div>
-  <div class="statCard">
-    <div class="statValue" id="statInactivos">0</div>
-    <div class="statLabel">Inactivos</div>
-  </div>
-</div>
+<!-- statsBar eliminado v10.1: KPIs redundantes, ocupaban espacio sin utilidad -->
 
 <div class="cardsArea" id="main"></div>
 
@@ -395,7 +375,7 @@ function loadData(){
   apiGet("adminData",{method:"GET",sheetName:"Clientes"})
   .then(function(r){
     hideLoad();
-    if(r.success){ROWS=r.data||[];render();updateStats();}
+    if(r.success){ROWS=r.data||[];render();}
     else{showError(r.error||"Error al cargar datos");}
   })
   .catch(function(e){hideLoad();showError("Error de red al cargar clientes");});
@@ -407,15 +387,6 @@ function showError(msg){
     '<div class="emptyStateTitle">Error de carga</div>'+
     '<div class="emptyStateDesc">'+msg+'</div>'+
     '<button class="retryBtn" onclick="loadData()">Reintentar</button></div>';
-}
-
-function updateStats(){
-  var total=ROWS.length;
-  var activos=ROWS.filter(function(r){return r.Estado==="Activo"}).length;
-  var inactivos=ROWS.filter(function(r){return r.Estado==="Inactivo"}).length;
-  document.getElementById("statTotal").textContent=total;
-  document.getElementById("statActivos").textContent=activos;
-  document.getElementById("statInactivos").textContent=inactivos;
 }
 
 function render(){
@@ -712,13 +683,15 @@ document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeMenu()
 init();
 </script>
 <!--
-FastBurguer Clientes v10.0
+FastBurguer Clientes v10.1
 Correcciones:
-- Correlativo: frontend ya no genera codigo, muestra "AUTO", backend genera real
+- Telefono fix: backend v12.3.7 preserva cero inicial en POST/PUT adminData
+- StatsBar eliminado: KPIs redundantes, ocupaban espacio sin utilidad real
+- Layout: cardsArea ajustado, más espacio visible para lista de clientes
 - Telefono: validacion estricta 041X/042X + 7 digitos, prefix+numero separados
-- UI: cards ultramodernas sin checkbox, columnas alineadas, stats bar, animaciones fluidas
+- UI: cards ultramodernas sin checkbox, animaciones fluidas
 - UX: modal bottom sheet, drag indicator, toggle switches premium, toast animado
-Fecha: 2026-06-15
+Fecha: 2026-06-17
 -->
 </body>
 </html>
