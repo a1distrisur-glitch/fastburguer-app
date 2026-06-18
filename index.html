@@ -39,21 +39,127 @@
   }
   .btn-primary:active{transform:scale(0.98);}
 
-  /* Product Card v2 — Horizontal tipo carrito */
-  .product-card-v2{
-    transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+  /* Product Card v3 — Vitrina Horizontal */
+  .product-card-v3{
+    transition:all 0.35s cubic-bezier(0.4,0,0.2,1);
     border:1px solid rgba(255,255,255,0.06);
+    position:relative;
+    overflow:hidden;
   }
-  .product-card-v2:hover{
-    border-color:rgba(255,107,53,0.2);
-    background:rgba(255,255,255,0.06);
+  .product-card-v3::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(135deg, rgba(255,107,53,0.03) 0%, transparent 50%);
+    opacity:0;
+    transition:opacity 0.35s ease;
+    pointer-events:none;
+    z-index:0;
   }
-  .product-card-v2:hover .product-thumb{transform:scale(1.05);}
-  .product-thumb{transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);}
+  .product-card-v3:hover::before{opacity:1;}
+  .product-card-v3:hover{
+    border-color:rgba(255,255,255,0.12);
+    background:rgba(255,255,255,0.05);
+    transform:translateY(-3px);
+    box-shadow:0 12px 40px rgba(0,0,0,0.4), 0 0 30px rgba(255,107,53,0.06);
+  }
+  .product-card-v3:hover .product-thumb-v3{transform:scale(1.08);}
+  /* Focus profesional - accesible y elegante */
+  .product-card-v3:focus-visible{
+    outline:none;
+    border-color:transparent;
+    box-shadow:0 0 0 2px rgba(255,107,53,0.4), 0 8px 30px rgba(0,0,0,0.3);
+    transform:translateY(-2px);
+  }
+  .product-card-v3:focus-visible::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    border-radius:0.75rem;
+    box-shadow:inset 0 0 20px rgba(255,107,53,0.08);
+    pointer-events:none;
+    z-index:1;
+  }
+  /* Active state - cuando se hace click */
+  .product-card-v3:active{
+    transform:translateY(-1px) scale(0.995);
+    box-shadow:0 4px 15px rgba(0,0,0,0.3);
+    transition:all 0.1s ease;
+  }
+  .product-card-v3:hover .product-img-wrap{
+    border-color:rgba(255,107,53,0.3);
+    box-shadow:0 0 15px rgba(255,107,53,0.15);
+  }
+  .product-thumb-v3{
+    transition:transform 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+  .product-img-wrap{
+    transition:all 0.35s cubic-bezier(0.4,0,0.2,1);
+    border:1.5px solid rgba(255,255,255,0.08);
+  }
+  .product-card-v3 .product-name-v3{
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+    line-height:1.25;
+  }
+  .product-card-v3 .product-desc-v3{
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .product-card-v3 .product-price-v3{
+    font-size:1.05rem;
+    text-shadow:0 0 12px rgba(255,107,53,0.25);
+  }
+  /* Staggered fade-in para cards */
+  .card-stagger{
+    animation:cardStagger 0.5s cubic-bezier(0.4,0,0.2,1) both;
+  }
+  @keyframes cardStagger{
+    from{opacity:0;transform:translateY(16px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  /* Skeleton shimmer mejorado */
+  .skeleton-v3{
+    background:linear-gradient(90deg,#1f2937 25%,#374151 50%,#1f2937 75%);
+    background-size:200% 100%;
+    animation:skeletonShimmer 1.5s ease-in-out infinite;
+    border-radius:0.75rem;
+  }
+  @keyframes skeletonShimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+  /* No stock elegante */
+  .no-stock-v3{opacity:0.5;pointer-events:none;}
+  .no-stock-v3 .add-btn-v3{display:none;}
+  .no-stock-stamp{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,0.5);
+    backdrop-filter:blur(2px);
+    z-index:10;
+    border-radius:0.75rem;
+  }
+  .no-stock-stamp span{
+    background:rgba(239,68,68,0.9);
+    color:#fff;
+    font-size:0.65rem;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    padding:0.35rem 0.9rem;
+    border-radius:9999px;
+    transform:rotate(-8deg);
+    box-shadow:0 4px 15px rgba(239,68,68,0.3);
+  }
 
   /* No stock overlay */
   .no-stock-v2{opacity:0.45;pointer-events:none;}
-  .no-stock-v2 .add-btn-v2{display:none;}
+  .no-stock-v2 .add-btn-v3{display:none;}
   .no-stock-badge{
     position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
     background:rgba(0,0,0,0.6);font-weight:700;font-size:0.9rem;border-radius:0.75rem;
@@ -148,19 +254,6 @@
     transform:none !important;box-shadow:none !important;
   }
 
-  /* Controles +/- en modal — compactos */
-  .modal-qty-btn-sm{
-    width:36px;height:36px;border-radius:8px;
-    background:#374151;color:#fff;font-size:1.1rem;font-weight:700;
-    display:flex;align-items:center;justify-content:center;
-    transition:all 0.2s ease;user-select:none;flex-shrink:0;
-  }
-  .modal-qty-btn-sm:hover{background:#ff6b35;color:#fff;}
-  .modal-qty-btn-sm:active{transform:scale(0.92);}
-  .modal-qty-display-sm{
-    font-size:1.25rem;font-weight:900;color:#fff;min-width:2.5rem;text-align:center;
-  }
-
   /* Botón flotante cambio de vista */
   .view-toggle-btn{
     position:fixed;
@@ -191,6 +284,131 @@
   }
   .view-toggle-btn:active{transform:scale(0.95);}
   .view-toggle-btn svg{width:1.5rem;height:1.5rem;}
+
+
+  /* ============================================
+     MODAL SHOWCASE PRODUCTO — Vitrina Espectacular
+     ============================================ */
+  .showcase-enter{animation:showcaseEnter 0.5s cubic-bezier(0.16,1,0.3,1);}
+  @keyframes showcaseEnter{
+    from{opacity:0;transform:scale(0.88) translateY(40px);filter:blur(4px);}
+    to{opacity:1;transform:scale(1) translateY(0);filter:blur(0);}
+  }
+  .showcase-img-reveal{animation:showcaseImgReveal 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both;}
+  @keyframes showcaseImgReveal{
+    from{opacity:0;transform:scale(1.1);}
+    to{opacity:1;transform:scale(1);}
+  }
+  .showcase-text-reveal{animation:showcaseTextReveal 0.5s cubic-bezier(0.16,1,0.3,1) 0.25s both;}
+  @keyframes showcaseTextReveal{
+    from{opacity:0;transform:translateY(15px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  .showcase-price-glow{animation:priceGlow 2s ease-in-out infinite;}
+  @keyframes priceGlow{
+    0%,100%{text-shadow:0 0 20px rgba(255,107,53,0.3);}
+    50%{text-shadow:0 0 35px rgba(255,107,53,0.6),0 0 60px rgba(255,107,53,0.2);}
+  }
+
+  .showcase-img-container{
+    position:relative;
+    overflow:hidden;
+  }
+  .showcase-img-container::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(to top, rgba(17,17,17,1) 0%, rgba(17,17,17,0.6) 15%, rgba(17,17,17,0.2) 40%, transparent 60%);
+    pointer-events:none;
+  }
+  .showcase-img-container::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(135deg, rgba(255,107,53,0.08) 0%, transparent 50%);
+    pointer-events:none;
+    z-index:1;
+  }
+  .showcase-img-container img{
+    transition:transform 0.8s cubic-bezier(0.4,0,0.2,1);
+  }
+  .showcase-card:hover .showcase-img-container img{
+    transform:scale(1.05);
+  }
+  .showcase-shimmer{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.08) 50%, transparent 60%);
+    background-size:200% 100%;
+    animation:shimmerReveal 1.2s ease-out;
+    pointer-events:none;
+    z-index:2;
+  }
+  @keyframes shimmerReveal{
+    0%{background-position:200% 0;}
+    100%{background-position:-200% 0;}
+  }
+  .showcase-cat{
+    display:inline-block;
+    background:linear-gradient(135deg,#ff6b35 0%,#f7931e 100%);
+    color:#fff;
+    font-size:0.65rem;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:0.15em;
+    padding:0.25rem 0.75rem;
+    border-radius:9999px;
+    margin-bottom:0.75rem;
+    box-shadow:0 2px 10px rgba(255,107,53,0.3);
+  }
+  .showcase-name{
+    font-size:1.4rem;
+    font-weight:900;
+    color:#fff;
+    line-height:1.15;
+    letter-spacing:-0.02em;
+    text-shadow:0 2px 10px rgba(0,0,0,0.5);
+  }
+  .showcase-price{
+    font-size:1.5rem;
+    font-weight:900;
+    color:#ff6b35;
+    text-shadow:0 0 20px rgba(255,107,53,0.2);
+  }
+  .showcase-desc{
+    font-size:0.9rem;
+    color:#a1a1aa;
+    line-height:1.75;
+    margin-top:0.75rem;
+    letter-spacing:0.01em;
+  }
+  .showcase-card{
+    background:linear-gradient(145deg, #1a1a1a 0%, #111 100%);
+    border:1px solid rgba(255,107,53,0.12);
+    box-shadow:0 25px 50px -12px rgba(0,0,0,0.8), 0 0 30px rgba(255,107,53,0.05);
+    transition:box-shadow 0.4s ease, border-color 0.4s ease;
+    animation:cardBreathing 4s ease-in-out infinite;
+  }
+  .showcase-card:hover{
+    box-shadow:0 25px 50px -12px rgba(0,0,0,0.9), 0 0 50px rgba(255,107,53,0.12);
+    border-color:rgba(255,255,255,0.12);
+  }
+  @keyframes cardBreathing{
+    0%,100%{box-shadow:0 25px 50px -12px rgba(0,0,0,0.8), 0 0 30px rgba(255,107,53,0.05);}
+    50%{box-shadow:0 25px 50px -12px rgba(0,0,0,0.85), 0 0 45px rgba(255,107,53,0.08);}
+  }
+  .showcase-close-hint{
+    position:absolute;
+    bottom:1.5rem;
+    left:50%;
+    transform:translateX(-50%);
+    color:rgba(255,255,255,0.3);
+    font-size:0.75rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    animation:showcaseHintPulse 2s ease-in-out infinite;
+  }
+  @keyframes showcaseHintPulse{0%,100%{opacity:0.3;}50%{opacity:0.6;}}
 
 </style>
 </head>
@@ -285,47 +503,78 @@
 <!-- MODAL PRODUCTO INTERMEDIO (Cantidad) -->
 <div id="productModal" class="fixed inset-0 z-[80] bg-black/80 flex items-center justify-center p-4 hidden">
   <div class="bg-[#1a1a1a] rounded-2xl w-full max-w-sm modal-product-enter border border-white/10 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-    <div class="p-6 overflow-y-auto custom-scroll">
-      <!-- Imagen + Nombre + Categoría -->
-      <div class="flex items-start gap-4 mb-4">
-        <div class="w-24 h-24 rounded-xl bg-gray-800 overflow-hidden flex-shrink-0 border border-gray-700">
-          <img id="modalProductImg" src="" alt="" class="w-full h-full object-cover product-thumb" onerror="this.src=PLACEHOLDER_IMG">
+    <!-- IMAGEN COMPACTA CON MARGEN -->
+    <div class="mx-4 mt-4 rounded-2xl h-[160px] bg-gray-800 overflow-hidden flex-shrink-0 relative">
+      <img id="modalProductImg" src="" alt="" class="w-full h-full object-cover cursor-pointer" onerror="this.src=PLACEHOLDER_IMG" >
+    </div>
+
+    <div class="px-4 pt-3 pb-2 overflow-y-auto custom-scroll flex-1">
+      <!-- CATEGORÍA -->
+      <p id="modalProductCat" class="text-xs text-orange-400 font-bold uppercase tracking-[0.15em] mb-1"></p>
+
+      <!-- NOMBRE + PRECIO MISMA LÍNEA -->
+      <div class="flex items-center justify-between mb-2">
+        <h3 id="modalProductName" class="font-bold text-lg text-white leading-tight flex-1 mr-2"></h3>
+        <span id="modalProductPrice" class="text-base font-black text-orange-400 price-mono flex-shrink-0"></span>
+      </div>
+
+      <!-- DESCRIPCIÓN COMPACTA -->
+      <p id="modalProductDesc" class="text-sm text-gray-400 leading-5 whitespace-pre-line mb-3"></p>
+
+      <!-- CANTIDAD + TOTAL EN FILA COMPACTA -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <button id="modalQtyMinus" class="w-10 h-10 rounded-xl bg-gray-700 text-white text-lg font-bold flex items-center justify-center transition hover:bg-gray-600 active:scale-95">−</button>
+          <span id="modalQtyDisplay" class="text-lg font-black text-white min-w-[1.5rem] text-center">1</span>
+          <button id="modalQtyPlus" class="w-10 h-10 rounded-xl bg-gray-700 text-white text-lg font-bold flex items-center justify-center transition hover:bg-gray-600 active:scale-95">+</button>
         </div>
-        <div class="flex-1 min-w-0">
-          <p id="modalProductCat" class="text-xs text-orange-400 font-semibold uppercase tracking-wider mb-1"></p>
-          <h3 id="modalProductName" class="font-bold text-xl text-white leading-tight"></h3>
-          <p id="modalProductPrice" class="text-lg font-black text-orange-400 price-mono mt-1"></p>
+        <div class="flex items-center gap-1.5">
+          <span class="text-gray-400 text-sm">Total</span>
+          <span id="modalTotalPrice" class="font-black text-white price-mono text-base"></span>
         </div>
-      </div>
-
-      <!-- DETALLE DEL PRODUCTO — SAGRADO, SIN TRUNCAR -->
-      <div class="mb-5">
-        <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1.5 font-semibold">Descripción</p>
-        <p id="modalProductDesc" class="text-sm text-gray-300 leading-relaxed"></p>
-      </div>
-
-      <!-- Cantidad — compacto -->
-      <div class="flex items-center justify-center gap-3 mb-4">
-        <button id="modalQtyMinus" class="modal-qty-btn-sm">−</button>
-        <span id="modalQtyDisplay" class="modal-qty-display-sm">1</span>
-        <button id="modalQtyPlus" class="modal-qty-btn-sm">+</button>
-      </div>
-
-      <!-- Total -->
-      <div class="flex items-center justify-between text-sm border-t border-white/10 pt-3">
-        <span class="text-gray-400">Total</span>
-        <span id="modalTotalPrice" class="font-bold text-white price-mono text-base"></span>
       </div>
     </div>
-    <div class="p-4 border-t border-white/10 bg-black/20 flex-shrink-0">
-      <button id="modalSendBtn" class="w-full btn-primary py-3.5 rounded-xl font-bold text-white text-lg transition">
-        Enviar Carrito
-      </button>
-      <button id="modalCancelBtn" class="w-full mt-2 py-3 rounded-xl font-bold text-gray-400 hover:text-white hover:bg-white/5 transition text-sm">
-        Cancelar
-      </button>
+
+    <div class="p-4 pt-2 flex-shrink-0">
+      <div class="flex gap-2">
+        <button id="modalCancelBtn" class="flex-1 py-2.5 rounded-xl font-bold text-gray-400 hover:text-white transition text-sm">
+          Cancelar
+        </button>
+        <button id="modalSendBtn" class="flex-[2] btn-primary py-2.5 rounded-xl font-bold text-white text-base transition">
+          Enviar Carrito
+        </button>
+      </div>
     </div>
   </div>
+</div>
+
+
+
+
+
+<!-- MODAL SHOWCASE PRODUCTO (Vitrina Espectacular) -->
+<div id="productShowcaseModal" class="fixed inset-0 z-[85] bg-black/95 flex items-center justify-center p-4 hidden" onclick="closeProductShowcase()">
+  <div class="showcase-card showcase-enter rounded-2xl w-full max-w-sm overflow-hidden relative" onclick="event.stopPropagation()">
+    <!-- Imagen grande con gradiente overlay, shimmer y animación reveal -->
+    <div class="showcase-img-container h-[55vh] w-full">
+      <img id="showcaseImg" src="" alt="" class="showcase-img-reveal w-full h-full object-cover">
+      <div class="showcase-shimmer"></div>
+    </div>
+    <!-- Info superpuesta en la parte inferior con animación staggered -->
+    <div class="p-5 relative z-10 -mt-16">
+      <span id="showcaseCat" class="showcase-cat showcase-text-reveal"></span>
+      <div class="flex items-baseline justify-between gap-3 showcase-text-reveal">
+        <h3 id="showcaseName" class="showcase-name flex-1"></h3>
+        <span id="showcasePrice" class="showcase-price showcase-price-glow price-mono flex-shrink-0"></span>
+      </div>
+      <p id="showcaseDesc" class="showcase-desc showcase-text-reveal"></p>
+    </div>
+  </div>
+  <!-- Hint de cierre con animación -->
+  <span class="showcase-close-hint">
+    <svg class="w-4 h-4 inline-block mr-1 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+    Toca para cerrar
+  </span>
 </div>
 
 <!-- SIDEBAR CARRITO (derecha) -->
@@ -464,7 +713,6 @@ let codASimbolo = {};
 let desTasaPorCod = {};
 let config = {};
 let currentClientPhone = localStorage.getItem("fb_client_phone") || "";
-let savedClientData = null;
 let enSitioAreas = [];
 
 // Estado del modal de producto
@@ -579,14 +827,15 @@ function showLoading() {
   let skeletons = "";
   for (let i = 0; i < 4; i++) {
     skeletons += `
-    <div class="glass rounded-2xl overflow-hidden p-3 flex gap-3 items-center">
-      <div class="w-16 h-16 rounded-lg bg-gray-800 skeleton flex-shrink-0"></div>
+    <div class="glass rounded-2xl overflow-hidden p-4 flex gap-4 items-center">
+      <div class="w-20 h-20 rounded-xl bg-gray-800 skeleton-v3 flex-shrink-0"></div>
       <div class="flex-1 space-y-2">
-        <div class="h-3 bg-gray-800 rounded w-1/3 skeleton"></div>
-        <div class="h-4 bg-gray-800 rounded w-3/4 skeleton"></div>
-        <div class="h-3 bg-gray-800 rounded w-1/2 skeleton"></div>
+        <div class="h-3 bg-gray-800 rounded w-1/3 skeleton-v3"></div>
+        <div class="h-5 bg-gray-800 rounded w-3/4 skeleton-v3"></div>
+        <div class="h-3 bg-gray-800 rounded w-2/3 skeleton-v3"></div>
+        <div class="h-4 bg-gray-800 rounded w-1/4 skeleton-v3"></div>
       </div>
-      <div class="h-8 bg-gray-800 rounded w-16 skeleton"></div>
+      <div class="h-9 bg-gray-800 rounded-lg w-18 skeleton-v3"></div>
     </div>`;
   }
   document.getElementById("productsGrid").innerHTML = `
@@ -683,29 +932,29 @@ function renderProductGrid(list) {
   }
 
   let html = "";
-  list.forEach(p => {
+  list.forEach((p, index) => {
     const isNoStock = p.StockProducto !== "Disponible";
-    const noStockClass = isNoStock ? "no-stock-v2 relative" : "";
+    const noStockClass = isNoStock ? "no-stock-v3 relative" : "";
 
     let btnClass, btnText, btnDisabled;
     if (isNoStock) {
-      btnClass = "add-btn-v2 hidden";
+      btnClass = "add-btn-v3 hidden";
       btnText = "Agregar";
       btnDisabled = "disabled";
     } else if (isStoreClosed) {
-      btnClass = "add-btn-v2 add-btn-disabled px-3 py-2 rounded-lg font-bold text-xs";
+      btnClass = "add-btn-v3 add-btn-disabled px-3.5 py-2.5 rounded-xl font-bold text-xs";
       btnText = "Agregar";
       btnDisabled = "disabled";
     } else {
-      btnClass = "add-btn-v2 btn-primary px-3 py-2 rounded-lg font-bold text-xs text-white transition";
+      btnClass = "add-btn-v3 btn-primary px-3.5 py-2.5 rounded-xl font-bold text-xs text-white transition";
       btnText = "Agregar";
       btnDisabled = "";
     }
 
     html += `
-    <div class="product-card-v2 ${noStockClass} glass rounded-xl overflow-hidden fade-in p-3 flex gap-3 items-center">
+    <div class="product-card-v3 ${noStockClass} glass rounded-xl overflow-hidden p-3 flex gap-3 items-center card-stagger" style="animation-delay:${index * 0.03}s" tabindex="0">
       <div class="w-16 h-16 rounded-lg bg-gray-800 overflow-hidden flex-shrink-0 border border-gray-700/50 relative">
-        <img src="${p.ImagenProducto || PLACEHOLDER_IMG}" alt="${p.DesProducto}" class="w-full h-full object-cover product-thumb" loading="lazy" decoding="async" onerror="this.src='${PLACEHOLDER_IMG}'">
+        <img src="${p.ImagenProducto || PLACEHOLDER_IMG}" alt="${p.DesProducto}" class="w-full h-full object-cover product-thumb-v3 cursor-pointer" loading="lazy" decoding="async" onerror="this.src='${PLACEHOLDER_IMG}'" onclick="openProductShowcase('${p.CodProducto}')">
         ${isNoStock ? '<div class="absolute inset-0 bg-black/50 flex items-center justify-center"><span class="text-[10px] font-bold text-red-400">Agotado</span></div>' : ''}
       </div>
       <div class="flex-1 min-w-0">
@@ -719,13 +968,13 @@ function renderProductGrid(list) {
           ${btnText}
         </button>
       </div>
-      ${isNoStock ? '<div class="no-stock-badge">No disponible</div>' : ''}
+      ${isNoStock ? '<div class="no-stock-stamp"><span>Agotado</span></div>' : ''}
     </div>`;
   });
   grid.innerHTML = html;
 
   if (!isStoreClosed) {
-    grid.querySelectorAll(".add-btn-v2").forEach(btn => {
+    grid.querySelectorAll(".add-btn-v3").forEach(btn => {
       if (!btn.disabled) btn.addEventListener("click", () => openProductModal(btn.dataset.code));
     });
   }
@@ -813,7 +1062,7 @@ function sendToCartFromModal() {
 // LOGICA DE CARRITO
 // ============================================
 function syncAddButtonStates() {
-  document.querySelectorAll(".add-btn-v2").forEach(btn => {
+  document.querySelectorAll(".add-btn-v3").forEach(btn => {
     const code = btn.dataset.code;
     const inCart = cart.some(item => item.CodProducto === code);
     if (inCart) {
@@ -828,35 +1077,6 @@ function syncAddButtonStates() {
       btn.disabled = false;
     }
   });
-}
-
-function addToCart(code) {
-  // Función legacy — ahora se usa el modal, pero la mantenemos para compatibilidad
-  const product = products.find(p => p.CodProducto === code);
-  if (!product) return;
-  if (product.StockProducto !== "Disponible") {
-    mostrarAlerta("error", "Producto agotado", "Este producto no esta disponible actualmente.");
-    return;
-  }
-  const existing = cart.find(item => item.CodProducto === code);
-  if (existing) {
-    existing.cantidad++; existing.subtotalItem = existing.cantidad * existing.precioUnitario;
-  } else {
-    cart.push({ 
-      CodProducto: product.CodProducto, 
-      CodCategoria: product.CodCategoria, 
-      DesCategoria: product.DesCategoria, 
-      DesProducto: product.DesProducto, 
-      cantidad: 1, 
-      precioUnitario: product.PrecioConvertido, 
-      subtotalItem: product.PrecioConvertido,
-      CodTasaProducto: product.CodTasa
-    });
-  }
-  saveCartToStorage();
-  updateCartUI();
-  const badge = document.getElementById("cartCount");
-  badge.classList.remove("cart-badge"); void badge.offsetWidth; badge.classList.add("cart-badge");
 }
 
 function removeFromCart(code) { cart = cart.filter(item => item.CodProducto !== code); saveCartToStorage(); updateCartUI(); }
@@ -1170,6 +1390,21 @@ function setupEventListeners() {
   document.getElementById("modalQtyPlus").addEventListener("click", () => modalQtyDelta(1));
   document.getElementById("modalSendBtn").addEventListener("click", sendToCartFromModal);
   document.getElementById("modalCancelBtn").addEventListener("click", closeProductModal);
+  document.getElementById("modalProductImg").addEventListener("click", openImageLightbox);
+
+  // Modal showcase (vitrina)
+  document.getElementById("showcaseImg").addEventListener("click", closeProductShowcase);
+
+  // Focus en cards - abrir showcase al enfocar con Enter
+  document.querySelectorAll('.product-card-v3').forEach(card => {
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const code = card.querySelector('[data-code]')?.dataset.code;
+        if (code) openProductShowcase(code);
+      }
+    });
+  });
 
   // Botón cambio de vista
   document.getElementById("viewToggleBtn").addEventListener("click", () => {
@@ -1177,6 +1412,63 @@ function setupEventListeners() {
   });
 }
 
+
+// ============================================
+// LIGHTBOX IMAGEN
+// ============================================
+function openImageLightbox() {
+  const imgSrc = document.getElementById("modalProductImg").src;
+  document.getElementById("lightboxImg").src = imgSrc;
+  document.getElementById("imageLightbox").classList.remove("hidden");
+}
+
+function closeImageLightbox() {
+  document.getElementById("imageLightbox").classList.add("hidden");
+}
+
+
+// ============================================
+// MODAL SHOWCASE PRODUCTO — Vitrina
+// ============================================
+function openProductShowcase(code) {
+  const product = products.find(p => p.CodProducto === code);
+  if (!product) return;
+
+  const modal = document.getElementById("productShowcaseModal");
+  const card = modal.querySelector(".showcase-card");
+  const img = document.getElementById("showcaseImg");
+  const textEls = modal.querySelectorAll(".showcase-text-reveal");
+
+  // Resetear animaciones para que se reproduzcan cada vez
+  card.style.animation = "none";
+  img.style.animation = "none";
+  textEls.forEach(el => el.style.animation = "none");
+  void card.offsetWidth; // Force reflow
+
+  // Rellenar datos
+  img.src = product.ImagenProducto || PLACEHOLDER_IMG;
+  img.alt = product.DesProducto;
+  document.getElementById("showcaseCat").textContent = product.DesCategoria;
+  document.getElementById("showcaseName").textContent = product.DesProducto;
+  document.getElementById("showcasePrice").textContent = formatearPrecio(product.PrecioConvertido, currentCurrency);
+  document.getElementById("showcaseDesc").textContent = product.DetalleProducto || "Sin descripción";
+
+  // Mostrar modal
+  modal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+
+  // Restaurar animaciones con delay staggered
+  card.style.animation = "";
+  img.style.animation = "";
+  setTimeout(() => {
+    textEls.forEach(el => el.style.animation = "");
+  }, 50);
+}
+
+function closeProductShowcase() {
+  document.getElementById("productShowcaseModal").classList.add("hidden");
+  document.body.style.overflow = "";
+}
 function checkOverlay() {
   if (document.getElementById("sideMenu").classList.contains("-translate-x-full") &&
       document.getElementById("cartSidebar").classList.contains("translate-x-full") &&
@@ -1195,7 +1487,10 @@ function checkOverlay() {
   <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
 </button>
 
+
+<!-- MODAL LIGHTBOX IMAGEN -->
+<div id="imageLightbox" class="fixed inset-0 z-[95] bg-black/95 flex items-center justify-center hidden" onclick="closeImageLightbox()">
+  <img id="lightboxImg" src="" alt="" class="max-w-[90%] max-h-[80vh] object-contain fade-in" onclick="event.stopPropagation()">
+</div>
 </body>
 </html>
-<!-- CONTROL DE VERSION CLIENTE
-var CLIENT_VERSION = "v9.2.2 - index2 | Cards Carrito + Modal Cantidad"; -->
