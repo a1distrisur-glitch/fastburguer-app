@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FastBurguer — Cobro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -37,6 +37,19 @@ body{font-family:'Inter',sans-serif;background:#161616;color:#fff;min-height:100
 .alertBtn{width:100%;padding:12px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:0.2s;border:none;background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff}
 .alertBtn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(255,107,53,0.3)}
 .alertBtn:active{transform:scale(0.97)}
+
+/* ===== MODAL CONFIRMACION COBRO ===== */
+#confirmCobroModal{position:fixed;inset:0;z-index:10001;background:rgba(0,0,0,0.85);display:none;justify-content:center;align-items:center;padding:20px;backdrop-filter:blur(8px)}
+#confirmCobroModal.show{display:flex}
+.confirmBox{background:linear-gradient(180deg,#1a1a1a,#0f0f0f);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:28px 24px;max-width:380px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.8);animation:alertEnter 0.35s cubic-bezier(0.4,0,0.2,1)}
+.confirmTitle{font-size:18px;font-weight:800;color:#fff;margin-bottom:8px}
+.confirmBody{font-size:13px;color:#9ca3af;margin-bottom:20px;line-height:1.5;white-space:pre-line}
+.confirmRow{display:flex;gap:10px}
+.confirmBtn{flex:1;padding:12px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:0.2s;border:none}
+.confirmBtn.ok{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff}
+.confirmBtn.ok:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(34,197,94,0.3)}
+.confirmBtn.cancel{background:#1a1a1a;color:#9ca3af;border:1px solid rgba(255,255,255,0.1)}
+.confirmBtn.cancel:hover{background:#252525;color:#fff}
 
 /* ===== HEADER ===== */
 .header{position:fixed;top:0;left:0;right:0;height:56px;background:rgba(22,22,22,0.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:100}
@@ -79,11 +92,15 @@ body{font-family:'Inter',sans-serif;background:#161616;color:#fff;min-height:100
 .cobrarPagadoInput{background:#111111;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px 12px;color:#fff;font-size:16px;font-weight:700;outline:none;font-family:'Inter',sans-serif;text-align:center}
 .cobrarPagadoInput:focus{border-color:rgba(255,107,53,0.4);box-shadow:0 0 0 3px rgba(255,107,53,0.08)}
 
-/* ===== PAYMENT ROW (2 líneas) ===== */
+/* ===== PAYMENT ROW (2 lineas) ===== */
 .paymentRow{background:#191919;border:1px solid rgba(255,255,255,0.04);border-radius:12px;padding:10px;margin-bottom:8px}
+.paymentRow.confirmed{opacity:0.7;pointer-events:none;border-color:rgba(34,197,94,0.2)}
 .paymentRow .row2{display:flex;gap:8px;align-items:center;margin-top:8px}
-.paymentRow .row2 input[type="number"]{flex:0 0 130px;width:130px;font-size:16px;font-weight:700}
-.paymentRow .row2 input[type="text"]{flex:1 1 140px;min-width:140px}
+.paymentRow .row2 input[type="text"]{flex:1 1 140px;min-width:140px;font-size:16px;font-weight:700}
+.paymentRow .row2 input[type="text"].refInput{flex:1 1 100px;min-width:80px}
+.paymentRow .row2 .confirmMontoBtn{flex:0 0 auto;padding:8px 14px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;transition:0.2s;border:none;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;white-space:nowrap}
+.paymentRow .row2 .confirmMontoBtn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(34,197,94,0.3)}
+.paymentRow .row2 .confirmMontoBtn:active{transform:scale(0.95)}
 .paymentRow .row2 .deleteBtn{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#f87171;cursor:pointer;transition:0.2s;border:none;flex-shrink:0}
 .paymentRow .row2 .deleteBtn:hover{background:rgba(239,68,68,0.2)}
 .paymentRow .row2 .deleteBtn:active{transform:scale(0.93)}
@@ -92,13 +109,12 @@ body{font-family:'Inter',sans-serif;background:#161616;color:#fff;min-height:100
 .paymentSelect{width:100%;background:#1f2937 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%239ca3af' viewBox='0 0 24 24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right 12px center;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 36px 12px 14px;color:#fff;font-size:14px;font-family:'Inter',sans-serif;outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;transition:0.2s}
 .paymentSelect:focus{border-color:rgba(255,107,53,0.4);box-shadow:0 0 0 3px rgba(255,107,53,0.08)}
 .paymentSelect option{background:#1a1a1a;color:#fff}
+.paymentSelect:disabled{opacity:0.5;cursor:not-allowed}
 
 /* Inputs generales dentro de paymentRow */
 .paymentRow input{background:#111111;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px 12px;color:#fff;font-size:14px;outline:none;font-family:'Inter',sans-serif}
 .paymentRow input:focus{border-color:rgba(255,107,53,0.4);box-shadow:0 0 0 3px rgba(255,107,53,0.08)}
-
-.addPaymentBtn{width:100%;padding:10px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;transition:0.2s;border:1px dashed rgba(255,255,255,0.15);background:transparent;color:#9ca3af;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:12px}
-.addPaymentBtn:hover{border-color:rgba(255,107,53,0.4);color:#f7931e}
+.paymentRow input:disabled{opacity:0.5;cursor:not-allowed}
 
 /* ===== PEDIDOS (icono carrito) ===== */
 .pedidosSection{background:#141414;border:1px solid rgba(255,255,255,0.04);border-radius:14px;margin-bottom:16px;overflow:hidden}
@@ -160,6 +176,12 @@ body{font-family:'Inter',sans-serif;background:#161616;color:#fff;min-height:100
 .obsTextarea:focus{border-color:rgba(255,107,53,0.4);box-shadow:0 0 0 3px rgba(255,107,53,0.08)}
 .obsTextarea::placeholder{color:#4b5563}
 
+/* ===== FALLBACK NOSCRIPT ===== */
+noscript .noscript-fallback{position:fixed;inset:0;background:#161616;display:flex;align-items:center;justify-content:center;z-index:99999;padding:20px}
+noscript .noscript-box{background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:32px;max-width:400px;text-align:center}
+noscript .noscript-box h2{color:#f7931e;font-size:18px;font-weight:800;margin-bottom:12px}
+noscript .noscript-box p{color:#9ca3af;font-size:13px;line-height:1.6}
+
 /* ===== SCROLLBAR ===== */
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -167,6 +189,16 @@ body{font-family:'Inter',sans-serif;background:#161616;color:#fff;min-height:100
 </style>
 </head>
 <body>
+
+<!-- FIX #9: Fallback si JavaScript esta deshabilitado o falla -->
+<noscript>
+  <div class="noscript-fallback">
+    <div class="noscript-box">
+      <h2>⚠️ JavaScript requerido</h2>
+      <p>Este modulo de cobro requiere JavaScript para funcionar. Por favor habilite JavaScript en su navegador o contacte al administrador del sistema.</p>
+    </div>
+  </div>
+</noscript>
 
 <div id="load"><div class="spin"></div><div style="color:#9ca3af;font-size:13px">Cargando...</div></div>
 <div id="toast"></div>
@@ -180,6 +212,20 @@ body{font-family:'Inter',sans-serif;background:#161616;color:#fff;min-height:100
     <button class="alertBtn" id="alertBtn" type="button"></button>
   </div>
 </div>
+
+<!-- MODAL CONFIRMACION COBRO -->
+<div id="confirmCobroModal">
+  <div class="confirmBox">
+    <div class="confirmTitle">¿Confirmar Cobro?</div>
+    <div class="confirmBody" id="confirmCobroBody">Verifique los montos antes de continuar.</div>
+    <div class="confirmRow">
+      <button class="confirmBtn cancel" id="btnCancelCobro" type="button">Cancelar</button>
+      <button class="confirmBtn ok" id="btnOkCobro" type="button">Si, Cobrar</button>
+    </div>
+  </div>
+</div>
+
+
 
 <!-- HEADER -->
 <div class="header">
@@ -200,552 +246,809 @@ body{font-family:'Inter',sans-serif;background:#161616;color:#fff;min-height:100
 </div>
 
 <script>
-var API="https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9FoXBkMYwPD4xkK1llpxakpExC6DspQvnOI6Vmw/exec";
-var NRO_PEDIDO="",ACTION="",PEDIDO=null,ITEMS=[],FORMAS_PAGO=[],PAGOS=[],CONFIG={},TASAS={};
+// ============================================
+// FASTBURGUER — CAJACOBRO.HTML v2.5.2
+// Produccion: fixes #2,#4,#5,#6,#7,#8,#9 aplicados
+// FIX select nativo movil + CodPago real desde backend v12.4.3
+// ============================================
 
-function showLoad(){document.getElementById("load").classList.add("show")}
-function hideLoad(){document.getElementById("load").classList.remove("show")}
-function toast(m,tipo){var t=document.getElementById("toast");t.textContent=m;t.className=tipo||"ok";t.style.display="block";setTimeout(function(){t.style.display="none"},4000)}
+var API = "https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9FoXBkMYwPD4xkK1llpxakpExC6DspQvnOI6Vmw/exec";
+var NRO_PEDIDO = "", ACTION = "", PEDIDO = null, ITEMS = [], FORMAS_PAGO = [], PAGOS = [], CONFIG = {}, TASAS = {};
+// FIX #7: PAGOS_ACTUALES se carga desde backend via loadPagosActuales()
+var PAGOS_ACTUALES = [];
 
-function mostrarAlerta(tipo,titulo,mensaje,callback,btnText){
-  btnText=btnText||"Entendido";
-  var modal=document.getElementById("customAlertModal");
-  var icon=document.getElementById("alertIcon");
-  var title=document.getElementById("alertTitle");
-  var body=document.getElementById("alertBody");
-  var btn=document.getElementById("alertBtn");
-  title.textContent=titulo;
-  body.textContent=mensaje;
-  btn.textContent=btnText;
-  if(tipo==="error"){
-    icon.className="alertIcon error";
-    icon.innerHTML='<svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>';
-  }else{
-    icon.className="alertIcon success";
-    icon.innerHTML='<svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+function showLoad() { document.getElementById("load").classList.add("show"); }
+function hideLoad() { document.getElementById("load").classList.remove("show"); }
+function toast(m, tipo) {
+  var t = document.getElementById("toast");
+  t.textContent = m;
+  t.className = tipo || "ok";
+  t.style.display = "block";
+  setTimeout(function() { t.style.display = "none"; }, 4000);
+}
+
+function mostrarAlerta(tipo, titulo, mensaje, callback, btnText) {
+  btnText = btnText || "Entendido";
+  var modal = document.getElementById("customAlertModal");
+  var icon = document.getElementById("alertIcon");
+  var title = document.getElementById("alertTitle");
+  var body = document.getElementById("alertBody");
+  var btn = document.getElementById("alertBtn");
+  title.textContent = titulo;
+  body.textContent = mensaje;
+  btn.textContent = btnText;
+  if (tipo === "error") {
+    icon.className = "alertIcon error";
+    icon.innerHTML = '<svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>';
+  } else {
+    icon.className = "alertIcon success";
+    icon.innerHTML = '<svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
   }
-  btn.onclick=function(){modal.classList.remove("show");if(callback)callback()};
+  btn.onclick = function() { modal.classList.remove("show"); if (callback) callback(); };
   modal.classList.add("show");
 }
 
-function apiGet(action,params){var url=API+"?action="+action+"&_cb="+Date.now();if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);return fetch(url).then(function(r){return r.json()})}
-function apiPost(d){return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)}).then(function(r){return r.json()})}
-
-function formatMoney(v,codTasa){var val=parseFloat(v)||0;var sym="$";if(codTasa==="T001"||codTasa==="T006")sym="Bs ";else if(codTasa==="T002")sym="$";else if(codTasa==="T003")sym="EUR ";else if(codTasa==="T004")sym="BN ";return sym+val.toFixed(2)}
-function formatTime(h){if(!h)return"--:--";var s=String(h);if(s.indexOf(":")>-1)return s.substring(0,5);var n=parseFloat(s);if(!isNaN(n)){var hh=Math.floor(n*24);var mm=Math.round((n*24-hh)*60);return String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")}return"--:--"}
-function getTipoLabel(t){t=String(t||"").toLowerCase();if(t==="delivery")return"Delivery";if(t==="pickup")return"Pick Up";if(t==="sitio")return"En Sitio";return t||"N/A"}
-function getEstadoClass(e){return String(e||"").toLowerCase().replace(/\s/g,"")}
-
-function init(){
-  var params=new URLSearchParams(window.location.search);
-  NRO_PEDIDO=params.get("pedido");
-  ACTION=params.get("action");
-  var validActions=["cobrar","liberar","anular","reversar"];
-  if(!NRO_PEDIDO||validActions.indexOf(ACTION)===-1){
-    mostrarAlerta("error","Parametros invalidos","Se requiere ?pedido=XXX&action=cobrar|liberar|anular|reversar",function(){window.location.href="caja.html"},"Regresar");
-    return;
-  }
-  if(ACTION==="liberar"||ACTION==="anular"||ACTION==="reversar"){
-    window.location.href="caja.html?pedido="+NRO_PEDIDO+"&action="+ACTION;
-    return;
-  }
-  document.getElementById("pageTitle").textContent="Cobrar";
-  document.getElementById("pageSub").textContent=NRO_PEDIDO;
-  showLoad();
-  loadConfig().then(function(){
-    loadPedido().then(function(){
-      loadFormasPago().then(function(){
-        render();hideLoad();
-      }).catch(function(){hideLoad()});
-    }).catch(function(){hideLoad()});
-  }).catch(function(){hideLoad()});
+function apiGet(action, params) {
+  var url = API + "?action=" + action + "&_cb=" + Date.now();
+  if (params) for (var key in params) url += "&" + key + "=" + encodeURIComponent(params[key]);
+  return fetch(url).then(function(r) { return r.json(); });
+}
+function apiPost(d) {
+  return fetch(API, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(d) }).then(function(r) { return r.json(); });
 }
 
-function loadConfig(){return apiGet("init",{}).then(function(r){if(r.success&&r.data&&r.data.config){CONFIG=r.data.config}if(r.success&&r.data&&r.data.tasas){r.data.tasas.forEach(function(t){TASAS[t.CodTasa]=parseFloat(t.ValorTasa)||0})}}).catch(function(e){throw e})}
-function loadPedido(){return apiGet("getPedidoDetalle",{nroPedido:NRO_PEDIDO}).then(function(r){if(r.success&&r.pedido){PEDIDO=r.pedido;ITEMS=r.items||[]}else{mostrarAlerta("error","Pedido no encontrado","No se encontro "+NRO_PEDIDO,function(){window.location.href="caja.html"},"Regresar")}}).catch(function(e){mostrarAlerta("error","Error de red","No se pudo cargar el pedido: "+(e.message||"desconocido"),function(){window.location.href="caja.html"},"Regresar");throw e})}
-function loadFormasPago(){return apiGet("getFormasPagoActivas",{}).then(function(r){if(r.success&&r.data){FORMAS_PAGO=r.data}}).catch(function(e){toast("Error cargando formas de pago: "+(e.message||"desconocido"),"err");throw e})}
+function parseNum(v) {
+  if (v === null || v === undefined || v === "") return 0;
+  var s = String(v).trim();
+  if (s.indexOf(",") > -1) { s = s.replace(/\./g, "").replace(",", "."); }
+  var n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+}
 
-function render(){
-  var container=document.getElementById("mainContent");
-  var html="";
-  html+=renderPedidoHeaderCard();
-  if(ACTION==="cobrar")html+=renderCobrarSection();
-  else if(ACTION==="liberar")html+=renderLiberarSection();
-  else if(ACTION==="anular")html+=renderAnularSection();
-  else if(ACTION==="reversar")html+=renderReversarSection();
-  html+=renderPedidosSection();
-  html+=renderItems();
-  if(ACTION==="cobrar")html+=renderBotonesCobro();
-  container.innerHTML=html;
+function formatMoney(v, codTasa) {
+  var val = parseNum(v);
+  var sym = "$";
+  if (codTasa === "T001" || codTasa === "T006") sym = "Bs ";
+  else if (codTasa === "T002") sym = "$";
+  else if (codTasa === "T003") sym = "EUR ";
+  else if (codTasa === "T004") sym = "BN ";
+  return sym + val.toFixed(2).replace(".", ",");
+}
+function formatTime(h) {
+  if (!h) return "--:--";
+  var s = String(h);
+  if (s.indexOf(":") > -1) return s.substring(0, 5);
+  var n = parseFloat(s);
+  if (!isNaN(n)) { var hh = Math.floor(n * 24); var mm = Math.round((n * 24 - hh) * 60); return String(hh).padStart(2, "0") + ":" + String(mm).padStart(2, "0"); }
+  return "--:--";
+}
+function getTipoLabel(t) {
+  t = String(t || "").toLowerCase();
+  if (t === "delivery") return "Delivery";
+  if (t === "pickup") return "Pick Up";
+  if (t === "sitio") return "En Sitio";
+  return t || "N/A";
+}
+function getEstadoClass(e) { return String(e || "").toLowerCase().replace(/\s/g, ""); }
+
+// ============================================
+// INICIALIZACION
+// ============================================
+function init() {
+  var params = new URLSearchParams(window.location.search);
+  NRO_PEDIDO = params.get("pedido");
+  ACTION = params.get("action");
+  var validActions = ["cobrar", "liberar", "anular", "reversar"];
+  if (!NRO_PEDIDO || validActions.indexOf(ACTION) === -1) {
+    mostrarAlerta("error", "Parametros invalidos", "Se requiere ?pedido=XXX&action=cobrar|liberar|anular|reversar", function() { window.location.href = "caja.html"; }, "Regresar");
+    return;
+  }
+  if (ACTION === "liberar" || ACTION === "anular" || ACTION === "reversar") {
+    window.location.href = "caja.html?pedido=" + NRO_PEDIDO + "&action=" + ACTION;
+    return;
+  }
+  document.getElementById("pageTitle").textContent = "Cobrar";
+  document.getElementById("pageSub").textContent = NRO_PEDIDO;
+  showLoad();
+  loadConfig().then(function() {
+    loadPedido().then(function() {
+      // FIX #7: Cargar pagos actuales para la seccion reversar
+      loadPagosActuales().then(function() {
+        loadFormasPago().then(function() {
+          // FIX #5: Eliminada propiedad montoEditado (variable muerta)
+          PAGOS = [{ codFormaPago: '', montoPago: '', codTasa: '', referencia: '', confirmed: false }];
+          render(); hideLoad();
+        }).catch(function(e) { hideLoad(); console.error(e); });
+      }).catch(function(e) { hideLoad(); console.error(e); });
+    }).catch(function(e) { hideLoad(); console.error(e); });
+  }).catch(function(e) { hideLoad(); console.error(e); });
+}
+
+function loadConfig() {
+  return apiGet("init", {}).then(function(r) {
+    if (r.success && r.data && r.data.config) { CONFIG = r.data.config; }
+    if (r.success && r.data && r.data.tasas) { r.data.tasas.forEach(function(t) { TASAS[t.CodTasa] = parseNum(t.ValorTasa); }); }
+  }).catch(function(e) { throw e; });
+}
+
+// FIX #2: loadPedido ya NO hace throw despues de mostrarAlerta()
+// El error se maneja localmente sin propagar al catch de init()
+function loadPedido() {
+  return apiGet("getPedidoDetalle", { nroPedido: NRO_PEDIDO }).then(function(r) {
+    if (r.success && r.pedido) {
+      PEDIDO = r.pedido; ITEMS = r.items || [];
+    } else {
+      mostrarAlerta("error", "Pedido no encontrado", "No se encontro " + NRO_PEDIDO, function() { window.location.href = "caja.html"; }, "Regresar");
+      // FIX #2: Retornamos promesa rechazada SIN throw para evitar doble alerta
+      return Promise.reject(new Error("Pedido no encontrado"));
+    }
+  }).catch(function(e) {
+    // FIX #2: Solo mostramos alerta si NO es el rechazo controlado de arriba
+    if (e.message !== "Pedido no encontrado") {
+      mostrarAlerta("error", "Error de red", "No se pudo cargar el pedido: " + (e.message || "desconocido"), function() { window.location.href = "caja.html"; }, "Regresar");
+    }
+    throw e;
+  });
+}
+
+function loadFormasPago() {
+  return apiGet("getFormasPagoActivas", {}).then(function(r) {
+    if (r.success && r.data) { FORMAS_PAGO = r.data; }
+  }).catch(function(e) { toast("Error cargando formas de pago: " + (e.message || "desconocido"), "err"); throw e; });
+}
+
+// FIX #7: Nueva funcion para cargar pagos actuales del pedido desde backend
+function loadPagosActuales() {
+  return apiGet("getPagosPorPedido", { nroPedido: NRO_PEDIDO }).then(function(r) {
+    if (r.success && r.data) { PAGOS_ACTUALES = r.data; }
+    else { PAGOS_ACTUALES = []; }
+  }).catch(function(e) {
+    console.warn("No se pudieron cargar pagos actuales:", e.message);
+    PAGOS_ACTUALES = [];
+  });
+}
+
+// ============================================
+// RENDER
+// ============================================
+function render() {
+  var container = document.getElementById("mainContent");
+  var html = "";
+  html += renderPedidoHeaderCard();
+  if (ACTION === "cobrar") html += renderCobrarSection();
+  else if (ACTION === "liberar") html += renderLiberarSection();
+  else if (ACTION === "anular") html += renderAnularSection();
+  else if (ACTION === "reversar") html += renderReversarSection();
+  html += renderPedidosSection();
+  html += renderItems();
+  if (ACTION === "cobrar") html += renderBotonesCobro();
+  container.innerHTML = html;
+  if (ACTION === "cobrar") {
+    renderPaymentRows();
+    calcTotals();
+  }
   attachEvents();
 }
 
-function renderPedidoHeaderCard(){
-  var estadoPedido=String(PEDIDO.EstadoPedido||"").trim();
-  var estadoPago=String(PEDIDO.EstadoPago||"").trim();
-  var total=formatMoney(PEDIDO.TotalPedido,PEDIDO.CodTasa);
-  var pagado=formatMoney(PEDIDO.TotalPagado||0,PEDIDO.CodTasa);
-  var html='<div class="pedidoHeaderCard">';
-  html+='<div class="pedidoHeaderTop">';
-  html+='<div class="pedidoNroBig">'+PEDIDO.NroPedido+'</div>';
-  html+='<div class="badgeRow">';
-  html+='<span class="statusChip '+getEstadoClass(estadoPedido)+'">'+(estadoPedido||"N/A")+'</span>';
-  html+='<span class="statusChip '+(estadoPago==="Pagado"?"pagado":"nopagado")+'">'+(estadoPago==="Pagado"?"Pagado":"No Pagado")+'</span>';
-  html+='</div>';
-  html+='</div>';
-  html+='<div class="totalesRow">';
-  html+='<div class="totalBlock">';
-  html+='<div class="totalBlockLabel">Total Pedido</div>';
-  html+='<div class="totalBlockValue naranja">'+total+'</div>';
-  html+='</div>';
-  html+='<div class="totalBlock" style="text-align:right">';
-  html+='<div class="totalBlockLabel">Pagado</div>';
-  html+='<div class="totalBlockValue pagado">'+pagado+'</div>';
-  html+='</div>';
-  html+='</div>';
-  html+='</div>';
+function renderPedidoHeaderCard() {
+  var estadoPedido = String(PEDIDO.EstadoPedido || "").trim();
+  var estadoPago = String(PEDIDO.EstadoPago || "").trim();
+  var total = formatMoney(PEDIDO.TotalPedido, PEDIDO.CodTasa);
+  var pagado = formatMoney(PEDIDO.TotalPagado || 0, PEDIDO.CodTasa);
+  var html = '<div class="pedidoHeaderCard">';
+  html += '<div class="pedidoHeaderTop">';
+  html += '<div class="pedidoNroBig">' + PEDIDO.NroPedido + '</div>';
+  html += '<div class="badgeRow">';
+  html += '<span class="statusChip ' + getEstadoClass(estadoPedido) + '">' + (estadoPedido || "N/A") + '</span>';
+  html += '<span class="statusChip ' + (estadoPago === "Pagado" ? "pagado" : "nopagado") + '">' + (estadoPago === "Pagado" ? "Pagado" : "No Pagado") + '</span>';
+  html += '</div>';
+  html += '</div>';
+  html += '<div class="totalesRow">';
+  html += '<div class="totalBlock">';
+  html += '<div class="totalBlockLabel">Total Pedido</div>';
+  html += '<div class="totalBlockValue naranja">' + total + '</div>';
+  html += '</div>';
+  html += '<div class="totalBlock" style="text-align:right">';
+  html += '<div class="totalBlockLabel">Pagado</div>';
+  html += '<div class="totalBlockValue pagado">' + pagado + '</div>';
+  html += '</div>';
+  html += '</div>';
+  html += '</div>';
   return html;
 }
 
-function renderCobrarSection(){
-  var totalPedido=parseFloat(PEDIDO.TotalPedido)||0;
-  var html='<div class="actionSection">';
-  html+='<div class="actionTitle">📋 Formas de Pago</div>';
-  html+='<div class="cobrarPagadoRow">';
-  html+='<div class="cobrarPagadoCol">';
-  html+='<span class="cobrarPagadoLabel">Faltante</span>';
-  html+='<input type="number" step="0.01" class="cobrarPagadoInput" id="inputCobrar" value="'+totalPedido.toFixed(2)+'" readonly>';
-  html+='</div>';
-  html+='<div class="cobrarPagadoCol">';
-  html+='<span class="cobrarPagadoLabel">Pagado</span>';
-  html+='<input type="number" step="0.01" class="cobrarPagadoInput" id="inputPagado" value="0.00" readonly>';
-  html+='</div>';
-  html+='</div>';
-  html+='<div id="paymentRows"></div>';
-  html+='<button class="addPaymentBtn" id="btnAddPago" type="button">➕ Agregar forma de pago</button>';
-  html+='<div style="text-align:center;font-size:12px;color:#9ca3af;margin-bottom:4px" id="diffText">Faltan '+formatMoney(totalPedido,PEDIDO.CodTasa)+'</div>';
-  html+='</div>';
+function renderCobrarSection() {
+  var totalPedido = parseNum(PEDIDO.TotalPedido);
+  var html = '<div class="actionSection">';
+  html += '<div class="actionTitle">📋 Formas de Pago</div>';
+  html += '<div class="cobrarPagadoRow">';
+  html += '<div class="cobrarPagadoCol">';
+  html += '<span class="cobrarPagadoLabel">Faltante</span>';
+  html += '<input type="text" class="cobrarPagadoInput" id="inputCobrar" value="' + formatMoney(totalPedido, PEDIDO.CodTasa) + '" readonly>';
+  html += '</div>';
+  html += '<div class="cobrarPagadoCol">';
+  html += '<span class="cobrarPagadoLabel">Pagado</span>';
+  html += '<input type="text" class="cobrarPagadoInput" id="inputPagado" value="' + formatMoney(0, PEDIDO.CodTasa) + '" readonly>';
+  html += '</div>';
+  html += '</div>';
+  html += '<div id="paymentRows"></div>';
+  html += '</div>';
   return html;
 }
 
-function renderPaymentRows(){
-  var container=document.getElementById("paymentRows");
-  if(!container)return;
-  var html="";
-  PAGOS.forEach(function(p,idx){
-    html+='<div class="paymentRow" data-idx="'+idx+'">';
-    // Línea 1: select forma de pago (ancho completo) — forzado a placeholder
-    html+='<select class="paymentSelect" data-field="codFormaPago" autocomplete="off">';
-    html+='<option value="" '+(p.codFormaPago?'':'selected')+'>Seleccione forma de pago</option>';
-    FORMAS_PAGO.forEach(function(fp){
-      var label=fp.DesPago+(fp.SimboloTasa?' ('+fp.SimboloTasa+')':'');
-      html+='<option value="'+fp.CodPago+'" data-codtasa="'+(fp.CodTasa||'')+'" '+(p.codFormaPago===fp.CodPago?'selected':'')+'>'+label+'</option>';
+function renderPaymentRows() {
+  var container = document.getElementById("paymentRows");
+  if (!container) return;
+  var html = "";
+  PAGOS.forEach(function(p, idx) {
+    var isConfirmed = p.confirmed === true;
+    html += '<div class="paymentRow ' + (isConfirmed ? 'confirmed' : '') + '" data-idx="' + idx + '">';
+    // Linea 1: select forma de pago
+    html += '<select class="paymentSelect" data-field="codFormaPago" autocomplete="off" ' + (isConfirmed ? 'disabled' : '') + '>';
+    html += '<option value="" ' + (p.codFormaPago ? '' : 'selected') + '>Seleccione forma de pago</option>';
+    FORMAS_PAGO.forEach(function(fp, fpIdx) {
+      var label = fp.DesPago + (fp.SimboloTasa ? ' (' + fp.SimboloTasa + ')' : '');
+      // FIX: Si CodPago esta vacio, usar indice como fallback para que el option tenga value
+      var codPagoValue = fp.CodPago || ('FP_' + fpIdx);
+      html += '<option value="' + codPagoValue + '" data-codtasa="' + (fp.CodTasa || '') + '" ' + (p.codFormaPago === fp.CodPago ? 'selected' : '') + '>' + label + '</option>';
     });
-    html+='</select>';
-    // Línea 2: monto + referencia + borrar
-    html+='<div class="row2">';
-    html+='<input type="number" step="0.01" placeholder="Monto" data-field="montoPago" value="'+(p.montoPago||"")+'">';
-    html+='<input type="text" placeholder="Referencia (opcional)" data-field="referencia" value="'+(p.referencia||"")+'">';
-    html+='<button class="deleteBtn" data-del="'+idx+'" type="button">🗑️</button>';
-    html+='</div>';
-    html+='</div>';
+    html += '</select>';
+    // Linea 2: monto + confirmar + referencia + borrar
+    html += '<div class="row2">';
+    var montoVal = p.montoPago ? parseNum(p.montoPago).toFixed(2).replace(".", ",") : '';
+    html += '<input type="text" placeholder="Monto" data-field="montoPago" value="' + montoVal + '" ' + (isConfirmed ? 'disabled' : '') + '>';
+    if (!isConfirmed) {
+      html += '<button class="confirmMontoBtn" data-confirm="' + idx + '" type="button">Confirmar Monto</button>';
+    }
+    html += '<input type="text" class="refInput" placeholder="Referencia (opcional)" data-field="referencia" value="' + (p.referencia || "") + '" ' + (isConfirmed ? 'disabled' : '') + '>';
+    html += '<button class="deleteBtn" data-del="' + idx + '" type="button">🗑️</button>';
+    html += '</div>';
+    html += '</div>';
   });
-  container.innerHTML=html;
-  // Fuerza explícita del valor del select para evitar cacheo del navegador
-  PAGOS.forEach(function(p,idx){
-    var row=container.children[idx];
-    if(row){
-      var sel=row.querySelector('select[data-field="codFormaPago"]');
-      if(sel) sel.value = p.codFormaPago || '';
+  container.innerHTML = html;
+  // Fuerza valor del select post-render
+  PAGOS.forEach(function(p, idx) {
+    var row = container.children[idx];
+    if (row) {
+      var sel = row.querySelector('select[data-field="codFormaPago"]');
+      if (sel) sel.value = p.codFormaPago || '';
     }
   });
   attachPaymentEvents();
+}
+
+// ============================================
+// FIX #6: attachPaymentEvents() — Event Delegation unico
+// Reemplaza el patron triple addEventListener/removeEventListener
+// que acumulaba 2 listeners huerfanos por re-render.
+// ============================================
+function attachPaymentEvents() {
+  var container = document.getElementById("paymentRows");
+  if (!container) return;
+
+  // Idempotencia: si ya esta activo, no registrar de nuevo
+  if (container._delegacionActiva === true) return;
+
+  // Delegacion para CLICK (confirmar + borrar)
+  container.addEventListener("click", function(e) {
+    var target = e.target;
+    var row = target.closest(".paymentRow");
+    if (!row) return;
+    var idx = parseInt(row.dataset.idx);
+    if (isNaN(idx)) return;
+
+    // === CLICK: confirmar monto ===
+    if (target.classList.contains("confirmMontoBtn")) {
+      e.preventDefault();
+      e.stopPropagation();
+      // Sincronizar PAGOS[] con DOM ANTES de confirmar
+      var btnSel = row.querySelector('select[data-field="codFormaPago"]');
+      var btnInp = row.querySelector('input[data-field="montoPago"]');
+      var btnRef = row.querySelector('input[data-field="referencia"]');
+      if (btnSel && btnSel.value) {
+        var btnOpt = btnSel.options[btnSel.selectedIndex];
+        PAGOS[idx].codFormaPago = btnSel.value;
+        PAGOS[idx].codTasa = btnOpt ? btnOpt.dataset.codtasa || "" : "";
+      }
+      if (btnInp) PAGOS[idx].montoPago = btnInp.value;
+      if (btnRef) PAGOS[idx].referencia = btnRef.value;
+      confirmarMonto(idx);
+      return;
+    }
+
+    // === CLICK: borrar fila ===
+    if (target.classList.contains("deleteBtn")) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (PAGOS[idx].confirmed) {
+        toast("No puede eliminar un pago confirmado", "err");
+        return;
+      }
+      PAGOS.splice(idx, 1);
+      if (PAGOS.length === 0) {
+        PAGOS.push({ codFormaPago: '', montoPago: '', codTasa: '', referencia: '', confirmed: false });
+      }
+      renderPaymentRows();
+      calcTotals();
+      return;
+    }
+  });
+
+  // Delegacion para CHANGE (select forma de pago)
+  container.addEventListener("change", function(e) {
+    var target = e.target;
+    var row = target.closest(".paymentRow");
+    if (!row) return;
+    var idx = parseInt(row.dataset.idx);
+    if (isNaN(idx)) return;
+
+    if (target.tagName === "SELECT" && target.dataset.field === "codFormaPago") {
+      var opt = target.options[target.selectedIndex];
+      var value = target.value;
+      var codTasa = opt ? opt.getAttribute('data-codtasa') || opt.dataset.codtasa || "" : "";
+
+      // FIX: Si value vacio, buscar en FORMAS_PAGO por texto de opcion
+      if (!value && opt && opt.text) {
+        var optText = opt.text.trim();
+        FORMAS_PAGO.forEach(function(fp) {
+          var fpLabel = fp.DesPago + (fp.SimboloTasa ? ' (' + fp.SimboloTasa + ')' : '');
+          if (fpLabel === optText) {
+            value = fp.CodPago || ('FP_' + target.selectedIndex);
+          }
+        });
+      }
+
+      PAGOS[idx].codFormaPago = value;
+      PAGOS[idx].codTasa = codTasa;
+
+      var codTasaPedido = PEDIDO.CodTasa || "T002";
+      var valorTasaPedido = TASAS[codTasaPedido] || 1;
+      var valorTasaPago = TASAS[codTasa] || 1;
+      var saldo = getSaldoFaltante(idx);
+
+      if (saldo > 0.01) {
+        PAGOS[idx].montoPago = (saldo * (valorTasaPedido / valorTasaPago)).toFixed(2);
+      } else {
+        PAGOS[idx].montoPago = "";
+      }
+
+      var inp = row.querySelector('input[data-field="montoPago"]');
+      if (inp) {
+        var mv = PAGOS[idx].montoPago ? parseNum(PAGOS[idx].montoPago).toFixed(2).replace(".", ",") : "";
+        inp.value = mv;
+      }
+      calcTotals();
+    }
+  });
+
+  // Delegacion para INPUT (monto + referencia)
+  container.addEventListener("input", function(e) {
+    var target = e.target;
+    var row = target.closest(".paymentRow");
+    if (!row) return;
+    var idx = parseInt(row.dataset.idx);
+    if (isNaN(idx)) return;
+
+    if (target.tagName === "INPUT" && target.dataset.field === "montoPago") {
+      PAGOS[idx].montoPago = target.value;
+      calcTotals();
+    }
+    else if (target.tagName === "INPUT" && target.dataset.field === "referencia") {
+      PAGOS[idx].referencia = target.value;
+    }
+  });
+
+  // Marcar contenedor como inicializado (previene duplicados)
+  container._delegacionActiva = true;
+}
+
+function confirmarMonto(idx) {
+  var container = document.getElementById("paymentRows");
+  var row = container ? container.children[idx] : null;
+
+  // FIX CRITICO v2.5.1: Leer FORZADAMENTE del DOM en el instante del click.
+  // El evento 'change' del select nativo en moviles NO actualiza PAGOS[]
+  // confiablemente. Leemos directamente del DOM y actualizamos PAGOS[].
+  var sel = row ? row.querySelector('select[data-field="codFormaPago"]') : null;
+  var inp = row ? row.querySelector('input[data-field="montoPago"]') : null;
+  var ref = row ? row.querySelector('input[data-field="referencia"]') : null;
+
+  var p = PAGOS[idx];
+
+  // Forzar lectura del select: value + selectedIndex + dataset
+  if (sel) {
+    var selectedValue = sel.value;
+    var selectedIndex = sel.selectedIndex;
+    var opt = sel.options[selectedIndex];
+    var dataCodTasa = opt ? opt.getAttribute('data-codtasa') || opt.dataset.codtasa || '' : '';
+
+    // FIX: Si sel.value esta vacio (bug en options generadas), 
+    // buscar en FORMAS_PAGO por matching de texto de opcion
+    if (!selectedValue && opt && opt.text) {
+      var optText = opt.text.trim();
+      FORMAS_PAGO.forEach(function(fp) {
+        var fpLabel = fp.DesPago + (fp.SimboloTasa ? ' (' + fp.SimboloTasa + ')' : '');
+        if (fpLabel === optText) {
+          selectedValue = fp.CodPago || ('FP_' + selectedIndex);
+        }
+      });
+    }
+
+    p.codFormaPago = selectedValue || '';
+    p.codTasa = dataCodTasa;
+  }
+
+  if (inp) p.montoPago = inp.value || '';
+  if (ref) p.referencia = ref.value || '';
+
+  // Validaciones normales
+  if (!p.codFormaPago) {
+    mostrarAlerta("error", "Forma de pago requerida", "Seleccione una forma de pago antes de confirmar.", function() {
+      if (sel) sel.focus();
+    });
+    return;
+  }
+  var monto = parseNum(p.montoPago);
+  if (monto <= 0) {
+    mostrarAlerta("error", "Monto invalido", "El monto debe ser mayor a cero.", function() {
+      if (inp) { inp.focus(); inp.select(); }
+    });
+    return;
+  }
+  PAGOS[idx].confirmed = true;
+  calcTotals();
+  var totalPedido = parseNum(PEDIDO.TotalPedido);
+  var codTasaPedido = PEDIDO.CodTasa || "T002";
+  var valorTasaPedido = TASAS[codTasaPedido] || 1;
+  var totalPagado = 0;
+  PAGOS.forEach(function(pp) {
+    if (pp.confirmed) {
+      var mm = parseNum(pp.montoPago);
+      var vt = TASAS[pp.codTasa] || 1;
+      totalPagado += mm * (vt / valorTasaPedido);
+    }
+  });
+  var faltante = totalPedido - totalPagado;
+  if (faltante > 0.01) {
+    PAGOS.push({ codFormaPago: '', montoPago: faltante.toFixed(2), codTasa: '', referencia: '', confirmed: false });
+  }
+  renderPaymentRows();
   calcTotals();
 }
 
-function attachPaymentEvents(){
-  // Selects forma de pago
-  document.querySelectorAll('.paymentRow select[data-field="codFormaPago"]').forEach(function(el){
-    el.addEventListener('change',function(){
-      var idx=parseInt(this.closest('.paymentRow').dataset.idx);
-      var opt=this.options[this.selectedIndex];
-      var value=this.value;
-      var codTasa=opt.dataset.codtasa||'';
-      PAGOS[idx].codFormaPago=value;
-      PAGOS[idx].codTasa=codTasa;
-      // Al seleccionar forma de pago, calcular monto del saldo faltante en esa moneda
-      var codTasaPedido=PEDIDO.CodTasa||'T002';
-      var valorTasaPedido=TASAS[codTasaPedido]||1;
-      var valorTasaPago=TASAS[codTasa]||1;
-      var saldo=getSaldoFaltante(idx);
-      if(saldo>0.01){
-        PAGOS[idx].montoPago=(saldo*(valorTasaPedido/valorTasaPago)).toFixed(2);
-      }else{
-        PAGOS[idx].montoPago='';
-      }
-      // Actualizar el input visual
-      var row=this.closest('.paymentRow');
-      if(row){
-        var inp=row.querySelector('input[data-field="montoPago"]');
-        if(inp)inp.value=PAGOS[idx].montoPago;
-      }
-      calcTotals();
-    });
-  });
-  // Inputs monto
-  document.querySelectorAll('.paymentRow input[data-field="montoPago"]').forEach(function(el){
-    el.addEventListener('input',function(){
-      var idx=parseInt(this.closest('.paymentRow').dataset.idx);
-      PAGOS[idx].montoPago=this.value;
-      PAGOS[idx].montoEditado=true;
-      recalcularMontosNoEditados();
-      calcTotals();
-    });
-  });
-  // Inputs referencia
-  document.querySelectorAll('.paymentRow input[data-field="referencia"]').forEach(function(el){
-    el.addEventListener('input',function(){
-      var idx=parseInt(this.closest('.paymentRow').dataset.idx);
-      PAGOS[idx].referencia=this.value;
-    });
-  });
-  // Delete buttons
-  document.querySelectorAll('.paymentRow .deleteBtn').forEach(function(el){
-    el.addEventListener('click',function(){
-      var idx=parseInt(this.dataset.del);
-      PAGOS.splice(idx,1);
-      renderPaymentRows();
-    });
-  });
-}
 
-function addPaymentRow(){
-  PAGOS.push({codFormaPago:'',montoPago:'',codTasa:'',referencia:'',montoEditado:false});
-  renderPaymentRows();
-}
-
-function getSaldoFaltante(excludeIdx){
-  var totalPedido=parseFloat(PEDIDO.TotalPedido)||0;
-  var codTasaPedido=PEDIDO.CodTasa||'T002';
-  var valorTasaPedido=TASAS[codTasaPedido]||1;
-  var totalPagado=0;
-  PAGOS.forEach(function(p,i){
-    if(i===excludeIdx)return;
-    var monto=parseFloat(p.montoPago)||0;
-    var valorTasaPago=TASAS[p.codTasa]||1;
-    if(monto>0&&p.codFormaPago){
-      totalPagado+=monto*(valorTasaPago/valorTasaPedido);
+// FIX #4: getSaldoFaltante ahora itera por confirmed, no por indice
+function getSaldoFaltante(excludeIdx) {
+  var totalPedido = parseNum(PEDIDO.TotalPedido);
+  var codTasaPedido = PEDIDO.CodTasa || "T002";
+  var valorTasaPedido = TASAS[codTasaPedido] || 1;
+  var totalPagado = 0;
+  PAGOS.forEach(function(p, i) {
+    if (i === excludeIdx) return;
+    if (!p.confirmed) return;
+    var monto = parseNum(p.montoPago);
+    var valorTasaPago = TASAS[p.codTasa] || 1;
+    if (monto > 0 && p.codFormaPago) {
+      totalPagado += monto * (valorTasaPago / valorTasaPedido);
     }
   });
-  return totalPedido-totalPagado;
+  return totalPedido - totalPagado;
 }
 
-function recalcularMontosNoEditados(){
-  var codTasaPedido=PEDIDO.CodTasa||'T002';
-  var valorTasaPedido=TASAS[codTasaPedido]||1;
-  var totalPedido=parseFloat(PEDIDO.TotalPedido)||0;
-  var lastNoEditado=-1;
-  for(var i=PAGOS.length-1;i>=0;i--){
-    if(!PAGOS[i].montoEditado){lastNoEditado=i;break;}
-  }
-  var totalPagado=0;
-  PAGOS.forEach(function(p,i){
-    if(i===lastNoEditado)return;
-    var monto=parseFloat(p.montoPago)||0;
-    var valorTasaPago=TASAS[p.codTasa]||1;
-    if(monto>0&&p.codFormaPago){
-      totalPagado+=monto*(valorTasaPago/valorTasaPedido);
+function calcTotals() {
+  var totalPedido = parseNum(PEDIDO.TotalPedido);
+  var codTasaPedido = PEDIDO.CodTasa || "T002";
+  var valorTasaPedido = TASAS[codTasaPedido] || 1;
+  var totalPagado = 0;
+  PAGOS.forEach(function(p) {
+    if (!p.confirmed) return;
+    var monto = parseNum(p.montoPago);
+    var valorTasaPago = TASAS[p.codTasa] || 1;
+    if (monto > 0 && p.codFormaPago) {
+      totalPagado += monto * (valorTasaPago / valorTasaPedido);
     }
   });
-  var saldo=totalPedido-totalPagado;
-  if(lastNoEditado>=0){
-    var p=PAGOS[lastNoEditado];
-    var valorTasaPago=TASAS[p.codTasa]||1;
-    if(p.codFormaPago&&saldo>0.01){
-      p.montoPago=(saldo*(valorTasaPedido/valorTasaPago)).toFixed(2);
-    }else if(saldo>0.01){
-      p.montoPago=saldo.toFixed(2);
-    }else{
-      p.montoPago='';
-    }
+  var inputPagado = document.getElementById('inputPagado');
+  var inputCobrar = document.getElementById('inputCobrar');
+  var btnConfirmar = document.getElementById('btnConfirmar');
+  if (inputCobrar) inputCobrar.value = formatMoney(totalPedido - totalPagado, codTasaPedido);
+  if (inputPagado) inputPagado.value = formatMoney(totalPagado, codTasaPedido);
+  if (btnConfirmar) {
+    var validRows = PAGOS.filter(function(p) { return p.confirmed && p.codFormaPago && parseNum(p.montoPago) > 0; }).length;
+    btnConfirmar.disabled = validRows === 0 || totalPagado < totalPedido;
   }
 }
 
-function calcTotals(){
-  var totalPedido=parseFloat(PEDIDO.TotalPedido)||0;
-  var codTasaPedido=PEDIDO.CodTasa||'T002';
-  var valorTasaPedido=TASAS[codTasaPedido]||1;
-  var totalPagado=0;
-  PAGOS.forEach(function(p){
-    var monto=parseFloat(p.montoPago)||0;
-    var valorTasaPago=TASAS[p.codTasa]||1;
-    if(monto>0&&p.codFormaPago){
-      totalPagado+=monto*(valorTasaPago/valorTasaPedido);
-    }
-  });
-  var diff=totalPagado-totalPedido;
-  var diffEl=document.getElementById('diffText');
-  var inputPagado=document.getElementById('inputPagado');
-  var inputCobrar=document.getElementById('inputCobrar');
-  var btnConfirmar=document.getElementById('btnConfirmar');
-  if(inputCobrar)inputCobrar.value=(totalPedido-totalPagado).toFixed(2);
-  if(inputPagado)inputPagado.value=totalPagado.toFixed(2);
-  if(diffEl){
-    if(Math.abs(diff)<0.01){
-      diffEl.textContent="✅ Pago completo";
-      diffEl.style.color="#4ade80";
-    }else if(diff>0){
-      diffEl.textContent="Vuelto: "+formatMoney(diff,codTasaPedido);
-      diffEl.style.color="#4ade80";
-    }else{
-      diffEl.textContent="Faltan: "+formatMoney(Math.abs(diff),codTasaPedido);
-      diffEl.style.color="#f87171";
-    }
-  }
-  if(btnConfirmar){
-    var validRows=PAGOS.filter(function(p){return p.codFormaPago&&parseFloat(p.montoPago)>0}).length;
-    btnConfirmar.disabled=validRows===0||totalPagado<totalPedido;
-  }
-}
-
-function submitCobro(){
-  var codTurno=PEDIDO.CodTurno||'';
-  if(!codTurno){
-    mostrarAlerta("error","Sin Turno","No se puede cobrar sin un turno activo.");
+function submitCobro() {
+  var codTurno = PEDIDO.CodTurno || '';
+  if (!codTurno) {
+    mostrarAlerta("error", "Sin Turno", "No se puede cobrar sin un turno activo.");
     return;
   }
-  var pagosValidos=PAGOS.filter(function(p){return p.codFormaPago&&parseFloat(p.montoPago)>0}).map(function(p){return{codFormaPago:p.codFormaPago,montoPago:parseFloat(p.montoPago),codTasa:p.codTasa||'',referencia:p.referencia||''}});
-  if(pagosValidos.length===0){
-    mostrarAlerta("error","Datos incompletos","Agregue al menos una forma de pago con monto valido.");
+  var pagosValidos = PAGOS.filter(function(p) { return p.confirmed && p.codFormaPago && parseNum(p.montoPago) > 0; }).map(function(p) {
+    return { codFormaPago: p.codFormaPago, montoPago: parseNum(p.montoPago), codTasa: p.codTasa || '', referencia: p.referencia || '' };
+  });
+  if (pagosValidos.length === 0) {
+    mostrarAlerta("error", "Datos incompletos", "Confirme al menos una forma de pago con monto valido.");
+    return;
+  }
+
+  var totalPedido = parseNum(PEDIDO.TotalPedido);
+  var codTasaPedido = PEDIDO.CodTasa || "T002";
+  var valorTasaPedido = TASAS[codTasaPedido] || 1;
+  var totalPagado = 0;
+  pagosValidos.forEach(function(p) {
+    var vt = TASAS[p.codTasa] || 1;
+    totalPagado += p.montoPago * (vt / valorTasaPedido);
+  });
+  var bodyText = "Total Pedido: " + formatMoney(totalPedido, codTasaPedido) + "\n";
+  bodyText += "Total Pagado: " + formatMoney(totalPagado, codTasaPedido) + "\n\n";
+  bodyText += "¿Desea registrar el cobro?";
+  document.getElementById("confirmCobroBody").textContent = bodyText;
+  var modal = document.getElementById("confirmCobroModal");
+  modal.classList.add("show");
+  document.getElementById("btnOkCobro").onclick = function() {
+    modal.classList.remove("show");
+    ejecutarCobro(pagosValidos);
+  };
+  document.getElementById("btnCancelCobro").onclick = function() {
+    modal.classList.remove("show");
+  };
+}
+
+
+function ejecutarCobro(pagosValidos) {
+  var codTurno = PEDIDO.CodTurno || '';
+  showLoad();
+  apiPost({ action: "registrarPago", nroPedido: NRO_PEDIDO, codTurno: codTurno, pagos: pagosValidos }).then(function(r) {
+    hideLoad();
+    if (r.success) {
+      mostrarAlerta("success", "Cobro registrado", r.message || "Pago registrado correctamente.", function() { window.location.href = "caja.html"; }, "Regresar a Caja");
+    } else {
+      mostrarAlerta("error", "Error al cobrar", r.error || "Error desconocido");
+    }
+  }).catch(function(e) { hideLoad(); mostrarAlerta("error", "Error de red", e.message); });
+}
+
+function renderPedidosSection() {
+  var html = '<div class="pedidosSection" id="pedidosSection">';
+  html += '<div class="pedidosHeader" id="pedidosHeader">';
+  html += '<div class="pedidosTitle">';
+  html += '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:#f7931e"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>';
+  html += 'Pedidos';
+  html += '</div>';
+  html += '<div class="pedidosToggle" id="pedidosToggle">';
+  html += '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>';
+  html += '</div>';
+  html += '</div>';
+  html += '<div class="pedidosBody" id="pedidosBody">';
+  html += '<div style="padding:8px 0">';
+  html += '<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.03)"><span style="color:#9ca3af">Cliente</span><span style="color:#fff;font-weight:600">' + (PEDIDO.Cliente || "N/A") + '</span></div>';
+  html += '<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.03)"><span style="color:#9ca3af">Telefono</span><span style="color:#fff;font-weight:600">' + (PEDIDO.Telefono || "N/A") + '</span></div>';
+  html += '<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.03)"><span style="color:#9ca3af">Tipo</span><span style="color:#fff;font-weight:600">' + getTipoLabel(PEDIDO.TipoServicio) + '</span></div>';
+  html += '<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px"><span style="color:#9ca3af">Hora</span><span style="color:#fff;font-weight:600">' + formatTime(PEDIDO.HoraPedido) + '</span></div>';
+  html += '</div>';
+  html += '</div>';
+  html += '</div>';
+  return html;
+}
+
+function renderItems() {
+  if (!ITEMS || ITEMS.length === 0) return "";
+  var html = '<div class="itemsSection" id="itemsSection">';
+  html += '<div class="itemsHeader" id="itemsHeader">';
+  html += '<div class="itemsTitle">';
+  html += '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:#f7931e"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>';
+  html += 'Productos (' + ITEMS.length + ')';
+  html += '</div>';
+  html += '<div class="itemsToggle" id="itemsToggle">';
+  html += '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>';
+  html += '</div>';
+  html += '</div>';
+  html += '<div class="itemsBody" id="itemsBody">';
+  ITEMS.forEach(function(item) {
+    var qty = parseInt(item.Cantidad) || 1;
+    var price = parseFloat(item.PrecioUnitario) || 0;
+    var sub = parseFloat(item.SubtotalItem) || (qty * price);
+    html += '<div class="itemRow">';
+    html += '<div class="itemQty">' + qty + '</div>';
+    html += '<div class="itemInfo"><div class="itemName">' + (item.DesProducto || "Producto") + '</div><div class="itemCat">' + (item.DesCategoria || "") + '</div></div>';
+    html += '<div class="itemPrice">' + formatMoney(sub, PEDIDO.CodTasa) + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+  html += '</div>';
+  return html;
+}
+
+function renderBotonesCobro() {
+  var html = '<div class="btnRow">';
+  html += '<button class="actionBtn secondary" id="btnCancelar" type="button">↩️ Regresar sin cobrar</button>';
+  html += '<button class="actionBtn primary" id="btnConfirmar" type="button" disabled>🛡️ Confirmar Cobro</button>';
+  html += '</div>';
+  return html;
+}
+
+function renderLiberarSection() {
+  var estadoPago = String(PEDIDO.EstadoPago || "").trim();
+  var html = '<div class="actionSection">';
+  html += '<div class="actionTitle">🍳 Liberar a Cocina</div>';
+  if (estadoPago !== "Pagado" && CONFIG.PedidoconPagoCaja === "Activo") {
+    html += '<div class="warningBox">⚠️ Modo Activo: el pedido debe estar pagado antes de liberar a cocina. Cobre primero.</div>';
+  } else if (estadoPago !== "Pagado") {
+    html += '<div class="infoBox">ℹ️ Modo Inactivo: puede liberar sin cobrar, pero debe indicar el motivo.</div>';
+    html += '<textarea class="obsTextarea" id="obsInput" placeholder="¿Por que libera a cocina sin cobrar? (obligatorio)"></textarea>';
+  } else {
+    html += '<div class="successBox">✅ El pedido ya esta pagado. Puede liberar a cocina directamente.</div>';
+    html += '<textarea class="obsTextarea" id="obsInput" placeholder="Observaciones opcionales..."></textarea>';
+  }
+  html += '<button class="actionBtn success" id="btnLiberar" type="button">🍳 Liberar a Cocina</button>';
+  html += '<button class="actionBtn secondary" id="btnCancelar" type="button">↩️ Regresar sin liberar</button>';
+  html += '</div>';
+  return html;
+}
+
+function submitLiberar() {
+  var obs = document.getElementById("obsInput").value.trim();
+  var estadoPago = String(PEDIDO.EstadoPago || "").trim();
+  if (estadoPago !== "Pagado" && CONFIG.PedidoconPagoCaja !== "Activo" && !obs) {
+    mostrarAlerta("error", "Observacion requerida", "Indique por que libera a cocina sin cobrar.");
     return;
   }
   showLoad();
-  apiPost({action:"registrarPago",nroPedido:NRO_PEDIDO,codTurno:codTurno,pagos:pagosValidos}).then(function(r){
+  apiPost({ action: "liberarPedido", nroPedido: NRO_PEDIDO, observaciones: obs }).then(function(r) {
     hideLoad();
-    if(r.success){
-      mostrarAlerta("success","Cobro registrado",r.message||"Pago registrado correctamente.",function(){window.location.href="caja.html"},"Regresar a Caja");
-    }else{
-      mostrarAlerta("error","Error al cobrar",r.error||"Error desconocido");
+    if (r.success) {
+      mostrarAlerta("success", "Liberado", r.message || "Pedido liberado a cocina.", function() { window.location.href = "caja.html"; }, "Regresar a Caja");
+    } else {
+      mostrarAlerta("error", "Error", r.error || "No se pudo liberar");
     }
-  }).catch(function(e){hideLoad();mostrarAlerta("error","Error de red",e.message)});
+  }).catch(function(e) { hideLoad(); mostrarAlerta("error", "Error de red", e.message); });
 }
 
-function renderPedidosSection(){
-  var html='<div class="pedidosSection" id="pedidosSection">';
-  html+='<div class="pedidosHeader" id="pedidosHeader">';
-  html+='<div class="pedidosTitle">';
-  html+='<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:#f7931e"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>';
-  html+='Pedidos';
-  html+='</div>';
-  html+='<div class="pedidosToggle" id="pedidosToggle">';
-  html+='<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>';
-  html+='</div>';
-  html+='</div>';
-  html+='<div class="pedidosBody" id="pedidosBody">';
-  html+='<div style="padding:8px 0">';
-  html+='<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.03)"><span style="color:#9ca3af">Cliente</span><span style="color:#fff;font-weight:600">'+(PEDIDO.Cliente||"N/A")+'</span></div>';
-  html+='<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.03)"><span style="color:#9ca3af">Telefono</span><span style="color:#fff;font-weight:600">'+(PEDIDO.Telefono||"N/A")+'</span></div>';
-  html+='<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.03)"><span style="color:#9ca3af">Tipo</span><span style="color:#fff;font-weight:600">'+getTipoLabel(PEDIDO.TipoServicio)+'</span></div>';
-  html+='<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px"><span style="color:#9ca3af">Hora</span><span style="color:#fff;font-weight:600">'+formatTime(PEDIDO.HoraPedido)+'</span></div>';
-  html+='</div>';
-  html+='</div>';
-  html+='</div>';
+function renderAnularSection() {
+  var html = '<div class="actionSection">';
+  html += '<div class="actionTitle">🗑️ Anular Pedido</div>';
+  html += '<div class="warningBox">⚠️ Esta accion anula el pedido permanentemente. El estado cambiara a <b>Anulado</b> y no podra revertirse desde aqui.</div>';
+  html += '<textarea class="obsTextarea" id="obsInput" placeholder="Motivo de la anulacion (obligatorio)..."></textarea>';
+  html += '<button class="actionBtn danger" id="btnAnular" type="button">🗑️ Confirmar Anulacion</button>';
+  html += '<button class="actionBtn secondary" id="btnCancelar" type="button">↩️ Regresar</button>';
+  html += '</div>';
   return html;
 }
 
-function renderItems(){
-  if(!ITEMS||ITEMS.length===0)return"";
-  var html='<div class="itemsSection" id="itemsSection">';
-  html+='<div class="itemsHeader" id="itemsHeader">';
-  html+='<div class="itemsTitle">';
-  html+='<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:#f7931e"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>';
-  html+='Productos ('+ITEMS.length+')';
-  html+='</div>';
-  html+='<div class="itemsToggle" id="itemsToggle">';
-  html+='<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>';
-  html+='</div>';
-  html+='</div>';
-  html+='<div class="itemsBody" id="itemsBody">';
-  ITEMS.forEach(function(item){
-    var qty=parseInt(item.Cantidad)||1;
-    var price=parseFloat(item.PrecioUnitario)||0;
-    var sub=parseFloat(item.SubtotalItem)||(qty*price);
-    html+='<div class="itemRow">';
-    html+='<div class="itemQty">'+qty+'</div>';
-    html+='<div class="itemInfo"><div class="itemName">'+(item.DesProducto||"Producto")+'</div><div class="itemCat">'+(item.DesCategoria||"")+'</div></div>';
-    html+='<div class="itemPrice">'+formatMoney(sub,PEDIDO.CodTasa)+'</div>';
-    html+='</div>';
-  });
-  html+='</div>';
-  html+='</div>';
-  return html;
-}
-
-function renderBotonesCobro(){
-  var html='<div class="btnRow">';
-  html+='<button class="actionBtn secondary" id="btnCancelar" type="button">↩️ Regresar sin cobrar</button>';
-  html+='<button class="actionBtn primary" id="btnConfirmar" type="button" disabled>🛡️ Confirmar Cobro</button>';
-  html+='</div>';
-  return html;
-}
-
-function renderLiberarSection(){
-  var estadoPago=String(PEDIDO.EstadoPago||"").trim();
-  var html='<div class="actionSection">';
-  html+='<div class="actionTitle">🍳 Liberar a Cocina</div>';
-  if(estadoPago!=="Pagado"&&CONFIG.PedidoconPagoCaja==="Activo"){
-    html+='<div class="warningBox">⚠️ Modo Activo: el pedido debe estar pagado antes de liberar a cocina. Cobre primero.</div>';
-  }else if(estadoPago!=="Pagado"){
-    html+='<div class="infoBox">ℹ️ Modo Inactivo: puede liberar sin cobrar, pero debe indicar el motivo.</div>';
-    html+='<textarea class="obsTextarea" id="obsInput" placeholder="¿Por que libera a cocina sin cobrar? (obligatorio)"></textarea>';
-  }else{
-    html+='<div class="successBox">✅ El pedido ya esta pagado. Puede liberar a cocina directamente.</div>';
-    html+='<textarea class="obsTextarea" id="obsInput" placeholder="Observaciones opcionales..."></textarea>';
-  }
-  html+='<button class="actionBtn success" id="btnLiberar" type="button">🍳 Liberar a Cocina</button>';
-  html+='<button class="actionBtn secondary" id="btnCancelar" type="button">↩️ Regresar sin liberar</button>';
-  html+='</div>';
-  return html;
-}
-
-function submitLiberar(){
-  var obs=document.getElementById("obsInput").value.trim();
-  var estadoPago=String(PEDIDO.EstadoPago||"").trim();
-  if(estadoPago!=="Pagado"&&CONFIG.PedidoconPagoCaja!=="Activo"&&!obs){
-    mostrarAlerta("error","Observacion requerida","Indique por que libera a cocina sin cobrar.");
+function submitAnular() {
+  var obs = document.getElementById("obsInput").value.trim();
+  if (!obs) {
+    mostrarAlerta("error", "Motivo requerido", "Indique el motivo de la anulacion.");
     return;
   }
   showLoad();
-  apiPost({action:"liberarPedido",nroPedido:NRO_PEDIDO,observaciones:obs}).then(function(r){
+  apiPost({ action: "updateEstadoPedido", nroPedido: NRO_PEDIDO, nuevoEstado: "Anulado", observaciones: obs }).then(function(r) {
     hideLoad();
-    if(r.success){
-      mostrarAlerta("success","Liberado",r.message||"Pedido liberado a cocina.",function(){window.location.href="caja.html"},"Regresar a Caja");
-    }else{
-      mostrarAlerta("error","Error",r.error||"No se pudo liberar");
+    if (r.success) {
+      mostrarAlerta("success", "Anulado", r.message || "Pedido anulado correctamente.", function() { window.location.href = "caja.html"; }, "Regresar a Caja");
+    } else {
+      mostrarAlerta("error", "Error", r.error || "No se pudo anular");
     }
-  }).catch(function(e){hideLoad();mostrarAlerta("error","Error de red",e.message)});
+  }).catch(function(e) { hideLoad(); mostrarAlerta("error", "Error de red", e.message); });
 }
 
-function renderAnularSection(){
-  var html='<div class="actionSection">';
-  html+='<div class="actionTitle">🗑️ Anular Pedido</div>';
-  html+='<div class="warningBox">⚠️ Esta accion anula el pedido permanentemente. El estado cambiara a <b>Anulado</b> y no podra revertirse desde aqui.</div>';
-  html+='<textarea class="obsTextarea" id="obsInput" placeholder="Motivo de la anulacion (obligatorio)..."></textarea>';
-  html+='<button class="actionBtn danger" id="btnAnular" type="button">🗑️ Confirmar Anulacion</button>';
-  html+='<button class="actionBtn secondary" id="btnCancelar" type="button">↩️ Regresar</button>';
-  html+='</div>';
-  return html;
-}
-
-function submitAnular(){
-  var obs=document.getElementById("obsInput").value.trim();
-  if(!obs){
-    mostrarAlerta("error","Motivo requerido","Indique el motivo de la anulacion.");
-    return;
-  }
-  showLoad();
-  apiPost({action:"updateEstadoPedido",nroPedido:NRO_PEDIDO,nuevoEstado:"Anulado",observaciones:obs}).then(function(r){
-    hideLoad();
-    if(r.success){
-      mostrarAlerta("success","Anulado",r.message||"Pedido anulado correctamente.",function(){window.location.href="caja.html"},"Regresar a Caja");
-    }else{
-      mostrarAlerta("error","Error",r.error||"No se pudo anular");
-    }
-  }).catch(function(e){hideLoad();mostrarAlerta("error","Error de red",e.message)});
-}
-
-var PAGOS_ACTUALES=[];
-function renderReversarSection(){
-  var html='<div class="actionSection">';
-  html+='<div class="actionTitle">↩️ Reversar Pago</div>';
-  var pagosActuales=PAGOS_ACTUALES||[];if(pagosActuales.length>0){
-    html+='<div class="itemsSection" style="margin-bottom:12px"><div class="itemsTitle">Pagos activos a reversar</div>';
-    pagosActuales.forEach(function(p){
-      html+='<div class="pagoRow">';
-      html+='<div><div class="pagoDesc">'+(p.DesFormaPago||p.DesPago||p.CodFormaPago)+'</div>';
-      if(p.Referencia){html+='<div class="pagoRef">Ref: '+p.Referencia+'</div>'}
-      html+='</div>';
-      html+='<div class="pagoMonto">'+formatMoney(p.MontoPago,p.CodTasa)+'</div>';
-      html+='</div>';
+// FIX #7 + #8: renderReversarSection ahora usa PAGOS_ACTUALES cargados desde backend
+// y el submit envia codTurno para auditoria
+function renderReversarSection() {
+  var html = '<div class="actionSection">';
+  html += '<div class="actionTitle">↩️ Reversar Pago</div>';
+  var pagosActuales = PAGOS_ACTUALES || [];
+  if (pagosActuales.length > 0) {
+    html += '<div class="itemsSection" style="margin-bottom:12px"><div class="itemsTitle">Pagos activos a reversar</div>';
+    pagosActuales.forEach(function(p) {
+      html += '<div class="pagoRow">';
+      html += '<div><div class="pagoDesc">' + (p.DesFormaPago || p.DesPago || p.CodFormaPago) + '</div>';
+      if (p.Referencia) { html += '<div class="pagoRef">Ref: ' + p.Referencia + '</div>'; }
+      html += '</div>';
+      html += '<div class="pagoMonto">' + formatMoney(p.MontoPago, p.CodTasa) + '</div>';
+      html += '</div>';
     });
-    html+='</div>';
-  }else{
-    html+='<div class="warningBox">No hay pagos activos para reversar en este pedido.</div>';
+    html += '</div>';
+  } else {
+    html += '<div class="warningBox">No hay pagos activos para reversar en este pedido.</div>';
   }
-  html+='<div class="warningBox">⚠️ Se reversaran <b>todos</b> los pagos activos de este pedido. El estado de pago volvera a <b>Pendiente</b>.</div>';
-  html+='<textarea class="obsTextarea" id="obsInput" placeholder="Motivo de la reversión (obligatorio)..."></textarea>';
-  html+='<button class="actionBtn danger" id="btnReversar" type="button">↩️ Confirmar Reversion</button>';
-  html+='<button class="actionBtn secondary" id="btnCancelar" type="button">Regresar</button>';
-  html+='</div>';
+  html += '<div class="warningBox">⚠️ Se reversaran <b>todos</b> los pagos activos de este pedido. El estado de pago volvera a <b>Pendiente</b>.</div>';
+  html += '<textarea class="obsTextarea" id="obsInput" placeholder="Motivo de la reversión (obligatorio)..."></textarea>';
+  html += '<button class="actionBtn danger" id="btnReversar" type="button">↩️ Confirmar Reversion</button>';
+  html += '<button class="actionBtn secondary" id="btnCancelar" type="button">Regresar</button>';
+  html += '</div>';
   return html;
 }
 
-function submitReversar(){
-  var motivo=document.getElementById("obsInput").value.trim();
-  if(!motivo){
-    mostrarAlerta("error","Motivo requerido","Indique el motivo de la reversión.");
+// FIX #8: submitReversar ahora envia codTurno para auditoria
+// y valida que existan pagos antes de llamar al endpoint
+function submitReversar() {
+  var motivo = document.getElementById("obsInput").value.trim();
+  if (!motivo) {
+    mostrarAlerta("error", "Motivo requerido", "Indique el motivo de la reversión.");
     return;
   }
+  // Validar que haya pagos para reversar
+  if (!PAGOS_ACTUALES || PAGOS_ACTUALES.length === 0) {
+    mostrarAlerta("error", "Sin pagos", "No hay pagos activos para reversar en este pedido.");
+    return;
+  }
+  var codTurno = PEDIDO.CodTurno || '';
   showLoad();
-  apiPost({action:"reversarPago",nroPedido:NRO_PEDIDO,motivo:motivo}).then(function(r){
+  // FIX #8: Enviamos codTurno y el array de pagos a reversar para auditoria
+  apiPost({
+    action: "reversarPago",
+    nroPedido: NRO_PEDIDO,
+    codTurno: codTurno,
+    motivo: motivo,
+    pagos: PAGOS_ACTUALES.map(function(p) {
+      return {
+        codFormaPago: p.CodFormaPago || p.codFormaPago,
+        montoPago: parseNum(p.MontoPago || p.montoPago),
+        codTasa: p.CodTasa || p.codTasa,
+        referencia: p.Referencia || p.referencia || ''
+      };
+    })
+  }).then(function(r) {
     hideLoad();
-    if(r.success){
-      mostrarAlerta("success","Reversado",r.message||"Pago reversado correctamente.",function(){window.location.href="caja.html"},"Regresar a Caja");
-    }else{
-      mostrarAlerta("error","Error",r.error||"No se pudo reversar");
+    if (r.success) {
+      mostrarAlerta("success", "Reversado", r.message || "Pago reversado correctamente.", function() { window.location.href = "caja.html"; }, "Regresar a Caja");
+    } else {
+      mostrarAlerta("error", "Error", r.error || "No se pudo reversar");
     }
-  }).catch(function(e){hideLoad();mostrarAlerta("error","Error de red",e.message)});
+  }).catch(function(e) { hideLoad(); mostrarAlerta("error", "Error de red", e.message); });
 }
 
-function attachEvents(){
-  document.getElementById("btnBack").addEventListener("click",function(){window.location.href="caja.html"});
-  var btnCancelar=document.getElementById("btnCancelar");
-  if(btnCancelar)btnCancelar.addEventListener("click",function(){window.location.href="caja.html"});
+function attachEvents() {
+  document.getElementById("btnBack").addEventListener("click", function() { window.location.href = "caja.html"; });
+  var btnCancelar = document.getElementById("btnCancelar");
+  if (btnCancelar) btnCancelar.addEventListener("click", function() { window.location.href = "caja.html"; });
 
-  var pedidosHeader=document.getElementById("pedidosHeader");
-  if(pedidosHeader){
-    pedidosHeader.addEventListener("click",function(){
-      var body=document.getElementById("pedidosBody");
-      var toggle=document.getElementById("pedidosToggle");
-      if(body.classList.contains("open")){
+  var pedidosHeader = document.getElementById("pedidosHeader");
+  if (pedidosHeader) {
+    pedidosHeader.addEventListener("click", function() {
+      var body = document.getElementById("pedidosBody");
+      var toggle = document.getElementById("pedidosToggle");
+      if (body.classList.contains("open")) {
         body.classList.remove("open");
         toggle.classList.remove("open");
-      }else{
+      } else {
         body.classList.add("open");
         toggle.classList.add("open");
       }
     });
   }
 
-  var itemsHeader=document.getElementById("itemsHeader");
-  if(itemsHeader){
-    itemsHeader.addEventListener("click",function(){
-      var body=document.getElementById("itemsBody");
-      var toggle=document.getElementById("itemsToggle");
-      if(body.classList.contains("open")){
+  var itemsHeader = document.getElementById("itemsHeader");
+  if (itemsHeader) {
+    itemsHeader.addEventListener("click", function() {
+      var body = document.getElementById("itemsBody");
+      var toggle = document.getElementById("itemsToggle");
+      if (body.classList.contains("open")) {
         body.classList.remove("open");
         toggle.classList.remove("open");
-      }else{
+      } else {
         body.classList.add("open");
         toggle.classList.add("open");
       }
     });
   }
 
-  if(ACTION==="cobrar"){
-    document.getElementById("btnAddPago").addEventListener("click",addPaymentRow);
-    document.getElementById("btnConfirmar").addEventListener("click",submitCobro);
-  }else if(ACTION==="liberar"){
-    document.getElementById("btnLiberar").addEventListener("click",submitLiberar);
-  }else if(ACTION==="anular"){
-    document.getElementById("btnAnular").addEventListener("click",submitAnular);
-  }else if(ACTION==="reversar"){
-    document.getElementById("btnReversar").addEventListener("click",submitReversar);
+  if (ACTION === "cobrar") {
+    document.getElementById("btnConfirmar").addEventListener("click", submitCobro);
+  } else if (ACTION === "liberar") {
+    document.getElementById("btnLiberar").addEventListener("click", submitLiberar);
+  } else if (ACTION === "anular") {
+    document.getElementById("btnAnular").addEventListener("click", submitAnular);
+  } else if (ACTION === "reversar") {
+    document.getElementById("btnReversar").addEventListener("click", submitReversar);
   }
 }
 
-document.addEventListener("DOMContentLoaded",init);
+document.addEventListener("DOMContentLoaded", init);
 </script>
-<!-- cajacobro.html v2.2.1 | 2026-06-18 | Fix: select forzado a placeholder + ancho monto 130px | Proyecto: Ing. Jesus Linares -->
+<!-- cajacobro.html v2.5.2 | 2026-06-19 | Produccion limpia: fixes aplicados, debug eliminado, flujo real restaurado | Proyecto: Ing. Jesus Linares -->
 </body>
 </html>
