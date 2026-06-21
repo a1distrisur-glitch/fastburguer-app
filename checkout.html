@@ -27,8 +27,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#ff6b35;box-sh
 .svc-btn-active{border-color:#ff6b35 !important;background:rgba(255,107,53,0.1) !important;color:#ff6b35 !important}
 .pickup-info{background:rgba(255,107,53,0.05);border:1px solid rgba(255,107,53,0.2)}
 </style>
+<base target="_blank">
 </head>
 <body class="min-h-screen">
+<!-- v2.0| 2026-06-21 | Inicio checkout.html -->
 
 <!-- HEADER -->
 <header class="fixed top-0 left-0 right-0 z-40 glass">
@@ -331,7 +333,15 @@ async function init(){
 }
 
 function convert(m,from,to){if(!tasas[from]||!tasas[to])return m;return(m*tasas[from])/tasas[to];}
-function fmt(v,cod){v=parseFloat(v)||0;let s=simbolos[cod]||"";if(s==="USD"||s==="$")return"$ "+v.toFixed(2);if(s==="BS"||s==="Bs")return"Bs "+v.toFixed(2);if(s==="EUR"||s==="€")return"EUR "+v.toFixed(2);if(s==="BN")return"BN "+v.toFixed(2);return v.toFixed(2);}
+function formatNum(v){
+  v=parseFloat(v)||0;
+  var parts=v.toFixed(2).split(".");
+  var intPart=parts[0];
+  var decPart=parts[1];
+  intPart=intPart.replace(/\B(?=(\d{3})+(?!\d))/g,",");
+  return intPart+"."+decPart;
+}
+function fmt(v,cod){v=parseFloat(v)||0;let s=simbolos[cod]||"";var formatted=formatNum(v);if(s==="USD"||s==="$")return"$ "+formatted;if(s==="BS"||s==="Bs")return"Bs "+formatted;if(s==="EUR"||s==="€")return"EUR "+formatted;if(s==="BN")return"BN "+formatted;return formatted;}
 
 function recalcCart(){cart=cart.map(item=>{let p=products.find(x=>x.CodProducto===item.CodProducto);if(p){let np=convert(p.Precio||0,p.CodTasa||"T002",currentCurrency);return{...item,precioUnitario:np,subtotalItem:item.cantidad*np};}return item;});}
 
@@ -531,7 +541,7 @@ function updateStepIndicator(step){
 // Step 3: PAGO
 function setupStep3(){
   const pSel=document.getElementById("paymentSelect");
-  paymentMethods.forEach(pm=>{pSel.innerHTML+=`<option value="${pm.CodPago}" data-codtasa="${pm.CodTasa||''}" data-despago="${pm.DesPago}" data-datos="${pm.DatosTasa||''}" data-simbolo="${pm.SimboloTasa||''}">${pm.DesPago}</option>`;});
+  paymentMethods.forEach(pm=>{pSel.innerHTML+=`<option value="${pm.CodFormaPago}" data-codtasa="${pm.CodTasa||''}" data-despago="${pm.DesPago}" data-datos="${pm.DatosTasa||''}" data-simbolo="${pm.SimboloTasa||''}">${pm.DesPago}</option>`;});
 }
 
 function updatePayment(){
@@ -611,20 +621,33 @@ async function confirmOrder(){
   const btn=document.getElementById("confirmBtn");
   const orig=btn.innerHTML;btn.innerHTML="Enviando...";btn.disabled=true;
   try{
-    const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(orderData)}).then(x=>x.json());
+    const resp=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(orderData)});
+    const respText=await resp.text();
+    let r;
+    try{r=JSON.parse(respText);}catch(parseErr){
+      console.error("[DIAG] Respuesta NO es JSON:",respText.substring(0,500));
+      btn.innerHTML=orig;btn.disabled=false;
+      alerta("error","Error de red","El servidor respondio con HTML en lugar de JSON. Intenta nuevamente. Si el problema persiste, contacta soporte.");
+      return;
+    }
     btn.innerHTML=orig;btn.disabled=false;
     if(r.success){
       let mis=JSON.parse(localStorage.getItem("mis_pedidos_fb")||"[]");
       if(!mis.includes(r.nroPedido))mis.push(r.nroPedido);
       localStorage.setItem("mis_pedidos_fb",JSON.stringify(mis));
       showConfirmation(r.nroPedido,payLabel,opt.dataset.datos||"",total,address,propina,payCodTasa);
-    }else{alerta("error","Error",r.error||"No se pudo registrar");}
-  }catch(e){btn.innerHTML=orig;btn.disabled=false;alerta("error","Error de red","Fallo la comunicacion");}
+    }else{alerta("error","Error del servidor",r.error||"No se pudo registrar");}
+  }catch(e){
+    console.error("[DIAG] Error en fetch:",e.name,e.message,e.stack);
+    btn.innerHTML=orig;btn.disabled=false;
+    alerta("error","Error de red","Fallo la comunicacion: "+e.name+" - "+e.message);
+  }
 }
 
 function showConfirmation(nro,label,datos,total,address,propina,payCodTasa){
   document.getElementById("step3").classList.add("hidden");
   document.getElementById("confirmation").classList.remove("hidden");
+  localStorage.removeItem("fb_cart_v3");
   updateStepIndicator(4);
   document.getElementById("confNro").textContent=nro;
 
@@ -640,10 +663,9 @@ function showConfirmation(nro,label,datos,total,address,propina,payCodTasa){
   if(selectedService==="delivery"&&address)msg+=`*Direccion:* ${address}\n`;
   if(selectedService==="sitio"&&selectedMesa)msg+=`*Mesa:* ${selectedMesa.DesEnSitio}\n`;
   if(propina>0)msg+=`*Propina:* ${fmt(convert(propina,currentCurrency,displayCurrency),displayCurrency)}\n`;
-  const wa="58"+(config.WhatsAppNegocio||"").replace(/^0/,"");
+  const wa="58"+String(config.WhatsAppNegocio||"").replace(/^0/,"");
   document.getElementById("waBtn").href=`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`;
 
-  localStorage.removeItem("fb_cart_v3");
 }
 
 function newOrder(){window.location.href="index.html";}
@@ -663,7 +685,7 @@ function closeAlert(){document.getElementById("alertBox").classList.add("hidden"
 
 document.addEventListener("DOMContentLoaded",init);
 </script>
+
+<!-- v2.0| 2026-06-21 | Fin checkout.html -->
 </body>
 </html>
-<!-- CONTROL DE VERSION CHECKOUT
-var CHECKOUT_VERSION = "v1.7 - Fix conversion moneda: convert() en renderSummary y updateTotals"; -->
