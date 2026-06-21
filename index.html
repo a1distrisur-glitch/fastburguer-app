@@ -15,7 +15,7 @@
 
 <style>
   /* ============================================
-     FASTBURGUER index2.html — v9.2.2 | Cards Carrito + Modal Cantidad
+     FASTBURGUER index.html — v9.3.0 | 2026-06-21 | Control de Versión Sagrado + Fix CSS comment
      ============================================ */
 
   body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;}
@@ -411,8 +411,10 @@
   @keyframes showcaseHintPulse{0%,100%{opacity:0.3;}50%{opacity:0.6;}}
 
 </style>
+<base target="_blank">
 </head>
 <body class="min-h-screen">
+<!-- v9.3.0 | 2026-06-21 | Inicio index.html -->
 
 <!-- HEADER -->
 <header class="fixed top-0 left-0 right-0 z-50 glass header-glow flex flex-col">
@@ -856,14 +858,21 @@ function calcularPrecioConvertido(precio, codTasaOrigen, codTasaDestino) {
   return convertirMonto(precio, codTasaOrigen, codTasaDestino);
 }
 
+function formatNum(v) {
+  v = parseFloat(v) || 0;
+  var parts = v.toFixed(2).split(".");
+  var intPart = parts[0];
+  var decPart = parts[1];
+  intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return intPart + "." + decPart;
+}
 function formatearPrecio(valor, codTasa) {
-  const v = parseFloat(valor) || 0;
   const simbolo = codASimbolo[codTasa] || "BS";
-  if (simbolo === "USD") return "$" + v.toFixed(2);
-  if (simbolo === "BS") return "Bs " + v.toFixed(2);
-  if (simbolo === "EUR") return "EUR " + v.toFixed(2);
-  if (simbolo === "BN") return "BN " + v.toFixed(2);
-  return v.toFixed(2);
+  if (simbolo === "USD") return "$" + formatNum(valor);
+  if (simbolo === "BS") return "Bs " + formatNum(valor);
+  if (simbolo === "EUR") return "EUR " + formatNum(valor);
+  if (simbolo === "BN") return "BN " + formatNum(valor);
+  return formatNum(valor);
 }
 
 async function apiGet(action, params) {
@@ -1492,5 +1501,6 @@ function checkOverlay() {
 <div id="imageLightbox" class="fixed inset-0 z-[95] bg-black/95 flex items-center justify-center hidden" onclick="closeImageLightbox()">
   <img id="lightboxImg" src="" alt="" class="max-w-[90%] max-h-[80vh] object-contain fade-in" onclick="event.stopPropagation()">
 </div>
+<!-- v9.3.0 | 2026-06-21 | Fin index.html -->
 </body>
 </html>
