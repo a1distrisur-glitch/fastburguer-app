@@ -8,6 +8,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
+  /* ============================================
+     FASTBURGUER  — v3.0 | 2026-06-21 | Control de Versión 
+     ============================================ */
+
+
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 .hidden{display:none!important}
@@ -38,6 +43,11 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
 .alertBtn{width:100%;padding:12px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:0.2s;border:none;background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff}
 .alertBtn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(255,107,53,0.3)}
 .alertBtn:active{transform:scale(0.97)}
+
+
+/* ===== MODALES LIBERAR / ANULAR ===== */
+#liberarModal,#anularModal1,#anularModal2{position:fixed;inset:0;z-index:10001;background:rgba(0,0,0,0.85);display:none;justify-content:center;align-items:center;padding:20px;backdrop-filter:blur(8px)}
+#liberarModal.show,#anularModal1.show,#anularModal2.show{display:flex}
 
 /* ===== HEADER ===== */
 .header{position:fixed;top:0;left:0;right:0;height:56px;background:rgba(10,10,10,0.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:100}
@@ -101,13 +111,13 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
 /* ===== STATUS CHIPS ===== */
 .statusRow{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
 .statusChip{font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px;text-transform:uppercase;letter-spacing:0.3px}
-.statusChip.pendientedepago{background:rgba(249,115,22,0.18);color:#fbbf24;border:1px solid rgba(249,115,22,0.25)}
 .statusChip.pendiente{background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.2)}
 .statusChip.enpreparacion{background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.2)}
 .statusChip.listo{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.2)}
 .statusChip.entregado{background:rgba(107,114,128,0.15);color:#9ca3af;border:1px solid rgba(107,114,128,0.2)}
 .statusChip.pagado{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.2)}
 .statusChip.nopagado{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.2)}
+.statusChip.porcobrar{background:rgba(249,115,22,0.15);color:#fbbf24;border:1px solid rgba(249,115,22,0.2)}
 .statusChip.anulado{background:rgba(239,68,68,0.18);color:#f87171;border:1px solid rgba(239,68,68,0.25)}
 
 /* ===== CARD ACTIONS ===== */
@@ -190,6 +200,53 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
   </div>
 </div>
 
+<!-- MODAL CONFIRMACION LIBERAR -->
+<div id="liberarModal">
+  <div class="alertBox">
+    <div class="alertIcon" style="background:rgba(34,197,94,0.15);color:#4ade80;box-shadow:0 0 20px rgba(34,197,94,0.2)">
+      <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+    </div>
+    <div class="alertTitle">Liberar Pedido</div>
+    <div class="alertBody" id="liberarBody">Desea enviar el pedido a preparar?</div>
+    <div style="display:flex;gap:10px;margin-top:20px">
+      <button class="alertBtn" id="liberarCancelBtn" type="button" style="background:rgba(255,255,255,0.06);color:#d1d5db;border:1px solid rgba(255,255,255,0.08)">Regresar</button>
+      <button class="alertBtn" id="liberarConfirmBtn" type="button" style="background:linear-gradient(135deg,#22c55e,#16a34a)">Enviar a Cocina</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMACION ANULAR (PASO 1) -->
+<div id="anularModal1">
+  <div class="alertBox">
+    <div class="alertIcon" style="background:rgba(239,68,68,0.15);color:#f87171;box-shadow:0 0 20px rgba(239,68,68,0.2)">
+      <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+    </div>
+    <div class="alertTitle">Anular Pedido</div>
+    <div class="alertBody" id="anular1Body">Estas seguro de anular el pedido? Esta accion no se puede deshacer.</div>
+    <div style="display:flex;gap:10px;margin-top:20px">
+      <button class="alertBtn" id="anular1CancelBtn" type="button" style="background:rgba(255,255,255,0.06);color:#d1d5db;border:1px solid rgba(255,255,255,0.08)">Regresar</button>
+      <button class="alertBtn" id="anular1NextBtn" type="button" style="background:linear-gradient(135deg,#ef4444,#dc2626)">Ejecutar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MOTIVO ANULAR (PASO 2) -->
+<div id="anularModal2">
+  <div class="alertBox">
+    <div class="alertIcon" style="background:rgba(249,115,22,0.15);color:#fbbf24;box-shadow:0 0 20px rgba(249,115,22,0.2)">
+      <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+    </div>
+    <div class="alertTitle">Motivo de Anulacion</div>
+    <div class="alertBody" id="anular2Body">El pedido sera anulado. Indica el motivo obligatorio para continuar.</div>
+    <textarea id="anularMotivo" placeholder="Escribe el motivo aqui..." style="width:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px;font-size:13px;color:#fff;outline:none;resize:none;height:80px;margin:12px 0;font-family:'Inter',sans-serif" maxlength="200"></textarea>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="alertBtn" id="anular2CancelBtn" type="button" style="background:rgba(255,255,255,0.06);color:#d1d5db;border:1px solid rgba(255,255,255,0.08)">Regresar</button>
+      <button class="alertBtn" id="anular2ConfirmBtn" type="button" style="background:linear-gradient(135deg,#ff6b35,#f7931e)">Ejecutar</button>
+    </div>
+  </div>
+</div>
+
+
 <!-- DETAIL PANEL -->
 <div id="detailOverlay"></div>
 <div id="detailPanel">
@@ -203,7 +260,7 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
         <div style="font-size:11px;color:#9ca3af" id="detailHora">--:--</div>
       </div>
     </div>
-    <span class="statusChip pendientedepago" id="detailStatus">Pendiente de Pago</span>
+    <span class="statusChip pendiente" id="detailStatus">Pendiente</span>
   </div>
   <div class="detailBody" id="detailBody"></div>
   <div class="detailFooter" id="detailFooter"></div>
@@ -240,7 +297,7 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
 
   <div class="filterRow">
     <button class="filterChip active" data-filter="todos" type="button">Todos</button>
-    <button class="filterChip" data-filter="pendientepago" type="button">Pendiente de Pago</button>
+    
     <button class="filterChip" data-filter="porcobrar" type="button">Por Cobrar</button>
     <button class="filterChip" data-filter="pagado" type="button">Pagado</button>
     <button class="filterChip" data-filter="anulado" type="button">Anulado</button>
@@ -275,6 +332,15 @@ var TURNO=null,PEDIDOS=[],FORMAS_PAGO=[],CONFIG={},TASAS={},BUSQUEDA="",AUTO_REF
 function showLoad(){document.getElementById("load").className="show"}
 function hideLoad(){document.getElementById("load").className=""}
 function toast(m,tipo){var t=document.getElementById("toast");t.textContent=m;t.className=tipo||"ok";t.style.display="block";setTimeout(function(){t.style.display="none"},4000)}
+function formatNum(v) {
+  v = parseFloat(v) || 0;
+  var parts = v.toFixed(2).split(".");
+  var intPart = parts[0];
+  var decPart = parts[1];
+  intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return intPart + "." + decPart;
+}
+
 
 /* ===== ALERTA CUSTOM CENTRADA ===== */
 function mostrarAlerta(tipo,titulo,mensaje,callback,btnText){
@@ -301,7 +367,7 @@ function mostrarAlerta(tipo,titulo,mensaje,callback,btnText){
 function apiGet(action,params){var url=API+"?action="+action+"&_cb="+Date.now();if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);return fetch(url).then(function(r){return r.json()})}
 function apiPost(d){return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)}).then(function(r){return r.json()})}
 
-function formatMoney(v,codTasa){var val=parseFloat(v)||0;var sym="$";if(codTasa==="T001"||codTasa==="T006")sym="Bs ";else if(codTasa==="T002")sym="$";else if(codTasa==="T003")sym="EUR ";else if(codTasa==="T004")sym="BN ";return sym+val.toFixed(2)}
+function formatMoney(v,codTasa){var val=parseFloat(v)||0;var sym="$";if(codTasa==="T001"||codTasa==="T006")sym="Bs ";else if(codTasa==="T002")sym="$";else if(codTasa==="T003")sym="EUR ";else if(codTasa==="T004")sym="BN ";return sym+formatNum(val)}
 function formatTime(h){if(!h)return"--:--";var s=String(h);if(s.indexOf(":")>-1)return s.substring(0,5);var n=parseFloat(s);if(!isNaN(n)){var hh=Math.floor(n*24);var mm=Math.round((n*24-hh)*60);return String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")}return"--:--"}
 function getTipoLabel(t){t=String(t||"").toLowerCase();if(t==="delivery")return"Delivery";if(t==="pickup")return"Pick Up";if(t==="sitio")return"En Sitio";return t||"N/A"}
 function getTipoClass(t){t=String(t||"").toLowerCase();if(t==="delivery")return"delivery";if(t==="pickup")return"pickup";if(t==="sitio")return"sitio";return"pickup"}
@@ -343,15 +409,15 @@ function loadPedidos(){
 function loadResumen(){if(!TURNO||!TURNO.CodTurno)return;apiGet("getResumenCaja",{codTurno:TURNO.CodTurno}).then(function(r){if(r.success){updateKPIs(r.totalGeneral||0,r.cantidadPagos||0,PEDIDOS.length)}}).catch(function(e){})}
 function updateHeaderTurno(){var el=document.getElementById("headerTurno");var btn=document.getElementById("btnTurnoAction");if(TURNO&&TURNO.CodTurno){el.textContent="Turno "+TURNO.CodTurno;el.className="hTurno";btn.className="turnoBtn close";btn.title="Cerrar Turno";btn.innerHTML='<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>'}else{el.textContent="Sin Turno";el.className="hTurno closed";btn.className="turnoBtn open";btn.title="Abrir Turno";btn.innerHTML='<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>'}}
 function updateKPIs(cobrado,pagos,porCobrar){document.getElementById("kpiCobrado").textContent=formatMoney(cobrado,"T002");document.getElementById("kpiPagos").textContent=pagos;document.getElementById("kpiPorCobrar").textContent=porCobrar;document.getElementById("countPorCobrar").textContent="("+porCobrar+")"}
-function updateSecTitle(count){var titles={"todos":"📋 Todos los Pedidos","pendientepago":"⏳ Pendiente de Pago","porcobrar":"💰 Pedidos Por Cobrar","pagado":"✅ Pedidos Pagados","anulado":"🗑️ Pedidos Anulados"};var el=document.getElementById("secTitle");el.innerHTML=(titles[FILTRO_ACTUAL]||"📋 Pedidos")+' <span id="countPorCobrar">('+(count||0)+")</span>"}
+function updateSecTitle(count){var titles={"todos":"📋 Todos","porcobrar":"💰 Por Cobrar","pagado":"✅ Pagados","anulado":"🗑️ Anulados"};var el=document.getElementById("secTitle");el.innerHTML=(titles[FILTRO_ACTUAL]||"📋 Pedidos")+' <span id="countPorCobrar">('+(count||0)+")</span>"}
 function startAutoRefresh(){if(AUTO_REFRESH)clearInterval(AUTO_REFRESH);AUTO_REFRESH=setInterval(loadPedidos,30000)}
 
 function renderPedidos(lista){
   var container=document.getElementById("listaPedidos");
   var filtrados=lista;
   if(BUSQUEDA){var q=BUSQUEDA.toLowerCase();filtrados=lista.filter(function(p){var nro=String(p.NroPedido||"").toLowerCase();var cliente=String(p.Cliente||"").toLowerCase();var tel=String(p.Telefono||"").toLowerCase();return nro.indexOf(q)>-1||cliente.indexOf(q)>-1||tel.indexOf(q)>-1})}
-  if(FILTRO_ACTUAL==="pendientepago"){filtrados=filtrados.filter(function(p){var ed=String(p.EstadoPedido||"").trim();return ed==="Pendiente de Pago"})}
-  else if(FILTRO_ACTUAL==="porcobrar"){filtrados=filtrados.filter(function(p){var ep=String(p.EstadoPago||"").trim();var ed=String(p.EstadoPedido||"").trim();return ep==="Pendiente"&&ed!=="Anulado"})}
+  
+  else if(FILTRO_ACTUAL==="porcobrar"){filtrados=filtrados.filter(function(p){var ep=String(p.EstadoPago||"").trim();var ed=String(p.EstadoPedido||"").trim();return ep==="Por Cobrar"&&ed!=="Anulado"})}
   else if(FILTRO_ACTUAL==="pagado"){filtrados=filtrados.filter(function(p){return String(p.EstadoPago||"").trim()==="Pagado"})}
   else if(FILTRO_ACTUAL==="anulado"){filtrados=filtrados.filter(function(p){var ed=String(p.EstadoPedido||"").trim();return ed==="Anulado"})}
   updateSecTitle(filtrados.length);
@@ -367,8 +433,8 @@ function renderOrderCard(p){
   var hora=formatTime(p.HoraPedido);
   var total=formatMoney(p.TotalPedido,p.CodTasa);
   var estadoPedidoClass=estadoPedido.toLowerCase().replace(/\s/g,"");
-  var estadoPagoClass=estadoPago==="Pagado"?"pagado":"nopagado";
-  var badgeIcons={"Pendiente de Pago":"⏳","Pendiente":"🍳","En Preparacion":"👨‍🍳","Listo":"✅","Entregado":"📦","Anulado":"🚫"};
+  var estadoPagoClass=estadoPago==="Pagado"?"pagado":"porcobrar";
+  var badgeIcons={"Pendiente":"⏳","En Preparacion":"👨‍🍳","Listo":"✅","Entregado":"📦","Anulado":"🚫"};
   var badgePagoIcon=estadoPago==="Pagado"?"💰":"⏳";
   var html='<div class="orderCard">';
   html+='<div class="orderHeader"><div class="orderNro">'+p.NroPedido+'</div><div class="orderTime">'+hora+'</div></div>';
@@ -378,9 +444,9 @@ function renderOrderCard(p){
   html+='<div class="orderFooter"><div class="orderTotal">'+total+'</div><div class="orderType '+tipoClass+'">'+tipoLabel+'</div></div>';
   html+='<div class="statusRow"><span class="statusChip '+estadoPedidoClass+'">'+(badgeIcons[estadoPedido]||"●")+" "+estadoPedido+'</span><span class="statusChip '+estadoPagoClass+'">'+badgePagoIcon+" "+(estadoPago==="Pagado"?"Pagado":"No Pagado")+'</span></div>';
   html+='<div class="cardActions">';
-  if(estadoPago==="Pendiente"){html+='<button class="cardBtn primary" data-action="cobrar" data-nro="'+p.NroPedido+'" type="button">💰 Cobrar</button>'}
-  if(estadoPedido==="Pendiente de Pago"){var puedeLiberar=true;var tooltip="";if(CONFIG.PedidoconPagoCaja==="Activo"&&estadoPago!=="Pagado"){puedeLiberar=false;tooltip="Cobrar primero (modo Activo)"}html+='<button class="cardBtn success" data-action="liberar" data-nro="'+p.NroPedido+'"'+(puedeLiberar?"":" disabled")+' type="button"'+(tooltip?' title="'+tooltip+'"':"")+'>🍳 Liberar</button>'}
-  if(estadoPedido!=="Pendiente de Pago"&&estadoPedido!=="Entregado"&&estadoPedido!=="Cancelado"&&estadoPedido!=="Anulado"){html+='<button class="cardBtn secondary" disabled type="button">En Cocina</button>'}
+  if(estadoPago==="Por Cobrar"){html+='<button class="cardBtn primary" data-action="cobrar" data-nro="'+p.NroPedido+'" type="button">💰 Cobrar</button>'}
+  if(estadoPedido==="Pendiente"){var puedeLiberar=true;var tooltip="";if(CONFIG.PedidoconPagoCaja==="Activo"&&estadoPago!=="Pagado"){puedeLiberar=false;tooltip="Debe cobrar antes de liberar (modo Activo)"}html+='<button class="cardBtn success" data-action="liberar" data-nro="'+p.NroPedido+'"'+(puedeLiberar?"":" disabled")+' type="button"'+(tooltip?' title="'+tooltip+'"':"")+'>🍳 Liberar Pedido</button>'}
+  if(estadoPedido!=="Pendiente"&&estadoPedido!=="Entregado"&&estadoPedido!=="Cancelado"&&estadoPedido!=="Anulado"){html+='<button class="cardBtn secondary" disabled type="button">En Cocina</button>'}
   if(estadoPago==="Pagado"){html+='<button class="cardBtn secondary" data-action="reversar" data-nro="'+p.NroPedido+'" type="button">↩️ Reversar</button>'}
   if(estadoPedido!=="Cancelado"&&estadoPedido!=="Anulado"){html+='<button class="cardBtn danger" data-action="anular" data-nro="'+p.NroPedido+'" type="button">🗑️ Anular</button>'}
   html+='</div></div>';
@@ -396,7 +462,7 @@ function openDetail(nroPedido){
   document.getElementById("detailHora").textContent=formatTime(pedido.HoraPedido);
   var estadoPedido=String(pedido.EstadoPedido||"").trim();
   var estadoPedidoClass=estadoPedido.toLowerCase().replace(/\s/g,"");
-  var badgeIcons={"Pendiente de Pago":"⏳","Pendiente":"🍳","En Preparacion":"👨‍🍳","Listo":"✅","Entregado":"📦","Anulado":"🚫"};
+  var badgeIcons={"Pendiente":"⏳","En Preparacion":"👨‍🍳","Listo":"✅","Entregado":"📦","Anulado":"🚫"};
   var detailStatus=document.getElementById("detailStatus");
   detailStatus.textContent=(badgeIcons[estadoPedido]||"●")+" "+estadoPedido;
   detailStatus.className="statusChip "+estadoPedidoClass;
@@ -429,8 +495,8 @@ function openDetail(nroPedido){
   var footerHtml="";
   var estadoPago=String(pedido.EstadoPago||"").trim();
   var estadoPedidoStr=String(pedido.EstadoPedido||"").trim();
-  if(estadoPago==="Pendiente"&&estadoPedidoStr!=="Anulado"){footerHtml+='<button class="cardBtn primary" style="width:100%;margin-bottom:8px" id="detailBtnCobrar" type="button">💰 Cobrar</button>'}
-  if(estadoPedidoStr==="Pendiente de Pago"&&(CONFIG.PedidoconPagoCaja!=="Activo"||estadoPago==="Pagado")){footerHtml+='<button class="cardBtn success" style="width:100%;margin-bottom:8px" id="detailBtnLiberar" type="button">🍳 Liberar a Cocina</button>'}
+  if(estadoPago==="Por Cobrar"&&estadoPedidoStr!=="Anulado"){footerHtml+='<button class="cardBtn primary" style="width:100%;margin-bottom:8px" id="detailBtnCobrar" type="button">💰 Cobrar</button>'}
+  if(estadoPedidoStr==="Pendiente"&&(CONFIG.PedidoconPagoCaja!=="Activo"||estadoPago==="Pagado")){footerHtml+='<button class="cardBtn success" style="width:100%;margin-bottom:8px" id="detailBtnLiberar" type="button">🍳 Liberar a Cocina</button>'}
   if(estadoPago==="Pagado"){footerHtml+='<button class="cardBtn secondary" style="width:100%;margin-bottom:8px" id="detailBtnReversar" type="button">↩️ Reversar Pago</button>'}
   if(estadoPedidoStr!=="Anulado"&&estadoPedidoStr!=="Cancelado"){footerHtml+='<button class="cardBtn danger" style="width:100%" id="detailBtnAnular" type="button">🗑️ Anular Pedido</button>'}
   document.getElementById("detailFooter").innerHTML=footerHtml;
@@ -468,6 +534,12 @@ function closeDetail(){document.getElementById("detailPanel").classList.remove("
 /* ===== EVENT LISTENERS ===== */
 document.addEventListener("DOMContentLoaded",function(){
   init();
+  document.getElementById("liberarCancelBtn").addEventListener("click",cerrarLiberarModal);
+  document.getElementById("liberarConfirmBtn").addEventListener("click",ejecutarLiberar);
+  document.getElementById("anular1CancelBtn").addEventListener("click",cerrarAnular1);
+  document.getElementById("anular1NextBtn").addEventListener("click",mostrarMotivoAnular);
+  document.getElementById("anular2CancelBtn").addEventListener("click",cerrarAnular2);
+  document.getElementById("anular2ConfirmBtn").addEventListener("click",ejecutarAnular);
   document.getElementById("btnBack").addEventListener("click",function(){window.location.href="admin.html"});
   document.getElementById("btnPedidos").addEventListener("click",function(){window.location.href="pedidos.html"});
   document.getElementById("btnTurnoAction").addEventListener("click",function(){window.location.href="cajaturno.html"});
@@ -480,11 +552,59 @@ document.addEventListener("DOMContentLoaded",function(){
   document.getElementById("detailOverlay").addEventListener("click",closeDetail);
   document.getElementById("listaPedidos").addEventListener("click",function(e){
     var btn=e.target.closest("[data-action]");
-    if(btn){var action=btn.dataset.action;var nro=btn.dataset.nro;window.location.href="cajacobro.html?pedido="+nro+"&action="+action;return}
+    if(btn){var action=btn.dataset.action;var nro=btn.dataset.nro;
+      if(action==="liberar"){mostrarConfirmacionLiberar(nro);return}
+      if(action==="anular"){mostrarConfirmacionAnular(nro);return}
+      window.location.href="cajacobro.html?pedido="+nro+"&action="+action;return}
     var card=e.target.closest(".orderCard");
     if(card){var nroPedido=card.querySelector(".orderNro").textContent;openDetail(nroPedido)}
   });
 });
+
+/* ===== FUNCIONES MODALES LIBERAR / ANULAR ===== */
+var PEDIDO_LIBERAR=null,PEDIDO_ANULAR=null;
+
+function mostrarConfirmacionLiberar(nroPedido){
+  PEDIDO_LIBERAR=nroPedido;
+  document.getElementById("liberarBody").textContent="Desea enviar el pedido "+nroPedido+" a preparar?";
+  document.getElementById("liberarModal").classList.add("show");
+}
+function cerrarLiberarModal(){document.getElementById("liberarModal").classList.remove("show");PEDIDO_LIBERAR=null}
+function ejecutarLiberar(){
+  if(!PEDIDO_LIBERAR)return;
+  showLoad();
+  apiPost({action:"liberarPedido",nroPedido:PEDIDO_LIBERAR}).then(function(r){
+    hideLoad();cerrarLiberarModal();
+    if(r.success){toast(r.message||"Pedido liberado a cocina","ok");loadPedidos();closeDetail()}
+    else{mostrarAlerta("error","Error",r.error||"No se pudo liberar el pedido")}
+  }).catch(function(e){hideLoad();cerrarLiberarModal();mostrarAlerta("error","Error de red",e.message)});
+}
+
+function mostrarConfirmacionAnular(nroPedido){
+  PEDIDO_ANULAR=nroPedido;
+  document.getElementById("anular1Body").textContent="Estas seguro de anular el pedido "+nroPedido+"? Esta accion no se puede deshacer.";
+  document.getElementById("anularModal1").classList.add("show");
+}
+function cerrarAnular1(){document.getElementById("anularModal1").classList.remove("show")}
+function mostrarMotivoAnular(){
+  cerrarAnular1();
+  document.getElementById("anular2Body").textContent="El pedido "+PEDIDO_ANULAR+" sera anulado. Indica el motivo obligatorio para continuar.";
+  document.getElementById("anularMotivo").value="";
+  document.getElementById("anularModal2").classList.add("show");
+}
+function cerrarAnular2(){document.getElementById("anularModal2").classList.remove("show");PEDIDO_ANULAR=null}
+function ejecutarAnular(){
+  if(!PEDIDO_ANULAR)return;
+  var motivo=document.getElementById("anularMotivo").value.trim();
+  if(!motivo){mostrarAlerta("error","Motivo requerido","Debes indicar un motivo para la anulacion.");return}
+  showLoad();
+  apiPost({action:"updateEstadoPedido",nroPedido:PEDIDO_ANULAR,nuevoEstado:"Anulado",observaciones:motivo}).then(function(r){
+    hideLoad();cerrarAnular2();
+    if(r.success){toast(r.message||"Pedido anulado","ok");loadPedidos();closeDetail()}
+    else{mostrarAlerta("error","Error",r.error||"No se pudo anular el pedido")}
+  }).catch(function(e){hideLoad();cerrarAnular2();mostrarAlerta("error","Error de red",e.message)});
+}
+
 </script>
 <!-- caja.html v2.0.0 | 2026-06-08 | Shell principal sin token, alerta custom centrada, navegacion a cajacobro/cajaturno | Asistencia: Kimi K2.6 | Proyecto: Ing. Jesus Linares -->
 </body>
