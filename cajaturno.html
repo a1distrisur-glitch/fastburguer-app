@@ -7,6 +7,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
+  /* ============================================
+     FASTBURGUER  — v3.0 | 2026-06-21 | Control de Versión 
+     ============================================ */
+
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 .hidden{display:none!important}
@@ -68,24 +72,35 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
 .disponibleRow:last-child{border-bottom:none}
 .disponibleRow.total{padding-top:14px;margin-top:4px;border-top:1px solid rgba(34,197,94,0.2);border-bottom:none}
 .disponibleLabel{color:#9ca3af}
-.disponibleValue{font-weight:600;color:#fff}
-.disponibleValue.total{font-size:20px;font-weight:800;color:#4ade80}
-.disponibleValue.highlight{color:#f7931e}
-.disponibleValue.positive{color:#4ade80}
-.disponibleValue.negative{color:#f87171}
+.disponibleValue{font-weight:700;color:#fff;font-size:15px}
+.disponibleValue.total{font-size:22px;font-weight:800;color:#4ade80}
+.disponibleValue.highlight{color:#f7931e;font-size:15px}
+.disponibleValue.positive{color:#4ade80;font-size:15px}
+.disponibleValue.negative{color:#fff;font-size:15px}
+.disponibleValue.apertura{color:#60a5fa;font-size:15px}
+
+/* ===== DESGLOSE POR MONEDA ===== */
+.monedaDesglose{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:12px;padding:14px;margin-top:12px}
+.monedaDesgloseTitle{font-size:12px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px}
+.monedaItem{display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:14px;border-bottom:1px solid rgba(255,255,255,0.03)}
+.monedaItem:last-child{border-bottom:none}
+.monedaNombre{color:#fff;font-weight:700;font-size:14px}
+.monedaOriginal{color:#e5e7eb;font-weight:600}
+.monedaUsd{color:#4ade80;font-weight:700;font-size:13px}
 
 /* ===== ACORDEONES ===== */
 .accordion{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:14px;margin-bottom:12px;overflow:hidden}
 .accordionHeader{width:100%;background:none;border:none;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;color:#fff;outline:none}
 .accordionHeader:active{background:rgba(255,255,255,0.02)}
+.accordionHeader *{pointer-events:none}
 .accordionTitle{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
-.accordionArrow{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;transition:transform 0.2s ease}
-.accordionArrow svg{width:14px;height:14px;fill:none;stroke:currentColor;transition:transform 0.2s}
+.accordionArrow{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;transition:transform 0.2s ease;pointer-events:none}
+.accordionArrow svg{width:14px;height:14px;fill:none;stroke:currentColor;transition:transform 0.2s;pointer-events:none}
 .accordion.active .accordionArrow svg{transform:rotate(180deg)}
 .accordionContent{padding:0 16px 16px;display:none}
 .accordion.active .accordionContent{display:block}
 
-/* ===== INTERNOS ACORDEÓN CUADRE ===== */
+/* ===== INTERNOS ACORDEON CUADRE ===== */
 .cuadreRow{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
 .cuadreRow:last-child{border-bottom:none}
 .cuadreRow.header{padding:6px 0;margin-bottom:4px;border-bottom:2px solid rgba(255,107,53,0.3)}
@@ -93,11 +108,12 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
 .cuadreDesc{display:flex;flex-direction:column;gap:2px}
 .cuadreFp{font-size:13px;font-weight:600;color:#fff}
 .cuadreCant{font-size:11px;color:#9ca3af}
-.cuadreMonto{font-size:14px;font-weight:700;color:#f7931e}
+.cuadreMonto{font-size:14px;font-weight:700;color:#f7931e;text-align:right}
+.cuadreMonto .usdEq{font-size:11px;color:#6b7280;font-weight:500;display:block}
 .cuadreMonto.total{font-size:18px}
 .emptyState{text-align:center;padding:16px;color:#6b7280;font-size:12px;font-style:italic}
 
-/* ===== INTERNOS ACORDEÓN MOVIMIENTOS ===== */
+/* ===== INTERNOS ACORDEON MOVIMIENTOS ===== */
 .movRow{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
 .movRow:last-child{border-bottom:none}
 .movTipo{font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:0.3px}
@@ -108,6 +124,7 @@ body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min-height:100
 .movMonto.salida{color:#f87171}
 .movMotivo{font-size:11px;color:#6b7280;margin-top:2px}
 .movMeta{font-size:10px;color:#4b5563}
+.movUsdEq{font-size:11px;color:#6b7280;margin-top:2px}
 
 /* ===== DOTS FOR PAYMENT METHODS ===== */
 .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:8px}
@@ -253,17 +270,17 @@ select.modalInput option{background:#1a1a1a;color:#fff;padding:10px}
     <div class="modalSub" id="cerrarSub">Confirme el arqueo para cerrar el turno</div>
 
     <div class="diffPreview">
-      <div><div class="diffLabel">Total Cobrado</div><div class="diffValue" id="previewCobrado" style="color:#f7931e">$0.00</div></div>
-      <div style="text-align:right"><div class="diffLabel">Monto Apertura</div><div class="diffValue" id="previewApertura" style="color:#fff">$0.00</div></div>
+      <div><div class="diffLabel">Total Cobrado (USD)</div><div class="diffValue" id="previewCobrado" style="color:#f7931e">$0.00</div></div>
+      <div style="text-align:right"><div class="diffLabel">Monto Apertura (USD)</div><div class="diffValue" id="previewApertura" style="color:#fff">$0.00</div></div>
     </div>
 
     <div class="modalField">
-      <label class="modalLabel">Monto de Arqueo</label>
+      <label class="modalLabel">Monto de Arqueo (USD)</label>
       <input type="number" class="modalInput" id="cerrarMonto" placeholder="0.00" step="0.01" inputmode="decimal" oninput="calcDiffCierre()">
     </div>
 
     <div class="diffPreview" style="margin-bottom:10px">
-      <div class="diffLabel">Diferencia</div>
+      <div class="diffLabel">Diferencia (USD)</div>
       <div class="diffValue" id="previewDiferencia">$0.00</div>
     </div>
 
@@ -368,7 +385,34 @@ function mostrarAlerta(tipo,titulo,mensaje,callback,btnText){
 function apiGet(action,params){var url=API+"?action="+action+"&_cb="+Date.now();if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);return fetch(url).then(function(r){return r.json()})}
 function apiPost(d){return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)}).then(function(r){return r.json()})}
 
-function formatMoney(v){var val=parseFloat(v)||0;return "$"+val.toFixed(2)}
+function formatNum(v) {
+  v = parseFloat(v) || 0;
+  var parts = v.toFixed(2).split(".");
+  var intPart = parts[0];
+  var decPart = parts[1];
+  intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return intPart + "." + decPart;
+}
+function formatMoney(v){return "$ "+formatNum(v)}
+function formatMoneyWithSymbol(v,simbolo){var sym=(simbolo||"$").trim();return sym+" "+formatNum(v)}
+
+/* ===== MAPA DE TASAS DESDE FORMAS DE PAGO ===== */
+function getTasaMap(){
+  var map={};
+  FORMAS_PAGO.forEach(function(fp){
+    if(fp.CodTasa) map[fp.CodTasa]=parseFloat(fp.ValorTasa)||1;
+  });
+  return map;
+}
+
+/* ===== CONVERTIR MONTO A USD USANDO TASAS ===== */
+function convertToUSD(monto,codTasa){
+  var map=getTasaMap();
+  var tasa=map[codTasa]||1;
+  var tasaUSD=map["T002"]||1;
+  return monto*tasa/tasaUSD;
+}
+
 function formatTime(h){
   if(!h)return"--:--";
   var s=String(h).trim();
@@ -446,12 +490,21 @@ function renderConTurno(){
   var r=RESUMEN||{};
   var m=MOVIMIENTOS||{};
   var resumenArr=r.resumen||[];
+  var resumenMonedaArr=r.resumenPorMoneda||[];
   var movsArr=m.movimientos||[];
+
+  // === VALORES EN USD (MONEDA BASE) ===
+  var totalGeneralUSD=parseFloat(r.totalGeneralUSD)||0;
+  var totalEntradasUSD=parseFloat(r.totalEntradasUSD)||0;
+  var totalSalidasUSD=parseFloat(r.totalSalidasUSD)||0;
+  var montoApertura=parseFloat(t.MontoApertura)||0;
+  var disponibleUSD=montoApertura+totalGeneralUSD+totalEntradasUSD-totalSalidasUSD;
+
+  // === VALORES CRUDOS (PARA REFERENCIA) ===
   var totalGeneral=parseFloat(r.totalGeneral)||0;
   var totalEntradas=parseFloat(r.totalEntradas)||0;
   var totalSalidas=parseFloat(r.totalSalidas)||0;
-  var montoApertura=parseFloat(t.MontoApertura)||0;
-  var disponible=montoApertura+totalGeneral+totalEntradas-totalSalidas;
+
   var fecha=formatDate(t.FechaApertura);
   var hora=formatTime(t.HoraApertura);
 
@@ -465,19 +518,32 @@ function renderConTurno(){
   html+='<div class="turnoRow"><span class="turnoLabel">Fecha Apertura</span><span class="turnoValue">'+fecha+' '+hora+'</span></div>';
   html+='</div>';
 
-  // 2. DISPONIBLE EN CAJA CARD (ESTILO CUADRO VERDE SUPERIOR)
+  // 2. DISPONIBLE EN CAJA CARD (USD BASE + DESGLOSE POR MONEDA)
   html+='<div class="disponibleCard">';
   html+='<div class="sectionTitle verde" style="margin-bottom:12px">📈 Disponible en Caja</div>';
-  html+='<div class="disponibleRow"><span class="disponibleLabel">Monto Apertura</span><span class="disponibleValue">'+formatMoney(montoApertura)+'</span></div>';
-  html+='<div class="disponibleRow"><span class="disponibleLabel">Total Cobrado</span><span class="disponibleValue highlight">'+formatMoney(totalGeneral)+'</span></div>';
-  html+='<div class="disponibleRow"><span class="disponibleLabel">Entradas de Caja</span><span class="disponibleValue positive">'+formatMoney(totalEntradas)+'</span></div>';
-  html+='<div class="disponibleRow"><span class="disponibleLabel">Salidas de Caja</span><span class="disponibleValue negative">'+formatMoney(totalSalidas)+'</span></div>';
-  html+='<div class="disponibleRow total"><span class="disponibleLabel" style="font-weight:700;color:#fff;font-size:14px">DISPONIBLE</span><span class="disponibleValue total">'+formatMoney(disponible)+'</span></div>';
+  html+='<div class="disponibleRow"><span class="disponibleLabel">Monto Apertura</span><span class="disponibleValue apertura">'+formatMoney(montoApertura)+'</span></div>';
+  html+='<div class="disponibleRow"><span class="disponibleLabel">Total Cobrado (USD)</span><span class="disponibleValue highlight">'+formatMoney(totalGeneralUSD)+'</span></div>';
+  html+='<div class="disponibleRow"><span class="disponibleLabel">Entradas de Caja (USD)</span><span class="disponibleValue positive">'+formatMoney(totalEntradasUSD)+'</span></div>';
+  html+='<div class="disponibleRow"><span class="disponibleLabel">Salidas de Caja (USD)</span><span class="disponibleValue negative">'+formatMoney(totalSalidasUSD)+'</span></div>';
+  html+='<div class="disponibleRow total"><span class="disponibleLabel" style="font-weight:700;color:#fff;font-size:14px">DISPONIBLE (USD)</span><span class="disponibleValue total">'+formatMoney(disponibleUSD)+'</span></div>';
+
+  // Desglose por moneda real
+  if(resumenMonedaArr.length>0){
+    html+='<div class="monedaDesglose">';
+    html+='<div class="monedaDesgloseTitle">Desglose por Moneda</div>';
+    resumenMonedaArr.forEach(function(mon){
+      html+='<div class="monedaItem">';
+      html+='<span class="monedaNombre">'+(mon.desTasa||mon.codTasa)+'</span>';
+      html+='<span><span class="monedaOriginal">'+formatMoneyWithSymbol(mon.totalOriginal,mon.simboloTasa)+'</span> <span class="monedaUsd">= '+formatMoney(mon.totalUSD)+'</span></span>';
+      html+='</div>';
+    });
+    html+='</div>';
+  }
   html+='</div>';
 
-  // 3. ACORDEÓN: CUADRE POR FORMA DE PAGO
+  // 3. ACORDEON: CUADRE POR FORMA DE PAGO (ORIGINAL + USD)
   html+='<div class="accordion" id="accCuadre">';
-  html+='<button type="button" class="accordionHeader" onclick="toggleAccordion(\'accCuadre\')">';
+  html+='<button type="button" class="accordionHeader" data-accordion="accCuadre">';
   html+='<div class="accordionTitle">💰 Cuadre por Forma de Pago</div>';
   html+='<div class="accordionArrow"><svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg></div>';
   html+='</button>';
@@ -485,28 +551,24 @@ function renderConTurno(){
   if(resumenArr.length===0){
     html+='<div class="emptyState">Sin pagos registrados en este turno</div>';
   }else{
-    html+='<div class="cuadreRow header">';
-    html+='<span style="font-weight:700;color:#9ca3af;font-size:11px;text-transform:uppercase;letter-spacing:0.5px">Forma de Pago</span>';
-    html+='<span style="font-weight:700;color:#9ca3af;font-size:11px;text-transform:uppercase;letter-spacing:0.5px">Monto</span>';
-    html+='</div>';
     resumenArr.forEach(function(item){
       var dotClass=getDotClass(item.codFormaPago);
       html+='<div class="cuadreRow">';
       html+='<div class="cuadreDesc"><div class="cuadreFp"><span class="dot '+dotClass+'"></span>'+(item.desPago||item.codFormaPago)+'</div><div class="cuadreCant">'+item.cantidad+' pago(s)</div></div>';
-      html+='<div class="cuadreMonto">'+formatMoney(item.total)+'</div>';
+      html+='<div class="cuadreMonto">'+formatMoneyWithSymbol(item.total,item.simboloTasa)+'<span class="usdEq">≈ '+formatMoney(item.totalUSD)+' USD</span></div>';
       html+='</div>';
     });
     html+='<div class="cuadreRow total">';
     html+='<div class="cuadreDesc"><div class="cuadreFp" style="font-weight:800">TOTAL COBRADO</div></div>';
-    html+='<div class="cuadreMonto total">'+formatMoney(totalGeneral)+'</div>';
+    html+='<div class="cuadreMonto total">'+formatMoney(totalGeneralUSD)+'<span class="usdEq">'+formatMoney(totalGeneral)+' crudo</span></div>';
     html+='</div>';
   }
   html+='</div>';
   html+='</div>';
 
-  // 4. ACORDEÓN: MOVIMIENTOS DE CAJA
+  // 4. ACORDEON: MOVIMIENTOS DE CAJA (CON USD)
   html+='<div class="accordion" id="accMovimientos">';
-  html+='<button type="button" class="accordionHeader" onclick="toggleAccordion(\'accMovimientos\')">';
+  html+='<button type="button" class="accordionHeader" data-accordion="accMovimientos">';
   html+='<div class="accordionTitle">📋 Movimientos de Caja</div>';
   html+='<div class="accordionArrow"><svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg></div>';
   html+='</button>';
@@ -516,25 +578,27 @@ function renderConTurno(){
   }else{
     movsArr.forEach(function(mov){
       var tipoClass=mov.TipoMovimiento==="Entrada"?"entrada":"salida";
+      var montoUSD=convertToUSD(parseFloat(mov.MontoMovimiento)||0,mov.CodTasa||"T002");
       html+='<div class="movRow">';
       html+='<div>';
-      html+='<div style="display:flex;align-items:center;gap:8px"><span class="movTipo '+tipoClass+'">'+mov.TipoMovimiento+'</span><span class="movMonto '+tipoClass+'">'+formatMoney(mov.MontoMovimiento)+'</span></div>';
+      html+='<div style="display:flex;align-items:center;gap:8px"><span class="movTipo '+tipoClass+'">'+mov.TipoMovimiento+'</span><span class="movMonto '+tipoClass+'">'+formatMoneyWithSymbol(mov.MontoMovimiento,mov.SimboloTasa||"$")+'</span></div>';
       html+='<div class="movMotivo">'+(mov.Motivo||"")+'</div>';
       html+='<div class="movMeta">'+(mov.DesPago||"")+' • '+(mov.FechaMovimiento||"")+' '+(mov.HoraMovimiento||"")+'</div>';
+      html+='<div class="movUsdEq">≈ '+formatMoney(montoUSD)+' USD</div>';
       html+='</div>';
       html+='</div>';
     });
-    if(totalEntradas>0||totalSalidas>0){
+    if(totalEntradasUSD>0||totalSalidasUSD>0){
       html+='<div style="display:flex;justify-content:space-between;padding-top:12px;margin-top:8px;border-top:1px solid rgba(255,255,255,0.06)">';
-      if(totalEntradas>0)html+='<span style="font-size:12px;color:#4ade80;font-weight:600">Entradas: '+formatMoney(totalEntradas)+'</span>';
-      if(totalSalidas>0)html+='<span style="font-size:12px;color:#f87171;font-weight:600">Salidas: '+formatMoney(totalSalidas)+'</span>';
+      if(totalEntradasUSD>0)html+='<span style="font-size:12px;color:#4ade80;font-weight:600">Entradas: '+formatMoney(totalEntradasUSD)+' USD</span>';
+      if(totalSalidasUSD>0)html+='<span style="font-size:12px;color:#f87171;font-weight:600">Salidas: '+formatMoney(totalSalidasUSD)+' USD</span>';
       html+='</div>';
     }
   }
   html+='</div>';
   html+='</div>';
 
-  // 5. BOTONERA INFERIOR ACORDE A LA IMAGEN
+  // 5. BOTONERA INFERIOR
   html+='<div class="footerActions">';
   html+='<button class="actionBtn clean" id="btnMovimiento" type="button">💰 Entrada / Salida de Caja</button>';
   html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">';
@@ -558,6 +622,18 @@ function attachEvents(){
   if(b1)b1.addEventListener("click",function(){window.location.href="caja.html"});
   var b2=document.getElementById("btnBackMenu2");
   if(b2)b2.addEventListener("click",function(){window.location.href="caja.html"});
+
+  // Delegacion de eventos para acordeones (evita problemas de comillas en HTML)
+  var container=document.getElementById("mainContent");
+  if(container){
+    container.addEventListener("click",function(e){
+      var header=e.target.closest(".accordionHeader");
+      if(header){
+        var accId=header.getAttribute("data-accordion");
+        if(accId) toggleAccordion(accId);
+      }
+    });
+  }
 }
 
 /* ===== MODAL ABRIR TURNO ===== */
@@ -664,9 +740,9 @@ function submitAbrir(){
 function openModalCerrar(){
   if(!TURNO||!TURNO.CodTurno)return;
   var r=RESUMEN||{};
-  var totalGeneral=parseFloat(r.totalGeneral)||0;
+  var totalGeneralUSD=parseFloat(r.totalGeneralUSD)||0;
   var montoApertura=parseFloat(TURNO.MontoApertura)||0;
-  document.getElementById("previewCobrado").textContent=formatMoney(totalGeneral);
+  document.getElementById("previewCobrado").textContent=formatMoney(totalGeneralUSD);
   document.getElementById("previewApertura").textContent=formatMoney(montoApertura);
   document.getElementById("cerrarMonto").value="";
   document.getElementById("cerrarObs").value="";
@@ -676,12 +752,12 @@ function openModalCerrar(){
 
 function calcDiffCierre(){
   var r=RESUMEN||{};
-  var totalGeneral=parseFloat(r.totalGeneral)||0;
+  var totalGeneralUSD=parseFloat(r.totalGeneralUSD)||0;
   var montoApertura=parseFloat(TURNO.MontoApertura)||0;
-  var totalEntradas=parseFloat(r.totalEntradas)||0;
-  var totalSalidas=parseFloat(r.totalSalidas)||0;
+  var totalEntradasUSD=parseFloat(r.totalEntradasUSD)||0;
+  var totalSalidasUSD=parseFloat(r.totalSalidasUSD)||0;
   var arqueo=parseFloat(document.getElementById("cerrarMonto").value)||0;
-  var diff=arqueo-montoApertura-totalGeneral-totalEntradas+totalSalidas;
+  var diff=arqueo-montoApertura-totalGeneralUSD-totalEntradasUSD+totalSalidasUSD;
   var el=document.getElementById("previewDiferencia");
   el.textContent=formatMoney(diff);
   if(Math.abs(diff)<0.01){el.className="diffValue ok"}
@@ -700,7 +776,7 @@ function submitCerrar(){
     if(r.success){
       var msg=r.message||"Turno cerrado correctamente.";
       if(r.diferencia!==undefined){msg+=" Diferencia: "+formatMoney(r.diferencia)+"."}
-      mostrarAlerta("success","Turno Closed",msg,function(){closeModal("modalCerrar");init();},"Aceptar");
+      mostrarAlerta("success","Turno Cerrado",msg,function(){closeModal("modalCerrar");init();},"Aceptar");
     }else{
       mostrarAlerta("error","Error",r.error||"No se pudo cerrar el turno.");
     }
@@ -715,7 +791,7 @@ function openModalMovimiento(){
   document.getElementById("movMotivo").value="";
   var sel=document.getElementById("movFormaPago");
   if(FORMAS_PAGO.length>0){
-    sel.innerHTML='<option value="">Seleccione forma de pago</option>'+FORMAS_PAGO.map(function(fp){return'<option value="'+fp.CodPago+'" data-codtasa="'+fp.CodTasa+'" data-despago="'+fp.DesPago+'">'+fp.DesPago+'</option>';}).join("");
+    sel.innerHTML='<option value="">Seleccione forma de pago</option>'+FORMAS_PAGO.map(function(fp){return'<option value="'+fp.CodFormaPago+'" data-codtasa="'+fp.CodTasa+'" data-despago="'+fp.DesPago+'" data-simbolo="'+(fp.SimboloTasa||"$")+'">'+fp.DesPago+'</option>';}).join("");
   }else{
     sel.innerHTML='<option value="">No hay formas de pago</option>';
   }
@@ -728,6 +804,7 @@ function submitMovimiento(){
   var codFP=sel.value;
   var desPago=sel.options[sel.selectedIndex]?sel.options[sel.selectedIndex].getAttribute("data-despago")||"":"";
   var codTasa=sel.options[sel.selectedIndex]?sel.options[sel.selectedIndex].getAttribute("data-codtasa")||"":"";
+  var simboloTasa=sel.options[sel.selectedIndex]?sel.options[sel.selectedIndex].getAttribute("data-simbolo")||"$":"$";
   var monto=parseFloat(document.getElementById("movMonto").value);
   var motivo=document.getElementById("movMotivo").value.trim();
 
