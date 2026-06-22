@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Productos - FastBurguer</title>
 <style>
+  /* ============================================
+     FASTBURGUER  — v3.0 | 2026-06-21 | Control de Versión 
+     ============================================ */
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 
@@ -288,6 +291,15 @@ var ROWS=[];var SEL=null;var FORM_STATE=true;var MODAL_MODE="add";var SHOW_INACT
 function showLoad(){document.getElementById("load").className="show"}
 function hideLoad(){document.getElementById("load").className=""}
 function toast(m,ok){var t=document.getElementById("toast");t.textContent=m;t.className=ok?"ok":"err";t.style.display="block";setTimeout(function(){t.style.display="none"},3000)}
+function formatNum(v) {
+  v = parseFloat(v) || 0;
+  var parts = v.toFixed(2).split(".");
+  var intPart = parts[0];
+  var decPart = parts[1];
+  intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return intPart + "." + decPart;
+}
+
 
 function apiGet(action,params){var url=API+"?action="+action+"&_cb="+Date.now();if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);return fetch(url).then(function(r){return r.json()})}
 
@@ -395,7 +407,7 @@ var isSel=SEL&&SEL.CodProducto===r.CodProducto;
 var row=document.createElement("div");
 row.className="tableRow"+(isSel?" sel":"")+(st?"":" inact");
 row.onclick=function(idx){return function(){selectCard(idx)}}(i);
-row.innerHTML='<div class="rowCheck"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div><div class="td">'+(r.CodProducto||"")+'</div><div class="td">'+(r.DesProducto||"")+'</div><div class="td">'+(r.DesCategoria||"")+'</div><div class="td">'+(r.Precio||"0")+'</div><div class="rowToggle '+(st?"on":"")+' noclick"></div>';
+row.innerHTML='<div class="rowCheck"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div><div class="td">'+(r.CodProducto||"")+'</div><div class="td">'+(r.DesProducto||"")+'</div><div class="td">'+(r.DesCategoria||"")+'</div><div class="td">'+formatNum(r.Precio||0)+'</div><div class="rowToggle '+(st?"on":"")+' noclick"></div>';
 wrap.appendChild(row);
 }
 m.appendChild(wrap);
