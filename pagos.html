@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Formas de Pago - FastBurguer</title>
 <style>
+  /* ============================================
+     FASTBURGUER  — v3.0 | 2026-06-21 | Control de Versión 
+     ============================================ */
+
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 
@@ -203,7 +207,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <span class="searchClear" id="searchClear" onclick="clearSearch()">X</span>
   <select id="filterField" class="filterSelect" onchange="render()">
     <option value="all">Todo</option>
-    <option value="CodPago">Codigo</option>
+    <option value="CodFormaPago">Codigo</option>
     <option value="DesPago">Descripcion</option>
   </select>
 </div>
@@ -351,11 +355,11 @@ wrap.appendChild(header);
 for(var i=0;i<filtered.length;i++){
 var r=filtered[i];
 var st=r.Estado==="Activo";
-var isSel=SEL&&SEL.CodPago===r.CodPago;
+var isSel=SEL&&SEL.CodFormaPago===r.CodFormaPago;
 var row=document.createElement("div");
 row.className="tableRow"+(isSel?" sel":"")+(st?"":" inact");
 row.onclick=function(idx){return function(){selectCard(idx)}}(i);
-row.innerHTML='<div class="rowCheck"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div><div class="td">'+(r.CodPago||"")+'</div><div class="td">'+(r.DesPago||"")+'</div><div class="td">'+(r.SimboloTasa||"")+'</div><div class="rowToggle '+(st?"on":"")+' noclick"></div>';
+row.innerHTML='<div class="rowCheck"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div><div class="td">'+(r.CodFormaPago||"")+'</div><div class="td">'+(r.DesPago||"")+'</div><div class="td">'+(r.SimboloTasa||"")+'</div><div class="rowToggle '+(st?"on":"")+' noclick"></div>';
 wrap.appendChild(row);
 }
 m.appendChild(wrap);
@@ -373,8 +377,8 @@ if(!SHOW_INACTIVOS){
 }
 if(!q)return out;
 return out.filter(function(r){
-if(field==="all"){return normalize(r.CodPago).indexOf(q)!==-1||normalize(r.DesPago).indexOf(q)!==-1}
-if(field==="CodPago")return normalize(r.CodPago).indexOf(q)!==-1;
+if(field==="all"){return normalize(r.CodFormaPago).indexOf(q)!==-1||normalize(r.DesPago).indexOf(q)!==-1}
+if(field==="CodFormaPago")return normalize(r.CodFormaPago).indexOf(q)!==-1;
 if(field==="DesPago")return normalize(r.DesPago).indexOf(q)!==-1;
 return false;
 });
@@ -383,7 +387,7 @@ return false;
 function selectCard(i){
 var filtered=getVisibleRows();
 var clicked=filtered[i];
-if(SEL&&SEL.CodPago===clicked.CodPago){SEL=null}else{SEL=clicked}
+if(SEL&&SEL.CodFormaPago===clicked.CodFormaPago){SEL=null}else{SEL=clicked}
 render();
 }
 
@@ -425,7 +429,7 @@ function openAddModal(){
 MODAL_MODE="add";FORM_STATE=true;
 document.getElementById("modalTitle").textContent="Nueva Forma de Pago";
 document.getElementById("codeLabel").textContent="CÓDIGO ...";
-fetchNextCode("CodPago").then(function(nextCode){
+fetchNextCode("CodFormaPago").then(function(nextCode){
   document.getElementById("codeLabel").textContent="CÓDIGO "+nextCode;
 });
 document.getElementById("fDesc").value="";
@@ -443,7 +447,7 @@ function openEditModal(){
 if(!SEL){toast("Seleccione una forma de pago",false);return}
 MODAL_MODE="edit";FORM_STATE=SEL.Estado==="Activo";
 document.getElementById("modalTitle").textContent="Editar Forma de Pago";
-document.getElementById("codeLabel").textContent="CÓDIGO "+(SEL.CodPago||"");
+document.getElementById("codeLabel").textContent="CÓDIGO "+(SEL.CodFormaPago||"");
 document.getElementById("fDesc").value=SEL.DesPago||"";
 document.getElementById("fDatos").value=SEL.DatosTasa||"";
 document.getElementById("fUrl").value=SEL.UrlPago||"";
@@ -487,7 +491,7 @@ var PENDING_DEL=null;
 function doDel(){
 if(!SEL){toast("Seleccione una forma de pago",false);closeMenu();return}
 PENDING_DEL=SEL;
-document.getElementById("confirmMsg").textContent='Desea eliminar "'+(SEL.CodPago||"")+" - "+(SEL.DesPago||"")+'"? ';
+document.getElementById("confirmMsg").textContent='Desea eliminar "'+(SEL.CodFormaPago||"")+" - "+(SEL.DesPago||"")+'"? ';
 document.getElementById("confirmOverlay").className="show";
 closeMenu();
 }
@@ -503,7 +507,7 @@ if(!PENDING_DEL){closeConfirm();return}
 var delItem=PENDING_DEL;
 closeConfirm();
 showLoad();
-apiPost({action:"adminData",method:"DELETE",sheetName:"FormasPago",data:{CodPago:delItem.CodPago}})
+apiPost({action:"adminData",method:"DELETE",sheetName:"FormasPago",data:{CodFormaPago:delItem.CodFormaPago}})
 .then(function(r){
  hideLoad();
  if(r.success){toast("Eliminado",true);SEL=null;loadData();}
@@ -524,7 +528,7 @@ if(!d.DesPago){toast("Descripcion requerida",false);return;}
 if(!d.CodTasa){toast("Moneda requerida",false);return;}
 showLoad();
 if(MODAL_MODE==="edit"&&SEL){
-d.CodPago=SEL.CodPago;
+d.CodFormaPago=SEL.CodFormaPago;
 apiPost({action:"adminData",method:"PUT",sheetName:"FormasPago",data:d})
 .then(function(r){
  hideLoad();
