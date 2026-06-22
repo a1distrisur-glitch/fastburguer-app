@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Servidores - FastBurguer</title>
 <style>
+  /* ============================================
+     FASTBURGUER  — v3.0 | 2026-06-21 | Control de Versión 
+     ============================================ */
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 
@@ -285,6 +288,18 @@ function showLoad(){document.getElementById("load").className="show"}
 function hideLoad(){document.getElementById("load").className=""}
 function toast(m,ok){var t=document.getElementById("toast");t.textContent=m;t.className=ok?"ok":"err";t.style.display="block";setTimeout(function(){t.style.display="none"},3000)}
 
+// ============================================
+// FORMATO NUMERICO — Separador de miles (solo visual)
+// ============================================
+function formatNum(v){
+  v = parseFloat(v) || 0;
+  var parts = v.toFixed(2).split(".");
+  var intPart = parts[0];
+  var decPart = parts[1];
+  intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return intPart + "." + decPart;
+}
+
 function apiGet(action,params){var url=API+"?action="+action+"&_cb="+Date.now();if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);return fetch(url).then(function(r){return r.json()})}
 
 function loadTasas(){
@@ -421,7 +436,9 @@ function fetchNextCode(codeField){
   }).catch(function(){return"Auto";});
 }
 function openAddModal(){
-MODAL_MODE="add";FORM_STATE=true;
+MODAL_MODE="add";
+FORM_STATE=true; // FIX v9.14: Resetear siempre a true al agregar
+
 document.getElementById("modalTitle").textContent="Nuevo Servidor";
 document.getElementById("codeLabel").textContent="CÓDIGO ...";
 fetchNextCode("CodServidor").then(function(nextCode){
@@ -430,37 +447,67 @@ fetchNextCode("CodServidor").then(function(nextCode){
 document.getElementById("fNom").value="";
 document.getElementById("fMesero").value="SI";
 document.getElementById("fDelivery").value="No";
-document.getElementById("fMoneda").value="T002";
-document.getElementById("fMonedaDes").value="Dolar";
+
+// FIX v9.14: Seleccionar primera moneda activa disponible en vez de forzar T002
+var selMoneda=document.getElementById("fMoneda");
+if(selMoneda.options.length>1){
+  selMoneda.selectedIndex=1;
+}else{
+  selMoneda.value="";
+}
+onMonedaChange(); // Actualizar descripcion oculta
+
 document.getElementById("fComision").value="";
 document.getElementById("fTlf").value="";
-document.getElementById("fToggle").className="modalToggle on";
+
+var ft=document.getElementById("fToggle");
+ft.className="modalToggle on";
+ft.onclick=toggleFormState; // FIX v9.14: Asegurar que el toggle funciona en modo add
 document.getElementById("fToggleTxt").textContent="Activo";
+
 document.getElementById("modalOverlay").className="show";
 closeMenu();
 }
 
 function openEditModal(){
 if(!SEL){toast("Seleccione un servidor",false);return}
-MODAL_MODE="edit";FORM_STATE=SEL.Estado==="Activo";
+
+MODAL_MODE="edit";
+// FIX v9.14: Resetear FORM_STATE al estado ACTUAL del registro seleccionado
+FORM_STATE=SEL.Estado==="Activo";
+
 document.getElementById("modalTitle").textContent="Editar Servidor";
 document.getElementById("codeLabel").textContent="CÓDIGO "+(SEL.CodServidor||"");
 document.getElementById("fNom").value=SEL.NombreServidor||"";
 document.getElementById("fMesero").value=SEL.MeseroServidor||"SI";
 document.getElementById("fDelivery").value=SEL.DeliveryServidor||"No";
-document.getElementById("fMoneda").value=SEL.CodTasa||"";
-document.getElementById("fMonedaDes").value=SEL.DesTasa||"";
-document.getElementById("fComision").value=SEL.CostoServidor||"";
+
+// FIX v9.14: Setear moneda correctamente y disparar onMonedaChange
+var selMoneda=document.getElementById("fMoneda");
+selMoneda.value=SEL.CodTasa||"";
+if(selMoneda.value!==(SEL.CodTasa||"")){
+  selMoneda.value="";
+}
+onMonedaChange();
+
+// FIX v9.14: Comision — parseFloat correcto, mostrar numero crudo en input (no formatNum)
+var comisionVal=parseFloat(SEL.CostoServidor);
+document.getElementById("fComision").value=isNaN(comisionVal)?"":comisionVal.toFixed(2);
+
 document.getElementById("fTlf").value=SEL.TelefonoServidor||"";
+
 var ft=document.getElementById("fToggle");
+var txt=document.getElementById("fToggleTxt");
 if(FORM_STATE){
-ft.className="modalToggle on disabled";
-ft.onclick=null;
-document.getElementById("fToggleTxt").textContent="Activo (bloqueado)";
+  // Servidor activo: toggle bloqueado (no puede desactivar desde aqui, usa el toggle de la tabla)
+  ft.className="modalToggle on disabled";
+  ft.onclick=null;
+  txt.textContent="Activo (bloqueado)";
 }else{
-ft.className="modalToggle";
-ft.onclick=toggleFormState;
-document.getElementById("fToggleTxt").textContent="Inactivo (puede activar)";
+  // Servidor inactivo: puede reactivar
+  ft.className="modalToggle";
+  ft.onclick=toggleFormState;
+  txt.textContent="Inactivo (puede activar)";
 }
 document.getElementById("modalOverlay").className="show";
 closeMenu();
@@ -528,37 +575,50 @@ apiPost({action:"adminData",method:"PUT",sheetName:"Servidores",data:{CodServido
 }
 
 function save(){
-var d={
-NombreServidor:document.getElementById("fNom").value.trim(),
-MeseroServidor:document.getElementById("fMesero").value,
-DeliveryServidor:document.getElementById("fDelivery").value,
-CodTasa:document.getElementById("fMoneda").value.trim(),
-DesTasa:document.getElementById("fMonedaDes").value.trim(),
-CostoServidor:parseFloat(document.getElementById("fComision").value)||0,
-TelefonoServidor:document.getElementById("fTlf").value.trim(),
-Estado:FORM_STATE?"Activo":"Inactivo"
-};
-if(!d.NombreServidor){toast("Nombre del Servidor requerido",false);return;}
-if(!d.CodTasa){toast("Seleccione una moneda",false);return;}
-showLoad();
-if(MODAL_MODE==="edit"&&SEL){
-d.CodServidor=SEL.CodServidor;
-apiPost({action:"adminData",method:"PUT",sheetName:"Servidores",data:d})
-.then(function(r){
- hideLoad();
- if(r.success){toast("Guardado",true);SEL=null;closeModal();loadData();}
- else{toast(r.error||"Error",false);}
-})
-.catch(function(e){hideLoad();toast("Error de red",false);});
-}else{
-apiPost({action:"adminData",method:"POST",sheetName:"Servidores",data:d})
-.then(function(r){
- hideLoad();
- if(r.success){toast("Creado: "+r.code,true);SEL=null;closeModal();loadData();}
- else{toast(r.error||"Error",false);}
-})
-.catch(function(e){hideLoad();toast("Error de red",false);});
-}
+  // FIX v9.14: Leer comision como string primero, luego parsear
+  var comisionRaw=document.getElementById("fComision").value.trim();
+  var comisionNum=parseFloat(comisionRaw);
+  if(comisionRaw!=="" && isNaN(comisionNum)){
+    toast("Comision debe ser un numero valido",false);
+    return;
+  }
+
+  var d={
+    NombreServidor:document.getElementById("fNom").value.trim(),
+    MeseroServidor:document.getElementById("fMesero").value,
+    DeliveryServidor:document.getElementById("fDelivery").value,
+    CodTasa:document.getElementById("fMoneda").value.trim(),
+    DesTasa:document.getElementById("fMonedaDes").value.trim(),
+    // FIX v9.14: Enviar comision como numero valido (0 si vacio, el valor si existe)
+    CostoServidor: comisionRaw==="" ? 0 : comisionNum,
+    TelefonoServidor:document.getElementById("fTlf").value.trim(),
+    Estado:FORM_STATE?"Activo":"Inactivo"
+  };
+
+  // Validaciones frontend
+  if(!d.NombreServidor){toast("Nombre del Servidor requerido",false);return;}
+  if(!d.CodTasa){toast("Seleccione una moneda",false);return;}
+
+  showLoad();
+
+  if(MODAL_MODE==="edit"&&SEL){
+    d.CodServidor=SEL.CodServidor;
+    apiPost({action:"adminData",method:"PUT",sheetName:"Servidores",data:d})
+    .then(function(r){
+      hideLoad();
+      if(r.success){toast("Guardado",true);SEL=null;closeModal();loadData();}
+      else{toast(r.error||"Error al guardar: "+JSON.stringify(r),false);}
+    })
+    .catch(function(e){hideLoad();toast("Error de red: "+e.message,false);});
+  }else{
+    apiPost({action:"adminData",method:"POST",sheetName:"Servidores",data:d})
+    .then(function(r){
+      hideLoad();
+      if(r.success){toast("Creado: "+r.code,true);SEL=null;closeModal();loadData();}
+      else{toast(r.error||"Error al crear: "+JSON.stringify(r),false);}
+    })
+    .catch(function(e){hideLoad();toast("Error de red: "+e.message,false);});
+  }
 }
 
 function toggleViewInactivos(){
@@ -574,6 +634,9 @@ function clearSearch(){document.getElementById("searchInput").value="";render();
 
 document.getElementById("searchInput").addEventListener("input",render);
 
+// FIX v9.14: Conectar evento change de moneda
+document.getElementById("fMoneda").addEventListener("change",onMonedaChange);
+
 document.addEventListener("keydown",function(e){
 if(e.key==="Escape"){closeMenu();closeModal();}
 });
@@ -582,10 +645,18 @@ init();
 </script>
 
 <!--
-FastBurguer Admin v9.13
+FastBurguer Admin v9.14
 Modulo: servicios.html
-Version: 9.13
-Fecha: 2026-06-08
+Version: 9.14
+Fecha: 2026-06-21
+Cambios v9.14:
+  1. FIX: CostoServidor ahora se parsea correctamente (no NaN)
+  2. FIX: onMonedaChange conectado al evento change del select
+  3. FIX: FORM_STATE reseteado correctamente en openAddModal y openEditModal
+  4. FIX: Seleccion de moneda por defecto usa primera opcion disponible, no T002 forzado
+  5. FIX: Mensajes de error mejorados con detalle del backend
+  6. ADD: formatNum() para separador de miles (preparado para futuro uso)
+  7. FIX: Toggle de estado en edicion respeta el estado real del registro
 Asistencia: Generado con IA
 Proyecto: Ing. Jesus Linares
 Contacto: 0412-0639340
