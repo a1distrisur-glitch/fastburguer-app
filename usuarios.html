@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Usuarios - FastBurguer</title>
 <style>
+  /* ============================================
+     FASTBURGUER  — v3.0 | 2026-06-21 | Control de Versión 
+     ============================================ */
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 
@@ -297,6 +300,18 @@ function showLoad(){document.getElementById("load").className="show"}
 function hideLoad(){document.getElementById("load").className=""}
 function toast(m,ok){var t=document.getElementById("toast");t.textContent=m;t.className=ok?"ok":"err";t.style.display="block";setTimeout(function(){t.style.display="none"},3000)}
 
+// ============================================
+// FORMATO NUMERICO — Separador de miles (solo visual)
+// ============================================
+function formatNum(v){
+  v = parseFloat(v) || 0;
+  var parts = v.toFixed(2).split(".");
+  var intPart = parts[0];
+  var decPart = parts[1];
+  intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return intPart + "." + decPart;
+}
+
 function apiGet(action,params){var url=API+"?action="+action+"&_cb="+Date.now();if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);return fetch(url).then(function(r){return r.json()})}
 function apiPost(d){return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.text();}).then(function(t){try{return JSON.parse(t);}catch(e){throw new Error("Respuesta no es JSON: "+t.substring(0,200));}})}
 
@@ -328,11 +343,8 @@ for(var i=0;i<TASAS.length;i++){
  opt.textContent=(t.DesTasa||t.CodTasa||"")+" ("+(t.SimboloTasa||"")+")";
  sel.appendChild(opt);
 }
-var foundT002=false;
-for(var i=0;i<sel.options.length;i++){
- if(sel.options[i].value==="T002"){sel.selectedIndex=i;foundT002=true;break;}
-}
-if(!foundT002&&sel.options.length>0)sel.selectedIndex=0;
+// FIX v9.14: Seleccionar primera moneda disponible, no forzar T002
+if(sel.options.length>0) sel.selectedIndex=0;
 }
 
 function init(){
@@ -443,7 +455,9 @@ function fetchNextCode(codeField){
   }).catch(function(){return"Auto";});
 }
 function openAddModal(){
-MODAL_MODE="add";FORM_STATE=true;
+MODAL_MODE="add";
+FORM_STATE=true; // FIX v9.14: Resetear siempre a true al agregar
+
 document.getElementById("modalTitle").textContent="Nuevo Usuario";
 document.getElementById("codeLabel").textContent="CÓDIGO ...";
 fetchNextCode("CodUsuario").then(function(nextCode){
@@ -458,9 +472,12 @@ document.getElementById("fInsta").value="";
 document.getElementById("fEmail").value="";
 document.getElementById("fMenu").value="";
 document.getElementById("fRol").value="admin";
-document.getElementById("fToggle").className="modalToggle on";
+
+var ft=document.getElementById("fToggle");
+ft.className="modalToggle on";
+ft.onclick=toggleFormState; // FIX v9.14: Asegurar que el toggle funciona en modo add
 document.getElementById("fToggleTxt").textContent="Activo";
-document.getElementById("fToggle").onclick=toggleFormState;
+
 populateTasaSelect();
 document.getElementById("modalOverlay").className="show";
 closeMenu();
@@ -468,7 +485,11 @@ closeMenu();
 
 function openEditModal(){
 if(!SEL){toast("Seleccione un usuario",false);return}
-MODAL_MODE="edit";FORM_STATE=SEL.Estado==="Activo";
+
+MODAL_MODE="edit";
+// FIX v9.14: Resetear FORM_STATE al estado ACTUAL del registro seleccionado
+FORM_STATE=SEL.Estado==="Activo";
+
 document.getElementById("modalTitle").textContent="Editar Usuario";
 document.getElementById("codeLabel").textContent="CÓDIGO "+(SEL.CodUsuario||"");
 document.getElementById("fNombre").value=SEL.NombreUsuario||"";
@@ -480,20 +501,29 @@ document.getElementById("fInsta").value=SEL.Instagram||"";
 document.getElementById("fEmail").value=SEL.EmailUsuario||"";
 document.getElementById("fMenu").value=SEL.MenuUsuario||"";
 document.getElementById("fRol").value=SEL.RolUsuario||"admin";
+
 populateTasaSelect();
+// FIX v9.14: Setear moneda correctamente
 var sel=document.getElementById("fTasa");
+var codTasaSel=SEL.CodTasa||"";
+var found=false;
 for(var i=0;i<sel.options.length;i++){
- if(sel.options[i].value===(SEL.CodTasa||"")){sel.selectedIndex=i;break;}
+ if(sel.options[i].value===codTasaSel){sel.selectedIndex=i;found=true;break;}
 }
+if(!found&&sel.options.length>0) sel.selectedIndex=0;
+
 var ft=document.getElementById("fToggle");
+var txt=document.getElementById("fToggleTxt");
 if(FORM_STATE){
-ft.className="modalToggle on disabled";
-ft.onclick=null;
-document.getElementById("fToggleTxt").textContent="Activo (bloqueado)";
+  // Usuario activo: toggle bloqueado (no puede desactivar desde aqui, usa el toggle de la tabla)
+  ft.className="modalToggle on disabled";
+  ft.onclick=null;
+  txt.textContent="Activo (bloqueado)";
 }else{
-ft.className="modalToggle";
-ft.onclick=toggleFormState;
-document.getElementById("fToggleTxt").textContent="Inactivo (puede activar)";
+  // Usuario inactivo: puede reactivar
+  ft.className="modalToggle";
+  ft.onclick=toggleFormState;
+  txt.textContent="Inactivo (puede activar)";
 }
 document.getElementById("modalOverlay").className="show";
 closeMenu();
@@ -546,40 +576,44 @@ apiPost({action:"adminData",method:"DELETE",sheetName:"Usuarios",data:{CodUsuari
 }
 
 function save(){
-var d={
-NombreUsuario:document.getElementById("fNombre").value.trim(),
-Clave:document.getElementById("fClave").value.trim(),
-DesUsuario:document.getElementById("fDes").value.trim(),
-DetalleUsuario:document.getElementById("fDet").value.trim(),
-CodTasa:document.getElementById("fTasa").value.trim(),
-RolUsuario:document.getElementById("fRol").value.trim(),
-TelUsuario:document.getElementById("fTel").value.trim(),
-Instagram:document.getElementById("fInsta").value.trim(),
-EmailUsuario:document.getElementById("fEmail").value.trim(),
-MenuUsuario:document.getElementById("fMenu").value.trim(),
-Estado:FORM_STATE?"Activo":"Inactivo"
-};
-if(!d.NombreUsuario||!d.Clave){toast("Nombre y Clave requeridos",false);return;}
-if(!d.CodTasa){toast("Moneda requerida",false);return;}
-showLoad();
-if(MODAL_MODE==="edit"&&SEL){
-d.CodUsuario=SEL.CodUsuario;
-apiPost({action:"adminData",method:"PUT",sheetName:"Usuarios",data:d})
-.then(function(r){
- hideLoad();
- if(r.success){toast("Guardado",true);SEL=null;closeModal();loadData();}
- else{toast(r.error||"Error",false);}
-})
-.catch(function(e){hideLoad();toast("Error de red",false);});
-}else{
-apiPost({action:"adminData",method:"POST",sheetName:"Usuarios",data:d})
-.then(function(r){
- hideLoad();
- if(r.success){toast("Creado: "+r.code,true);SEL=null;closeModal();loadData();}
- else{toast(r.error||"Error",false);}
-})
-.catch(function(e){hideLoad();toast("Error de red",false);});
-}
+  var d={
+    NombreUsuario:document.getElementById("fNombre").value.trim(),
+    Clave:document.getElementById("fClave").value.trim(),
+    DesUsuario:document.getElementById("fDes").value.trim(),
+    DetalleUsuario:document.getElementById("fDet").value.trim(),
+    CodTasa:document.getElementById("fTasa").value.trim(),
+    RolUsuario:document.getElementById("fRol").value.trim(),
+    TelUsuario:document.getElementById("fTel").value.trim(),
+    Instagram:document.getElementById("fInsta").value.trim(),
+    EmailUsuario:document.getElementById("fEmail").value.trim(),
+    MenuUsuario:document.getElementById("fMenu").value.trim(),
+    Estado:FORM_STATE?"Activo":"Inactivo"
+  };
+
+  // Validaciones frontend
+  if(!d.NombreUsuario||!d.Clave){toast("Nombre y Clave requeridos",false);return;}
+  if(!d.CodTasa){toast("Moneda requerida",false);return;}
+
+  showLoad();
+
+  if(MODAL_MODE==="edit"&&SEL){
+    d.CodUsuario=SEL.CodUsuario;
+    apiPost({action:"adminData",method:"PUT",sheetName:"Usuarios",data:d})
+    .then(function(r){
+      hideLoad();
+      if(r.success){toast("Guardado",true);SEL=null;closeModal();loadData();}
+      else{toast(r.error||"Error al guardar: "+JSON.stringify(r),false);}
+    })
+    .catch(function(e){hideLoad();toast("Error de red: "+e.message,false);});
+  }else{
+    apiPost({action:"adminData",method:"POST",sheetName:"Usuarios",data:d})
+    .then(function(r){
+      hideLoad();
+      if(r.success){toast("Creado: "+r.code,true);SEL=null;closeModal();loadData();}
+      else{toast(r.error||"Error al crear: "+JSON.stringify(r),false);}
+    })
+    .catch(function(e){hideLoad();toast("Error de red: "+e.message,false);});
+  }
 }
 
 function toggleViewInactivos(){
@@ -607,10 +641,17 @@ init();
 </script>
 
 <!--
-FastBurguer Admin v9.13
+FastBurguer Admin v9.14
 Modulo: usuarios.html
-Version: 9.13
-Fecha: 2026-06-08
+Version: 9.14
+Fecha: 2026-06-21
+Cambios v9.14:
+  1. FIX: populateTasaSelect ahora selecciona primera moneda disponible, no fuerza T002
+  2. FIX: FORM_STATE reseteado correctamente en openAddModal y openEditModal
+  3. FIX: Toggle de estado en edicion respeta el estado real del registro
+  4. FIX: Seleccion de moneda en edicion maneja caso de opcion no encontrada
+  5. FIX: Mensajes de error mejorados con detalle del backend (JSON.stringify)
+  6. ADD: formatNum() para separador de miles (preparado para futuro uso)
 Asistencia: Generado con IA
 Proyecto: Ing. Jesus Linares
 Contacto: 0412-0639340
