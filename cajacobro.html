@@ -8,23 +8,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
+  /* ============================================
+     FASTBURGUER  — v3.0 | 2026-06-21 | Control de Versión 
+     ============================================ */
+
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',sans-serif;background:#161616;color:#fff;min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 .hidden{display:none!important}
 
-/* ===== LOADER ===== */
 #load{position:fixed;inset:0;background:rgba(22,22,22,0.95);display:none;justify-content:center;align-items:center;z-index:9999;flex-direction:column;gap:12px}
 #load.show{display:flex}
 .spin{width:40px;height:40px;border:3px solid rgba(255,255,255,0.08);border-top-color:#f7931e;border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ===== TOAST ===== */
 #toast{position:fixed;top:16px;right:16px;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:600;z-index:9999;display:none;backdrop-filter:blur(10px);max-width:320px;animation:toastIn 0.3s ease}
 #toast.ok{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#22c55e}
 #toast.err{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444}
 @keyframes toastIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
 
-/* ===== ALERTA CUSTOM CENTRADA ===== */
 #customAlertModal{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.85);display:none;justify-content:center;align-items:center;padding:20px;backdrop-filter:blur(8px)}
 #customAlertModal.show{display:flex}
 .alertBox{background:linear-gradient(180deg,#1a1a1a,#0f0f0f);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:28px 24px;max-width:360px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.8);animation:alertEnter 0.35s cubic-bezier(0.4,0,0.2,1)}
@@ -38,7 +39,6 @@ body{font-family:'Inter',sans-serif;background:#161616;color:#fff;min-height:100
 .alertBtn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(255,107,53,0.3)}
 .alertBtn:active{transform:scale(0.97)}
 
-/* ===== MODAL CONFIRMACION COBRO ===== */
 #confirmCobroModal{position:fixed;inset:0;z-index:10001;background:rgba(0,0,0,0.85);display:none;justify-content:center;align-items:center;padding:20px;backdrop-filter:blur(8px)}
 #confirmCobroModal.show{display:flex}
 .confirmBox{background:linear-gradient(180deg,#1a1a1a,#0f0f0f);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:28px 24px;max-width:380px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.8);animation:alertEnter 0.35s cubic-bezier(0.4,0,0.2,1)}
@@ -51,17 +51,14 @@ body{font-family:'Inter',sans-serif;background:#161616;color:#fff;min-height:100
 .confirmBtn.cancel{background:#1a1a1a;color:#9ca3af;border:1px solid rgba(255,255,255,0.1)}
 .confirmBtn.cancel:hover{background:#252525;color:#fff}
 
-/* ===== HEADER ===== */
 .header{position:fixed;top:0;left:0;right:0;height:56px;background:rgba(22,22,22,0.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:100}
 .hBtn{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.2s;background:rgba(255,255,255,0.05);border:none;color:#fff}
 .hBtn:active{transform:scale(0.93);background:rgba(255,107,53,0.15)}
 .hTitle{font-size:16px;font-weight:800;color:#f7931e;letter-spacing:-0.3px}
 .hSub{font-size:11px;color:#6b7280;font-weight:500}
 
-/* ===== CONTENT ===== */
 .content{padding:70px 14px 24px;min-height:100vh;max-width:800px;margin:0 auto}
 
-/* ===== PEDIDO HEADER CARD ===== */
 .pedidoHeaderCard{background:#151515;border:1px solid rgba(255,255,255,0.04);border-radius:16px;padding:16px;margin-bottom:16px}
 .pedidoHeaderTop{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
 .pedidoNroBig{font-size:16px;font-weight:800;color:#f7931e}
@@ -73,7 +70,6 @@ body{font-family:'Inter',sans-serif;background:#161616;color:#fff;min-height:100
 .statusChip.anulado{background:#3a1a1a;color:#f87171;border:1px solid rgba(239,68,68,0.25)}
 .statusChip.entregado{background:#2a2a2a;color:#9ca3af;border:1px solid rgba(107,114,128,0.2)}
 
-/* Totales */
 .totalesRow{display:flex;justify-content:space-between;align-items:center}
 .totalBlock{display:flex;flex-direction:column}
 .totalBlockLabel{font-size:12px;color:#9ca3af;font-weight:500;margin-bottom:2px}
@@ -81,42 +77,38 @@ body{font-family:'Inter',sans-serif;background:#161616;color:#fff;min-height:100
 .totalBlockValue.naranja{color:#f7931e}
 .totalBlockValue.pagado{color:#fff}
 
-/* ===== FORMAS DE PAGO ===== */
 .actionSection{background:#141414;border:1px solid rgba(255,255,255,0.04);border-radius:16px;padding:16px;margin-bottom:16px}
 .actionTitle{font-size:14px;font-weight:700;color:#f7931e;margin-bottom:14px;display:flex;align-items:center;gap:6px}
 
-/* Fila Cobrar | Pagado */
 .cobrarPagadoRow{display:flex;gap:12px;align-items:center;margin-bottom:10px}
 .cobrarPagadoCol{flex:1;display:flex;flex-direction:column;gap:4px}
 .cobrarPagadoLabel{font-size:12px;font-weight:600;color:#9ca3af}
 .cobrarPagadoInput{background:#111111;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px 12px;color:#fff;font-size:16px;font-weight:700;outline:none;font-family:'Inter',sans-serif;text-align:center}
 .cobrarPagadoInput:focus{border-color:rgba(255,107,53,0.4);box-shadow:0 0 0 3px rgba(255,107,53,0.08)}
 
-/* ===== PAYMENT ROW (2 lineas) ===== */
 .paymentRow{background:#191919;border:1px solid rgba(255,255,255,0.04);border-radius:12px;padding:10px;margin-bottom:8px}
-.paymentRow.confirmed{opacity:0.7;pointer-events:none;border-color:rgba(34,197,94,0.2)}
+.paymentRow.confirmed{opacity:0.85;border-color:rgba(34,197,94,0.3)}
 .paymentRow .row2{display:flex;gap:8px;align-items:center;margin-top:8px}
 .paymentRow .row2 input[type="text"]{flex:1 1 140px;min-width:140px;font-size:16px;font-weight:700}
 .paymentRow .row2 input[type="text"].refInput{flex:1 1 100px;min-width:80px}
 .paymentRow .row2 .confirmMontoBtn{flex:0 0 auto;padding:8px 14px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;transition:0.2s;border:none;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;white-space:nowrap}
+.editBtn{background:linear-gradient(135deg,#f59e0b,#d97706)!important;color:#fff!important}
+.editBtn:hover{box-shadow:0 6px 16px rgba(245,158,11,0.3)!important}
 .paymentRow .row2 .confirmMontoBtn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(34,197,94,0.3)}
 .paymentRow .row2 .confirmMontoBtn:active{transform:scale(0.95)}
-.paymentRow .row2 .deleteBtn{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#f87171;cursor:pointer;transition:0.2s;border:none;flex-shrink:0}
+.paymentRow .row2 .deleteBtn{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(239,68,68,0.25);border:1px solid rgba(239,68,68,0.5);color:#fca5a5;cursor:pointer;transition:0.2s;border:none;flex-shrink:0;font-size:18px}
 .paymentRow .row2 .deleteBtn:hover{background:rgba(239,68,68,0.2)}
 .paymentRow .row2 .deleteBtn:active{transform:scale(0.93)}
 
-/* Select nativo estilizado */
 .paymentSelect{width:100%;background:#1f2937 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%239ca3af' viewBox='0 0 24 24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right 12px center;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 36px 12px 14px;color:#fff;font-size:14px;font-family:'Inter',sans-serif;outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;transition:0.2s}
 .paymentSelect:focus{border-color:rgba(255,107,53,0.4);box-shadow:0 0 0 3px rgba(255,107,53,0.08)}
 .paymentSelect option{background:#1a1a1a;color:#fff}
 .paymentSelect:disabled{opacity:0.5;cursor:not-allowed}
 
-/* Inputs generales dentro de paymentRow */
 .paymentRow input{background:#111111;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px 12px;color:#fff;font-size:14px;outline:none;font-family:'Inter',sans-serif}
 .paymentRow input:focus{border-color:rgba(255,107,53,0.4);box-shadow:0 0 0 3px rgba(255,107,53,0.08)}
 .paymentRow input:disabled{opacity:0.5;cursor:not-allowed}
 
-/* ===== PEDIDOS (icono carrito) ===== */
 .pedidosSection{background:#141414;border:1px solid rgba(255,255,255,0.04);border-radius:14px;margin-bottom:16px;overflow:hidden}
 .pedidosHeader{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;cursor:pointer;user-select:none}
 .pedidosTitle{font-size:13px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;display:flex;align-items:center;gap:8px}
@@ -125,7 +117,6 @@ body{font-family:'Inter',sans-serif;background:#161616;color:#fff;min-height:100
 .pedidosBody{padding:0 16px 14px;display:none}
 .pedidosBody.open{display:block}
 
-/* ===== PRODUCTOS COLAPSABLE ===== */
 .itemsSection{background:#141414;border:1px solid rgba(255,255,255,0.04);border-radius:14px;margin-bottom:16px;overflow:hidden}
 .itemsHeader{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;cursor:pointer;user-select:none}
 .itemsTitle{font-size:13px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;display:flex;align-items:center;gap:8px}
@@ -141,17 +132,14 @@ body{font-family:'Inter',sans-serif;background:#161616;color:#fff;min-height:100
 .itemCat{font-size:11px;color:#9ca3af}
 .itemPrice{font-size:14px;font-weight:700;color:#f7931e;text-align:right;white-space:nowrap}
 
-/* ===== BOTONES LADO A LADO (AL FINAL) ===== */
 .btnRow{display:flex;gap:10px;margin-top:16px}
 .btnRow .actionBtn{flex:1;margin-bottom:0}
 
-/* ===== ACTION BUTTONS ===== */
 .actionBtn{width:100%;padding:14px;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;transition:0.2s;border:none;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px}
 .actionBtn:hover{transform:translateY(-1px)}
 .actionBtn:active{transform:scale(0.97)}
 .actionBtn.primary{background:linear-gradient(135deg,#ff6b35,#f7931e);color:#fff}
 .actionBtn.primary:hover{box-shadow:0 8px 24px rgba(255,107,53,0.3)}
-.actionBtn.primary:disabled{opacity:0.4;cursor:not-allowed;transform:none!important;box-shadow:none!important}
 .actionBtn.danger{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.2)}
 .actionBtn.danger:hover{background:rgba(239,68,68,0.25)}
 .actionBtn.success{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.2)}
@@ -159,30 +147,25 @@ body{font-family:'Inter',sans-serif;background:#161616;color:#fff;min-height:100
 .actionBtn.secondary{background:#1a1a1a;color:#9ca3af;border:1px solid rgba(255,255,255,0.08)}
 .actionBtn.secondary:hover{background:#252525;color:#fff}
 
-/* ===== WARNING / INFO BOXES ===== */
 .warningBox{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:12px;color:#f87171;font-size:13px;margin-bottom:16px;line-height:1.5}
 .infoBox{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:12px;padding:12px;color:#60a5fa;font-size:13px;margin-bottom:16px;line-height:1.5}
 .successBox{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:12px;padding:12px;color:#4ade80;font-size:13px;margin-bottom:16px;line-height:1.5}
 
-/* ===== PAGOS LIST ===== */
 .pagoRow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
 .pagoRow:last-child{border-bottom:none}
 .pagoDesc{font-size:13px;font-weight:600;color:#fff}
 .pagoRef{font-size:11px;color:#9ca3af}
 .pagoMonto{font-size:14px;font-weight:700;color:#f7931e}
 
-/* ===== OBS TEXTAREA ===== */
 .obsTextarea{width:100%;background:#111111;border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:12px;color:#fff;font-size:14px;font-family:'Inter',sans-serif;outline:none;resize:vertical;min-height:80px;margin-bottom:12px}
 .obsTextarea:focus{border-color:rgba(255,107,53,0.4);box-shadow:0 0 0 3px rgba(255,107,53,0.08)}
 .obsTextarea::placeholder{color:#4b5563}
 
-/* ===== FALLBACK NOSCRIPT ===== */
 noscript .noscript-fallback{position:fixed;inset:0;background:#161616;display:flex;align-items:center;justify-content:center;z-index:99999;padding:20px}
 noscript .noscript-box{background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:32px;max-width:400px;text-align:center}
 noscript .noscript-box h2{color:#f7931e;font-size:18px;font-weight:800;margin-bottom:12px}
 noscript .noscript-box p{color:#9ca3af;font-size:13px;line-height:1.6}
 
-/* ===== SCROLLBAR ===== */
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(255,107,53,0.3);border-radius:4px}
@@ -190,7 +173,6 @@ noscript .noscript-box p{color:#9ca3af;font-size:13px;line-height:1.6}
 </head>
 <body>
 
-<!-- FIX #9: Fallback si JavaScript esta deshabilitado o falla -->
 <noscript>
   <div class="noscript-fallback">
     <div class="noscript-box">
@@ -203,7 +185,6 @@ noscript .noscript-box p{color:#9ca3af;font-size:13px;line-height:1.6}
 <div id="load"><div class="spin"></div><div style="color:#9ca3af;font-size:13px">Cargando...</div></div>
 <div id="toast"></div>
 
-<!-- ALERTA CUSTOM CENTRADA -->
 <div id="customAlertModal">
   <div class="alertBox">
     <div class="alertIcon" id="alertIcon"></div>
@@ -213,7 +194,6 @@ noscript .noscript-box p{color:#9ca3af;font-size:13px;line-height:1.6}
   </div>
 </div>
 
-<!-- MODAL CONFIRMACION COBRO -->
 <div id="confirmCobroModal">
   <div class="confirmBox">
     <div class="confirmTitle">¿Confirmar Cobro?</div>
@@ -225,9 +205,6 @@ noscript .noscript-box p{color:#9ca3af;font-size:13px;line-height:1.6}
   </div>
 </div>
 
-
-
-<!-- HEADER -->
 <div class="header">
   <div style="display:flex;align-items:center;gap:10px">
     <button class="hBtn" id="btnBack" type="button">
@@ -240,30 +217,25 @@ noscript .noscript-box p{color:#9ca3af;font-size:13px;line-height:1.6}
   </div>
 </div>
 
-<!-- CONTENT -->
-<div class="content" id="mainContent">
-  <!-- Se renderiza dinamicamente -->
-</div>
+<div class="content" id="mainContent"></div>
 
 <script>
 // ============================================
-// FASTBURGUER — CAJACOBRO.HTML v2.5.2
-// Produccion: fixes #2,#4,#5,#6,#7,#8,#9 aplicados
-// FIX select nativo movil + CodPago real desde backend v12.4.3
+// FASTBURGUER — CAJACOBRO.HTML v2.6.0
+// FIX: Boton "Confirmar Cobro" SIEMPRE activo + validaciones con modales de error
+// FIX: Separador de miles formatNum aplicado a todos los formatos visuales de dinero
+// FIX: CodFormaPago alineado con columna del Sheet (v12.4.6 backend)
 // ============================================
 
 var API = "https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9FoXBkMYwPD4xkK1llpxakpExC6DspQvnOI6Vmw/exec";
 var NRO_PEDIDO = "", ACTION = "", PEDIDO = null, ITEMS = [], FORMAS_PAGO = [], PAGOS = [], CONFIG = {}, TASAS = {};
-// FIX #7: PAGOS_ACTUALES se carga desde backend via loadPagosActuales()
 var PAGOS_ACTUALES = [];
 
 function showLoad() { document.getElementById("load").classList.add("show"); }
 function hideLoad() { document.getElementById("load").classList.remove("show"); }
 function toast(m, tipo) {
   var t = document.getElementById("toast");
-  t.textContent = m;
-  t.className = tipo || "ok";
-  t.style.display = "block";
+  t.textContent = m; t.className = tipo || "ok"; t.style.display = "block";
   setTimeout(function() { t.style.display = "none"; }, 4000);
 }
 
@@ -274,9 +246,7 @@ function mostrarAlerta(tipo, titulo, mensaje, callback, btnText) {
   var title = document.getElementById("alertTitle");
   var body = document.getElementById("alertBody");
   var btn = document.getElementById("alertBtn");
-  title.textContent = titulo;
-  body.textContent = mensaje;
-  btn.textContent = btnText;
+  title.textContent = titulo; body.textContent = mensaje; btn.textContent = btnText;
   if (tipo === "error") {
     icon.className = "alertIcon error";
     icon.innerHTML = '<svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>';
@@ -300,20 +270,44 @@ function apiPost(d) {
 function parseNum(v) {
   if (v === null || v === undefined || v === "") return 0;
   var s = String(v).trim();
-  if (s.indexOf(",") > -1) { s = s.replace(/\./g, "").replace(",", "."); }
+  if (s.indexOf(",") > -1 && s.indexOf(".") > -1) {
+    if (s.lastIndexOf(",") < s.lastIndexOf(".")) {
+      // Coma es separador de miles, punto es decimal
+    } else {
+      s = s.replace(/\./g, "").replace(",", ".");
+    }
+  } else if (s.indexOf(",") > -1 && s.indexOf(".") === -1) {
+    var parts = s.split(",");
+    if (parts.length === 2 && parts[1].length <= 2) { s = s.replace(",", "."); }
+    else { s = s.replace(/,/g, ""); }
+  }
   var n = parseFloat(s);
   return isNaN(n) ? 0 : n;
 }
 
+// ============================================
+// FORMATO NUMERICO: separador de miles + punto decimal
+// Backend envia numeros crudos. Frontend formatea visualmente.
+// ============================================
+function formatNum(v) {
+  v = parseFloat(v) || 0;
+  var parts = v.toFixed(2).split(".");
+  var intPart = parts[0];
+  var decPart = parts[1];
+  intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return intPart + "." + decPart;
+}
+
 function formatMoney(v, codTasa) {
-  var val = parseNum(v);
+  var formatted = formatNum(v);
   var sym = "$";
   if (codTasa === "T001" || codTasa === "T006") sym = "Bs ";
-  else if (codTasa === "T002") sym = "$";
+  else if (codTasa === "T002") sym = "$ ";
   else if (codTasa === "T003") sym = "EUR ";
   else if (codTasa === "T004") sym = "BN ";
-  return sym + val.toFixed(2).replace(".", ",");
+  return sym + formatted;
 }
+
 function formatTime(h) {
   if (!h) return "--:--";
   var s = String(h);
@@ -331,9 +325,6 @@ function getTipoLabel(t) {
 }
 function getEstadoClass(e) { return String(e || "").toLowerCase().replace(/\s/g, ""); }
 
-// ============================================
-// INICIALIZACION
-// ============================================
 function init() {
   var params = new URLSearchParams(window.location.search);
   NRO_PEDIDO = params.get("pedido");
@@ -352,10 +343,8 @@ function init() {
   showLoad();
   loadConfig().then(function() {
     loadPedido().then(function() {
-      // FIX #7: Cargar pagos actuales para la seccion reversar
       loadPagosActuales().then(function() {
         loadFormasPago().then(function() {
-          // FIX #5: Eliminada propiedad montoEditado (variable muerta)
           PAGOS = [{ codFormaPago: '', montoPago: '', codTasa: '', referencia: '', confirmed: false }];
           render(); hideLoad();
         }).catch(function(e) { hideLoad(); console.error(e); });
@@ -371,19 +360,14 @@ function loadConfig() {
   }).catch(function(e) { throw e; });
 }
 
-// FIX #2: loadPedido ya NO hace throw despues de mostrarAlerta()
-// El error se maneja localmente sin propagar al catch de init()
 function loadPedido() {
   return apiGet("getPedidoDetalle", { nroPedido: NRO_PEDIDO }).then(function(r) {
-    if (r.success && r.pedido) {
-      PEDIDO = r.pedido; ITEMS = r.items || [];
-    } else {
+    if (r.success && r.pedido) { PEDIDO = r.pedido; ITEMS = r.items || []; }
+    else {
       mostrarAlerta("error", "Pedido no encontrado", "No se encontro " + NRO_PEDIDO, function() { window.location.href = "caja.html"; }, "Regresar");
-      // FIX #2: Retornamos promesa rechazada SIN throw para evitar doble alerta
       return Promise.reject(new Error("Pedido no encontrado"));
     }
   }).catch(function(e) {
-    // FIX #2: Solo mostramos alerta si NO es el rechazo controlado de arriba
     if (e.message !== "Pedido no encontrado") {
       mostrarAlerta("error", "Error de red", "No se pudo cargar el pedido: " + (e.message || "desconocido"), function() { window.location.href = "caja.html"; }, "Regresar");
     }
@@ -397,20 +381,13 @@ function loadFormasPago() {
   }).catch(function(e) { toast("Error cargando formas de pago: " + (e.message || "desconocido"), "err"); throw e; });
 }
 
-// FIX #7: Nueva funcion para cargar pagos actuales del pedido desde backend
 function loadPagosActuales() {
   return apiGet("getPagosPorPedido", { nroPedido: NRO_PEDIDO }).then(function(r) {
     if (r.success && r.data) { PAGOS_ACTUALES = r.data; }
     else { PAGOS_ACTUALES = []; }
-  }).catch(function(e) {
-    console.warn("No se pudieron cargar pagos actuales:", e.message);
-    PAGOS_ACTUALES = [];
-  });
+  }).catch(function(e) { console.warn("No se pudieron cargar pagos actuales:", e.message); PAGOS_ACTUALES = []; });
 }
 
-// ============================================
-// RENDER
-// ============================================
 function render() {
   var container = document.getElementById("mainContent");
   var html = "";
@@ -423,10 +400,7 @@ function render() {
   html += renderItems();
   if (ACTION === "cobrar") html += renderBotonesCobro();
   container.innerHTML = html;
-  if (ACTION === "cobrar") {
-    renderPaymentRows();
-    calcTotals();
-  }
+  if (ACTION === "cobrar") { renderPaymentRows(); calcTotals(); }
   attachEvents();
 }
 
@@ -441,19 +415,11 @@ function renderPedidoHeaderCard() {
   html += '<div class="badgeRow">';
   html += '<span class="statusChip ' + getEstadoClass(estadoPedido) + '">' + (estadoPedido || "N/A") + '</span>';
   html += '<span class="statusChip ' + (estadoPago === "Pagado" ? "pagado" : "nopagado") + '">' + (estadoPago === "Pagado" ? "Pagado" : "No Pagado") + '</span>';
-  html += '</div>';
-  html += '</div>';
+  html += '</div></div>';
   html += '<div class="totalesRow">';
-  html += '<div class="totalBlock">';
-  html += '<div class="totalBlockLabel">Total Pedido</div>';
-  html += '<div class="totalBlockValue naranja">' + total + '</div>';
-  html += '</div>';
-  html += '<div class="totalBlock" style="text-align:right">';
-  html += '<div class="totalBlockLabel">Pagado</div>';
-  html += '<div class="totalBlockValue pagado">' + pagado + '</div>';
-  html += '</div>';
-  html += '</div>';
-  html += '</div>';
+  html += '<div class="totalBlock"><div class="totalBlockLabel">Total Pedido</div><div class="totalBlockValue naranja">' + total + '</div></div>';
+  html += '<div class="totalBlock" style="text-align:right"><div class="totalBlockLabel">Pagado</div><div class="totalBlockValue pagado">' + pagado + '</div></div>';
+  html += '</div></div>';
   return html;
 }
 
@@ -462,17 +428,11 @@ function renderCobrarSection() {
   var html = '<div class="actionSection">';
   html += '<div class="actionTitle">📋 Formas de Pago</div>';
   html += '<div class="cobrarPagadoRow">';
-  html += '<div class="cobrarPagadoCol">';
-  html += '<span class="cobrarPagadoLabel">Faltante</span>';
-  html += '<input type="text" class="cobrarPagadoInput" id="inputCobrar" value="' + formatMoney(totalPedido, PEDIDO.CodTasa) + '" readonly>';
-  html += '</div>';
-  html += '<div class="cobrarPagadoCol">';
-  html += '<span class="cobrarPagadoLabel">Pagado</span>';
-  html += '<input type="text" class="cobrarPagadoInput" id="inputPagado" value="' + formatMoney(0, PEDIDO.CodTasa) + '" readonly>';
-  html += '</div>';
-  html += '</div>';
-  html += '<div id="paymentRows"></div>';
-  html += '</div>';
+  html += '<div class="cobrarPagadoCol"><span class="cobrarPagadoLabel">Faltante</span>';
+  html += '<input type="text" class="cobrarPagadoInput" id="inputCobrar" value="' + formatMoney(totalPedido, PEDIDO.CodTasa) + '" readonly></div>';
+  html += '<div class="cobrarPagadoCol"><span class="cobrarPagadoLabel">Pagado</span>';
+  html += '<input type="text" class="cobrarPagadoInput" id="inputPagado" value="' + formatMoney(0, PEDIDO.CodTasa) + '" readonly></div>';
+  html += '</div><div id="paymentRows"></div></div>';
   return html;
 }
 
@@ -483,53 +443,38 @@ function renderPaymentRows() {
   PAGOS.forEach(function(p, idx) {
     var isConfirmed = p.confirmed === true;
     html += '<div class="paymentRow ' + (isConfirmed ? 'confirmed' : '') + '" data-idx="' + idx + '">';
-    // Linea 1: select forma de pago
     html += '<select class="paymentSelect" data-field="codFormaPago" autocomplete="off" ' + (isConfirmed ? 'disabled' : '') + '>';
     html += '<option value="" ' + (p.codFormaPago ? '' : 'selected') + '>Seleccione forma de pago</option>';
-    FORMAS_PAGO.forEach(function(fp, fpIdx) {
+    FORMAS_PAGO.forEach(function(fp) {
       var label = fp.DesPago + (fp.SimboloTasa ? ' (' + fp.SimboloTasa + ')' : '');
-      // FIX: Si CodPago esta vacio, usar indice como fallback para que el option tenga value
-      var codPagoValue = fp.CodPago || ('FP_' + fpIdx);
-      html += '<option value="' + codPagoValue + '" data-codtasa="' + (fp.CodTasa || '') + '" ' + (p.codFormaPago === fp.CodPago ? 'selected' : '') + '>' + label + '</option>';
+      html += '<option value="' + fp.CodFormaPago + '" data-codtasa="' + (fp.CodTasa || '') + '" ' + (p.codFormaPago === fp.CodFormaPago ? 'selected' : '') + '>' + label + '</option>';
     });
     html += '</select>';
-    // Linea 2: monto + confirmar + referencia + borrar
     html += '<div class="row2">';
     var montoVal = p.montoPago ? parseNum(p.montoPago).toFixed(2).replace(".", ",") : '';
     html += '<input type="text" placeholder="Monto" data-field="montoPago" value="' + montoVal + '" ' + (isConfirmed ? 'disabled' : '') + '>';
     if (!isConfirmed) {
-      html += '<button class="confirmMontoBtn" data-confirm="' + idx + '" type="button">Confirmar Monto</button>';
+      html += '<button class="confirmMontoBtn" data-confirm="' + idx + '" type="button">Confirmar</button>';
+    } else {
+      html += '<button class="confirmMontoBtn editBtn" data-edit="' + idx + '" type="button">✏️ Editar</button>';
     }
     html += '<input type="text" class="refInput" placeholder="Referencia (opcional)" data-field="referencia" value="' + (p.referencia || "") + '" ' + (isConfirmed ? 'disabled' : '') + '>';
     html += '<button class="deleteBtn" data-del="' + idx + '" type="button">🗑️</button>';
-    html += '</div>';
-    html += '</div>';
+    html += '</div></div>';
   });
   container.innerHTML = html;
-  // Fuerza valor del select post-render
   PAGOS.forEach(function(p, idx) {
     var row = container.children[idx];
-    if (row) {
-      var sel = row.querySelector('select[data-field="codFormaPago"]');
-      if (sel) sel.value = p.codFormaPago || '';
-    }
+    if (row) { var sel = row.querySelector('select[data-field="codFormaPago"]'); if (sel) sel.value = p.codFormaPago || ''; }
   });
   attachPaymentEvents();
 }
 
-// ============================================
-// FIX #6: attachPaymentEvents() — Event Delegation unico
-// Reemplaza el patron triple addEventListener/removeEventListener
-// que acumulaba 2 listeners huerfanos por re-render.
-// ============================================
 function attachPaymentEvents() {
   var container = document.getElementById("paymentRows");
   if (!container) return;
-
-  // Idempotencia: si ya esta activo, no registrar de nuevo
   if (container._delegacionActiva === true) return;
 
-  // Delegacion para CLICK (confirmar + borrar)
   container.addEventListener("click", function(e) {
     var target = e.target;
     var row = target.closest(".paymentRow");
@@ -537,11 +482,8 @@ function attachPaymentEvents() {
     var idx = parseInt(row.dataset.idx);
     if (isNaN(idx)) return;
 
-    // === CLICK: confirmar monto ===
-    if (target.classList.contains("confirmMontoBtn")) {
-      e.preventDefault();
-      e.stopPropagation();
-      // Sincronizar PAGOS[] con DOM ANTES de confirmar
+    if (target.classList.contains("confirmMontoBtn") && !target.classList.contains("editBtn")) {
+      e.preventDefault(); e.stopPropagation();
       var btnSel = row.querySelector('select[data-field="codFormaPago"]');
       var btnInp = row.querySelector('input[data-field="montoPago"]');
       var btnRef = row.querySelector('input[data-field="referencia"]');
@@ -556,143 +498,103 @@ function attachPaymentEvents() {
       return;
     }
 
-    // === CLICK: borrar fila ===
     if (target.classList.contains("deleteBtn")) {
-      e.preventDefault();
-      e.stopPropagation();
+      e.preventDefault(); e.stopPropagation();
       if (PAGOS[idx].confirmed) {
-        toast("No puede eliminar un pago confirmado", "err");
-        return;
+        PAGOS[idx].confirmed = false;
+        for (var i = PAGOS.length - 1; i > idx; i--) { if (!PAGOS[i].confirmed) PAGOS.splice(i, 1); }
+        renderPaymentRows(); calcTotals(); return;
       }
       PAGOS.splice(idx, 1);
-      if (PAGOS.length === 0) {
-        PAGOS.push({ codFormaPago: '', montoPago: '', codTasa: '', referencia: '', confirmed: false });
-      }
-      renderPaymentRows();
-      calcTotals();
-      return;
+      if (PAGOS.length === 0) { PAGOS.push({ codFormaPago: '', montoPago: '', codTasa: '', referencia: '', confirmed: false }); }
+      renderPaymentRows(); calcTotals(); return;
     }
   });
 
-  // Delegacion para CHANGE (select forma de pago)
   container.addEventListener("change", function(e) {
     var target = e.target;
     var row = target.closest(".paymentRow");
     if (!row) return;
     var idx = parseInt(row.dataset.idx);
     if (isNaN(idx)) return;
-
     if (target.tagName === "SELECT" && target.dataset.field === "codFormaPago") {
       var opt = target.options[target.selectedIndex];
       var value = target.value;
       var codTasa = opt ? opt.getAttribute('data-codtasa') || opt.dataset.codtasa || "" : "";
-
-      // FIX: Si value vacio, buscar en FORMAS_PAGO por texto de opcion
       if (!value && opt && opt.text) {
         var optText = opt.text.trim();
-        FORMAS_PAGO.forEach(function(fp) {
-          var fpLabel = fp.DesPago + (fp.SimboloTasa ? ' (' + fp.SimboloTasa + ')' : '');
-          if (fpLabel === optText) {
-            value = fp.CodPago || ('FP_' + target.selectedIndex);
-          }
-        });
+        FORMAS_PAGO.forEach(function(fp) { var fpLabel = fp.DesPago + (fp.SimboloTasa ? ' (' + fp.SimboloTasa + ')' : ''); if (fpLabel === optText) { value = fp.CodFormaPago; } });
       }
-
       PAGOS[idx].codFormaPago = value;
       PAGOS[idx].codTasa = codTasa;
-
       var codTasaPedido = PEDIDO.CodTasa || "T002";
       var valorTasaPedido = TASAS[codTasaPedido] || 1;
       var valorTasaPago = TASAS[codTasa] || 1;
       var saldo = getSaldoFaltante(idx);
-
-      if (saldo > 0.01) {
-        PAGOS[idx].montoPago = (saldo * (valorTasaPedido / valorTasaPago)).toFixed(2);
-      } else {
-        PAGOS[idx].montoPago = "";
-      }
-
+      if (saldo > 0.01) { PAGOS[idx].montoPago = (saldo * (valorTasaPedido / valorTasaPago)).toFixed(2); }
+      else { PAGOS[idx].montoPago = ""; }
       var inp = row.querySelector('input[data-field="montoPago"]');
-      if (inp) {
-        var mv = PAGOS[idx].montoPago ? parseNum(PAGOS[idx].montoPago).toFixed(2).replace(".", ",") : "";
-        inp.value = mv;
-      }
+      if (inp) { var mv = PAGOS[idx].montoPago ? parseNum(PAGOS[idx].montoPago).toFixed(2).replace(".", ",") : ""; inp.value = mv; }
       calcTotals();
     }
   });
 
-  // Delegacion para INPUT (monto + referencia)
   container.addEventListener("input", function(e) {
     var target = e.target;
     var row = target.closest(".paymentRow");
     if (!row) return;
     var idx = parseInt(row.dataset.idx);
     if (isNaN(idx)) return;
-
-    if (target.tagName === "INPUT" && target.dataset.field === "montoPago") {
-      PAGOS[idx].montoPago = target.value;
-      calcTotals();
-    }
-    else if (target.tagName === "INPUT" && target.dataset.field === "referencia") {
-      PAGOS[idx].referencia = target.value;
-    }
+    if (target.tagName === "INPUT" && target.dataset.field === "montoPago") { PAGOS[idx].montoPago = target.value; calcTotals(); }
+    else if (target.tagName === "INPUT" && target.dataset.field === "referencia") { PAGOS[idx].referencia = target.value; }
   });
 
-  // Marcar contenedor como inicializado (previene duplicados)
+  container.addEventListener("click", function(e) {
+    var target = e.target;
+    if (!target.classList.contains("editBtn")) return;
+    var row = target.closest(".paymentRow");
+    if (!row) return;
+    var idx = parseInt(row.dataset.idx);
+    if (isNaN(idx)) return;
+    e.preventDefault(); e.stopPropagation();
+    PAGOS[idx].confirmed = false;
+    for (var i = PAGOS.length - 1; i > idx; i--) { if (!PAGOS[i].confirmed) PAGOS.splice(i, 1); }
+    renderPaymentRows(); calcTotals();
+  });
+
   container._delegacionActiva = true;
 }
 
 function confirmarMonto(idx) {
   var container = document.getElementById("paymentRows");
   var row = container ? container.children[idx] : null;
-
-  // FIX CRITICO v2.5.1: Leer FORZADAMENTE del DOM en el instante del click.
-  // El evento 'change' del select nativo en moviles NO actualiza PAGOS[]
-  // confiablemente. Leemos directamente del DOM y actualizamos PAGOS[].
   var sel = row ? row.querySelector('select[data-field="codFormaPago"]') : null;
   var inp = row ? row.querySelector('input[data-field="montoPago"]') : null;
   var ref = row ? row.querySelector('input[data-field="referencia"]') : null;
-
   var p = PAGOS[idx];
 
-  // Forzar lectura del select: value + selectedIndex + dataset
   if (sel) {
     var selectedValue = sel.value;
     var selectedIndex = sel.selectedIndex;
     var opt = sel.options[selectedIndex];
     var dataCodTasa = opt ? opt.getAttribute('data-codtasa') || opt.dataset.codtasa || '' : '';
-
-    // FIX: Si sel.value esta vacio (bug en options generadas), 
-    // buscar en FORMAS_PAGO por matching de texto de opcion
     if (!selectedValue && opt && opt.text) {
       var optText = opt.text.trim();
-      FORMAS_PAGO.forEach(function(fp) {
-        var fpLabel = fp.DesPago + (fp.SimboloTasa ? ' (' + fp.SimboloTasa + ')' : '');
-        if (fpLabel === optText) {
-          selectedValue = fp.CodPago || ('FP_' + selectedIndex);
-        }
-      });
+      FORMAS_PAGO.forEach(function(fp) { var fpLabel = fp.DesPago + (fp.SimboloTasa ? ' (' + fp.SimboloTasa + ')' : ''); if (fpLabel === optText) { selectedValue = fp.CodFormaPago; } });
     }
-
     p.codFormaPago = selectedValue || '';
     p.codTasa = dataCodTasa;
   }
-
   if (inp) p.montoPago = inp.value || '';
   if (ref) p.referencia = ref.value || '';
 
-  // Validaciones normales
   if (!p.codFormaPago) {
-    mostrarAlerta("error", "Forma de pago requerida", "Seleccione una forma de pago antes de confirmar.", function() {
-      if (sel) sel.focus();
-    });
+    mostrarAlerta("error", "Forma de pago requerida", "Seleccione una forma de pago antes de confirmar.", function() { if (sel) sel.focus(); });
     return;
   }
   var monto = parseNum(p.montoPago);
   if (monto <= 0) {
-    mostrarAlerta("error", "Monto invalido", "El monto debe ser mayor a cero.", function() {
-      if (inp) { inp.focus(); inp.select(); }
-    });
+    mostrarAlerta("error", "Monto invalido", "El monto debe ser mayor a cero.", function() { if (inp) { inp.focus(); inp.select(); } });
     return;
   }
   PAGOS[idx].confirmed = true;
@@ -702,22 +604,13 @@ function confirmarMonto(idx) {
   var valorTasaPedido = TASAS[codTasaPedido] || 1;
   var totalPagado = 0;
   PAGOS.forEach(function(pp) {
-    if (pp.confirmed) {
-      var mm = parseNum(pp.montoPago);
-      var vt = TASAS[pp.codTasa] || 1;
-      totalPagado += mm * (vt / valorTasaPedido);
-    }
+    if (pp.confirmed) { var mm = parseNum(pp.montoPago); var vt = TASAS[pp.codTasa] || 1; totalPagado += mm * (vt / valorTasaPedido); }
   });
   var faltante = totalPedido - totalPagado;
-  if (faltante > 0.01) {
-    PAGOS.push({ codFormaPago: '', montoPago: faltante.toFixed(2), codTasa: '', referencia: '', confirmed: false });
-  }
-  renderPaymentRows();
-  calcTotals();
+  if (faltante > 0.01) { PAGOS.push({ codFormaPago: '', montoPago: faltante.toFixed(2), codTasa: '', referencia: '', confirmed: false }); }
+  renderPaymentRows(); calcTotals();
 }
 
-
-// FIX #4: getSaldoFaltante ahora itera por confirmed, no por indice
 function getSaldoFaltante(excludeIdx) {
   var totalPedido = parseNum(PEDIDO.TotalPedido);
   var codTasaPedido = PEDIDO.CodTasa || "T002";
@@ -728,13 +621,15 @@ function getSaldoFaltante(excludeIdx) {
     if (!p.confirmed) return;
     var monto = parseNum(p.montoPago);
     var valorTasaPago = TASAS[p.codTasa] || 1;
-    if (monto > 0 && p.codFormaPago) {
-      totalPagado += monto * (valorTasaPago / valorTasaPedido);
-    }
+    if (monto > 0 && p.codFormaPago) { totalPagado += monto * (valorTasaPago / valorTasaPedido); }
   });
   return totalPedido - totalPagado;
 }
 
+// ============================================
+// FIX CRITICO v2.6.0: calcTotals ya NO deshabilita el boton "Confirmar Cobro"
+// El boton siempre esta activo. Las validaciones ocurren en submitCobro().
+// ============================================
 function calcTotals() {
   var totalPedido = parseNum(PEDIDO.TotalPedido);
   var codTasaPedido = PEDIDO.CodTasa || "T002";
@@ -744,69 +639,79 @@ function calcTotals() {
     if (!p.confirmed) return;
     var monto = parseNum(p.montoPago);
     var valorTasaPago = TASAS[p.codTasa] || 1;
-    if (monto > 0 && p.codFormaPago) {
-      totalPagado += monto * (valorTasaPago / valorTasaPedido);
-    }
+    if (monto > 0 && p.codFormaPago) { totalPagado += monto * (valorTasaPago / valorTasaPedido); }
   });
   var inputPagado = document.getElementById('inputPagado');
   var inputCobrar = document.getElementById('inputCobrar');
-  var btnConfirmar = document.getElementById('btnConfirmar');
   if (inputCobrar) inputCobrar.value = formatMoney(totalPedido - totalPagado, codTasaPedido);
   if (inputPagado) inputPagado.value = formatMoney(totalPagado, codTasaPedido);
-  if (btnConfirmar) {
-    var validRows = PAGOS.filter(function(p) { return p.confirmed && p.codFormaPago && parseNum(p.montoPago) > 0; }).length;
-    btnConfirmar.disabled = validRows === 0 || totalPagado < totalPedido;
-  }
+  // FIX: El boton Confirmar Cobro NUNCA se deshabilita. Siempre activo.
 }
 
+// ============================================
+// FIX CRITICO v2.6.0: submitCobro valida TODO y muestra errores con modales
+// Boton siempre activo. Error -> modal de error. OK -> modal de confirmacion.
+// ============================================
 function submitCobro() {
   var codTurno = PEDIDO.CodTurno || '';
-  if (!codTurno) {
-    mostrarAlerta("error", "Sin Turno", "No se puede cobrar sin un turno activo.");
+  if (!codTurno) { mostrarAlerta("error", "Sin Turno", "No se puede cobrar sin un turno activo."); return; }
+
+  var pagosConfirmados = PAGOS.filter(function(p) { return p.confirmed; });
+  if (pagosConfirmados.length === 0) {
+    mostrarAlerta("error", "Sin pagos confirmados", "Confirme al menos una forma de pago con monto valido antes de cobrar.");
     return;
   }
-  var pagosValidos = PAGOS.filter(function(p) { return p.confirmed && p.codFormaPago && parseNum(p.montoPago) > 0; }).map(function(p) {
-    return { codFormaPago: p.codFormaPago, montoPago: parseNum(p.montoPago), codTasa: p.codTasa || '', referencia: p.referencia || '' };
+
+  var pagosInvalidos = [];
+  pagosConfirmados.forEach(function(p, i) {
+    if (!p.codFormaPago) pagosInvalidos.push("Pago #" + (i + 1) + ": falta forma de pago");
+    if (parseNum(p.montoPago) <= 0) pagosInvalidos.push("Pago #" + (i + 1) + ": monto debe ser mayor a cero");
   });
-  if (pagosValidos.length === 0) {
-    mostrarAlerta("error", "Datos incompletos", "Confirme al menos una forma de pago con monto valido.");
-    return;
-  }
+  if (pagosInvalidos.length > 0) { mostrarAlerta("error", "Pagos invalidos", pagosInvalidos.join("\n")); return; }
 
   var totalPedido = parseNum(PEDIDO.TotalPedido);
   var codTasaPedido = PEDIDO.CodTasa || "T002";
   var valorTasaPedido = TASAS[codTasaPedido] || 1;
   var totalPagado = 0;
-  pagosValidos.forEach(function(p) {
-    var vt = TASAS[p.codTasa] || 1;
-    totalPagado += p.montoPago * (vt / valorTasaPedido);
+  pagosConfirmados.forEach(function(p) { var vt = TASAS[p.codTasa] || 1; totalPagado += parseNum(p.montoPago) * (vt / valorTasaPedido); });
+
+  if (totalPagado < totalPedido - 0.01) {
+    var faltante = totalPedido - totalPagado;
+    mostrarAlerta("error", "Cobro incompleto",
+      "Faltan " + formatMoney(faltante, codTasaPedido) + " por cobrar.\n\n" +
+      "Total pedido: " + formatMoney(totalPedido, codTasaPedido) + "\n" +
+      "Total pagado: " + formatMoney(totalPagado, codTasaPedido) + "\n\n" +
+      "Agregue otra forma de pago para cubrir el faltante.");
+    return;
+  }
+
+  var pagosValidos = pagosConfirmados.map(function(p) {
+    return { codFormaPago: p.codFormaPago, montoPago: parseNum(p.montoPago), codTasa: p.codTasa || '', referencia: p.referencia || '' };
   });
-  var bodyText = "Total Pedido: " + formatMoney(totalPedido, codTasaPedido) + "\n";
+
+  var bodyText = "Resumen del cobro:\n\n";
+  bodyText += "Total Pedido: " + formatMoney(totalPedido, codTasaPedido) + "\n";
   bodyText += "Total Pagado: " + formatMoney(totalPagado, codTasaPedido) + "\n\n";
-  bodyText += "¿Desea registrar el cobro?";
+  bodyText += "Formas de pago:\n";
+  pagosValidos.forEach(function(p, i) {
+    var fp = FORMAS_PAGO.find(function(f) { return f.CodFormaPago === p.codFormaPago; });
+    bodyText += (i + 1) + ". " + (fp ? fp.DesPago : p.codFormaPago) + ": " + formatMoney(p.montoPago, p.codTasa) + "\n";
+  });
+  bodyText += "\n¿Desea registrar el cobro?";
   document.getElementById("confirmCobroBody").textContent = bodyText;
   var modal = document.getElementById("confirmCobroModal");
   modal.classList.add("show");
-  document.getElementById("btnOkCobro").onclick = function() {
-    modal.classList.remove("show");
-    ejecutarCobro(pagosValidos);
-  };
-  document.getElementById("btnCancelCobro").onclick = function() {
-    modal.classList.remove("show");
-  };
+  document.getElementById("btnOkCobro").onclick = function() { modal.classList.remove("show"); ejecutarCobro(pagosValidos); };
+  document.getElementById("btnCancelCobro").onclick = function() { modal.classList.remove("show"); };
 }
-
 
 function ejecutarCobro(pagosValidos) {
   var codTurno = PEDIDO.CodTurno || '';
   showLoad();
   apiPost({ action: "registrarPago", nroPedido: NRO_PEDIDO, codTurno: codTurno, pagos: pagosValidos }).then(function(r) {
     hideLoad();
-    if (r.success) {
-      mostrarAlerta("success", "Cobro registrado", r.message || "Pago registrado correctamente.", function() { window.location.href = "caja.html"; }, "Regresar a Caja");
-    } else {
-      mostrarAlerta("error", "Error al cobrar", r.error || "Error desconocido");
-    }
+    if (r.success) { mostrarAlerta("success", "Cobro registrado", r.message || "Pago registrado correctamente.", function() { window.location.href = "caja.html"; }, "Regresar a Caja"); }
+    else { mostrarAlerta("error", "Error al cobrar", r.error || "Error desconocido"); }
   }).catch(function(e) { hideLoad(); mostrarAlerta("error", "Error de red", e.message); });
 }
 
@@ -815,21 +720,17 @@ function renderPedidosSection() {
   html += '<div class="pedidosHeader" id="pedidosHeader">';
   html += '<div class="pedidosTitle">';
   html += '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:#f7931e"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>';
-  html += 'Pedidos';
-  html += '</div>';
+  html += 'Pedidos</div>';
   html += '<div class="pedidosToggle" id="pedidosToggle">';
   html += '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>';
-  html += '</div>';
-  html += '</div>';
+  html += '</div></div>';
   html += '<div class="pedidosBody" id="pedidosBody">';
   html += '<div style="padding:8px 0">';
   html += '<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.03)"><span style="color:#9ca3af">Cliente</span><span style="color:#fff;font-weight:600">' + (PEDIDO.Cliente || "N/A") + '</span></div>';
   html += '<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.03)"><span style="color:#9ca3af">Telefono</span><span style="color:#fff;font-weight:600">' + (PEDIDO.Telefono || "N/A") + '</span></div>';
   html += '<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.03)"><span style="color:#9ca3af">Tipo</span><span style="color:#fff;font-weight:600">' + getTipoLabel(PEDIDO.TipoServicio) + '</span></div>';
   html += '<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px"><span style="color:#9ca3af">Hora</span><span style="color:#fff;font-weight:600">' + formatTime(PEDIDO.HoraPedido) + '</span></div>';
-  html += '</div>';
-  html += '</div>';
-  html += '</div>';
+  html += '</div></div></div>';
   return html;
 }
 
@@ -839,12 +740,10 @@ function renderItems() {
   html += '<div class="itemsHeader" id="itemsHeader">';
   html += '<div class="itemsTitle">';
   html += '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:#f7931e"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>';
-  html += 'Productos (' + ITEMS.length + ')';
-  html += '</div>';
+  html += 'Productos (' + ITEMS.length + ')</div>';
   html += '<div class="itemsToggle" id="itemsToggle">';
   html += '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>';
-  html += '</div>';
-  html += '</div>';
+  html += '</div></div>';
   html += '<div class="itemsBody" id="itemsBody">';
   ITEMS.forEach(function(item) {
     var qty = parseInt(item.Cantidad) || 1;
@@ -856,15 +755,18 @@ function renderItems() {
     html += '<div class="itemPrice">' + formatMoney(sub, PEDIDO.CodTasa) + '</div>';
     html += '</div>';
   });
-  html += '</div>';
-  html += '</div>';
+  html += '</div></div>';
   return html;
 }
 
+// ============================================
+// FIX CRITICO v2.6.0: Boton "Confirmar Cobro" SIEMPRE activo (sin disabled)
+// Las validaciones ocurren en submitCobro() con modales de error claros.
+// ============================================
 function renderBotonesCobro() {
   var html = '<div class="btnRow">';
   html += '<button class="actionBtn secondary" id="btnCancelar" type="button">↩️ Regresar sin cobrar</button>';
-  html += '<button class="actionBtn primary" id="btnConfirmar" type="button" disabled>🛡️ Confirmar Cobro</button>';
+  html += '<button class="actionBtn primary" id="btnConfirmar" type="button">🛡️ Confirmar Cobro</button>';
   html += '</div>';
   return html;
 }
@@ -898,11 +800,8 @@ function submitLiberar() {
   showLoad();
   apiPost({ action: "liberarPedido", nroPedido: NRO_PEDIDO, observaciones: obs }).then(function(r) {
     hideLoad();
-    if (r.success) {
-      mostrarAlerta("success", "Liberado", r.message || "Pedido liberado a cocina.", function() { window.location.href = "caja.html"; }, "Regresar a Caja");
-    } else {
-      mostrarAlerta("error", "Error", r.error || "No se pudo liberar");
-    }
+    if (r.success) { mostrarAlerta("success", "Liberado", r.message || "Pedido liberado a cocina.", function() { window.location.href = "caja.html"; }, "Regresar a Caja"); }
+    else { mostrarAlerta("error", "Error", r.error || "No se pudo liberar"); }
   }).catch(function(e) { hideLoad(); mostrarAlerta("error", "Error de red", e.message); });
 }
 
@@ -919,23 +818,15 @@ function renderAnularSection() {
 
 function submitAnular() {
   var obs = document.getElementById("obsInput").value.trim();
-  if (!obs) {
-    mostrarAlerta("error", "Motivo requerido", "Indique el motivo de la anulacion.");
-    return;
-  }
+  if (!obs) { mostrarAlerta("error", "Motivo requerido", "Indique el motivo de la anulacion."); return; }
   showLoad();
   apiPost({ action: "updateEstadoPedido", nroPedido: NRO_PEDIDO, nuevoEstado: "Anulado", observaciones: obs }).then(function(r) {
     hideLoad();
-    if (r.success) {
-      mostrarAlerta("success", "Anulado", r.message || "Pedido anulado correctamente.", function() { window.location.href = "caja.html"; }, "Regresar a Caja");
-    } else {
-      mostrarAlerta("error", "Error", r.error || "No se pudo anular");
-    }
+    if (r.success) { mostrarAlerta("success", "Anulado", r.message || "Pedido anulado correctamente.", function() { window.location.href = "caja.html"; }, "Regresar a Caja"); }
+    else { mostrarAlerta("error", "Error", r.error || "No se pudo anular"); }
   }).catch(function(e) { hideLoad(); mostrarAlerta("error", "Error de red", e.message); });
 }
 
-// FIX #7 + #8: renderReversarSection ahora usa PAGOS_ACTUALES cargados desde backend
-// y el submit envia codTurno para auditoria
 function renderReversarSection() {
   var html = '<div class="actionSection">';
   html += '<div class="actionTitle">↩️ Reversar Pago</div>';
@@ -956,99 +847,65 @@ function renderReversarSection() {
   }
   html += '<div class="warningBox">⚠️ Se reversaran <b>todos</b> los pagos activos de este pedido. El estado de pago volvera a <b>Pendiente</b>.</div>';
   html += '<textarea class="obsTextarea" id="obsInput" placeholder="Motivo de la reversión (obligatorio)..."></textarea>';
-  html += '<button class="actionBtn danger" id="btnReversar" type="button">↩️ Confirmar Reversion</button>';
-  html += '<button class="actionBtn secondary" id="btnCancelar" type="button">Regresar</button>';
+  html += '<button class="actionBtn danger" id="btnReversar" type="button">↩️ Confirmar Reversión</button>';
+  html += '<button class="actionBtn secondary" id="btnCancelar" type="button">↩️ Regresar</button>';
   html += '</div>';
   return html;
 }
 
-// FIX #8: submitReversar ahora envia codTurno para auditoria
-// y valida que existan pagos antes de llamar al endpoint
 function submitReversar() {
-  var motivo = document.getElementById("obsInput").value.trim();
-  if (!motivo) {
-    mostrarAlerta("error", "Motivo requerido", "Indique el motivo de la reversión.");
-    return;
-  }
-  // Validar que haya pagos para reversar
-  if (!PAGOS_ACTUALES || PAGOS_ACTUALES.length === 0) {
-    mostrarAlerta("error", "Sin pagos", "No hay pagos activos para reversar en este pedido.");
-    return;
-  }
-  var codTurno = PEDIDO.CodTurno || '';
+  var obs = document.getElementById("obsInput").value.trim();
+  if (!obs) { mostrarAlerta("error", "Motivo requerido", "Indique el motivo de la reversión."); return; }
   showLoad();
-  // FIX #8: Enviamos codTurno y el array de pagos a reversar para auditoria
-  apiPost({
-    action: "reversarPago",
-    nroPedido: NRO_PEDIDO,
-    codTurno: codTurno,
-    motivo: motivo,
-    pagos: PAGOS_ACTUALES.map(function(p) {
-      return {
-        codFormaPago: p.CodFormaPago || p.codFormaPago,
-        montoPago: parseNum(p.MontoPago || p.montoPago),
-        codTasa: p.CodTasa || p.codTasa,
-        referencia: p.Referencia || p.referencia || ''
-      };
-    })
-  }).then(function(r) {
+  apiPost({ action: "reversarPago", nroPedido: NRO_PEDIDO, observaciones: obs }).then(function(r) {
     hideLoad();
-    if (r.success) {
-      mostrarAlerta("success", "Reversado", r.message || "Pago reversado correctamente.", function() { window.location.href = "caja.html"; }, "Regresar a Caja");
-    } else {
-      mostrarAlerta("error", "Error", r.error || "No se pudo reversar");
-    }
+    if (r.success) { mostrarAlerta("success", "Reversado", r.message || "Pagos reversados correctamente.", function() { window.location.href = "caja.html"; }, "Regresar a Caja"); }
+    else { mostrarAlerta("error", "Error", r.error || "No se pudo reversar"); }
   }).catch(function(e) { hideLoad(); mostrarAlerta("error", "Error de red", e.message); });
 }
 
 function attachEvents() {
-  document.getElementById("btnBack").addEventListener("click", function() { window.location.href = "caja.html"; });
+  var btnBack = document.getElementById("btnBack");
+  if (btnBack) btnBack.onclick = function() { window.location.href = "caja.html"; };
+
   var btnCancelar = document.getElementById("btnCancelar");
-  if (btnCancelar) btnCancelar.addEventListener("click", function() { window.location.href = "caja.html"; });
+  if (btnCancelar) btnCancelar.onclick = function() { window.location.href = "caja.html"; };
+
+  var btnConfirmar = document.getElementById("btnConfirmar");
+  if (btnConfirmar) btnConfirmar.onclick = submitCobro;
+
+  var btnLiberar = document.getElementById("btnLiberar");
+  if (btnLiberar) btnLiberar.onclick = submitLiberar;
+
+  var btnAnular = document.getElementById("btnAnular");
+  if (btnAnular) btnAnular.onclick = submitAnular;
+
+  var btnReversar = document.getElementById("btnReversar");
+  if (btnReversar) btnReversar.onclick = submitReversar;
 
   var pedidosHeader = document.getElementById("pedidosHeader");
   if (pedidosHeader) {
-    pedidosHeader.addEventListener("click", function() {
+    pedidosHeader.onclick = function() {
       var body = document.getElementById("pedidosBody");
       var toggle = document.getElementById("pedidosToggle");
-      if (body.classList.contains("open")) {
-        body.classList.remove("open");
-        toggle.classList.remove("open");
-      } else {
-        body.classList.add("open");
-        toggle.classList.add("open");
-      }
-    });
+      if (body.classList.contains("open")) { body.classList.remove("open"); toggle.classList.remove("open"); }
+      else { body.classList.add("open"); toggle.classList.add("open"); }
+    };
   }
 
   var itemsHeader = document.getElementById("itemsHeader");
   if (itemsHeader) {
-    itemsHeader.addEventListener("click", function() {
+    itemsHeader.onclick = function() {
       var body = document.getElementById("itemsBody");
       var toggle = document.getElementById("itemsToggle");
-      if (body.classList.contains("open")) {
-        body.classList.remove("open");
-        toggle.classList.remove("open");
-      } else {
-        body.classList.add("open");
-        toggle.classList.add("open");
-      }
-    });
-  }
-
-  if (ACTION === "cobrar") {
-    document.getElementById("btnConfirmar").addEventListener("click", submitCobro);
-  } else if (ACTION === "liberar") {
-    document.getElementById("btnLiberar").addEventListener("click", submitLiberar);
-  } else if (ACTION === "anular") {
-    document.getElementById("btnAnular").addEventListener("click", submitAnular);
-  } else if (ACTION === "reversar") {
-    document.getElementById("btnReversar").addEventListener("click", submitReversar);
+      if (body.classList.contains("open")) { body.classList.remove("open"); toggle.classList.remove("open"); }
+      else { body.classList.add("open"); toggle.classList.add("open"); }
+    };
   }
 }
 
+// Inicializar al cargar
 document.addEventListener("DOMContentLoaded", init);
 </script>
-<!-- cajacobro.html v2.5.2 | 2026-06-19 | Produccion limpia: fixes aplicados, debug eliminado, flujo real restaurado | Proyecto: Ing. Jesus Linares -->
 </body>
 </html>
