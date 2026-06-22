@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Mesas - FastBurguer</title>
 <style>
+  /* ============================================
+     FASTBURGUER  — v3.0 | 2026-06-21 | Control de Versión 
+     ============================================ */
+
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 
@@ -223,7 +227,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       </button>
     </div>
     <div class="modalBody">
-      <div class="codeLabel" id="codeLabel">CÓDIGO ES002</div>
+      <div class="codeLabel" id="codeLabel">CÓDIGO ...</div>
 
       <div class="fLabel">Descripcion del Area</div>
       <input type="text" id="fDesc" class="fInput" placeholder="Ej: Mesa 01">
@@ -267,131 +271,222 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <script>
+// ============================================
+// CONFIGURACION API
+// ============================================
 var API="https://script.google.com/macros/s/AKfycbxqlBT5nM5UuJe-5IAXu6YewZxeV5r9FoXBkMYwPD4xkK1llpxakpExC6DspQvnOI6Vmw/exec";
-var ROWS=[];var SEL=null;var FORM_STATE=true;var MODAL_MODE="add";var SHOW_INACTIVOS=false;var TASAS=[];
 
+// ============================================
+// VARIABLES GLOBALES
+// ============================================
+var ROWS=[];
+var SEL=null;
+var FORM_STATE=true;
+var MODAL_MODE="add";
+var SHOW_INACTIVOS=false;
+var TASAS=[];
+
+// ============================================
+// HELPERS UI
+// ============================================
 function showLoad(){document.getElementById("load").className="show"}
 function hideLoad(){document.getElementById("load").className=""}
-function toast(m,ok){var t=document.getElementById("toast");t.textContent=m;t.className=ok?"ok":"err";t.style.display="block";setTimeout(function(){t.style.display="none"},3000)}
+function toast(m,ok){
+  var t=document.getElementById("toast");
+  t.textContent=m;
+  t.className=ok?"ok":"err";
+  t.style.display="block";
+  setTimeout(function(){t.style.display="none"},3000);
+}
 
-function apiGet(action,params){var url=API+"?action="+action+"&_cb="+Date.now();if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);return fetch(url).then(function(r){return r.json()})}
+// ============================================
+// FORMATO NUMERICO — Separador de miles (solo visual)
+// ============================================
+function formatNum(v){
+  v = parseFloat(v) || 0;
+  var parts = v.toFixed(2).split(".");
+  var intPart = parts[0];
+  var decPart = parts[1];
+  intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return intPart + "." + decPart;
+}
 
+// ============================================
+// API — GET
+// ============================================
+function apiGet(action,params){
+  var url=API+"?action="+action+"&_cb="+Date.now();
+  if(params)for(var key in params)url+="&"+key+"="+encodeURIComponent(params[key]);
+  return fetch(url).then(function(r){return r.json()});
+}
+
+// ============================================
+// API — POST
+// ============================================
+function apiPost(d){
+  return fetch(API,{
+    method:"POST",
+    headers:{"Content-Type":"text/plain"},
+    body:JSON.stringify(d)
+  }).then(function(r){
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    return r.text();
+  }).then(function(t){
+    try{return JSON.parse(t);}
+    catch(e){throw new Error("Respuesta no es JSON: "+t.substring(0,200));}
+  });
+}
+
+// ============================================
+// CARGAR TASAS (Monedas)
+// ============================================
 function loadTasas(){
-return apiGet("adminData",{method:"GET",sheetName:"Tasas"})
-.then(function(r){
- if(r.success){
-  TASAS=r.data||[];
-  var sel=document.getElementById("fMoneda");
-  sel.innerHTML='<option value="">Seleccione...</option>';
-  for(var i=0;i<TASAS.length;i++){
-   var t=TASAS[i];
-   if(t.Estado==="Activo"){
-    var opt=document.createElement("option");
-    opt.value=t.CodTasa||"";
-    opt.textContent=(t.CodTasa||"")+" - "+(t.DesTasa||"");
-    sel.appendChild(opt);
-   }
-  }
- }
-});
+  return apiGet("adminData",{method:"GET",sheetName:"Tasas"})
+  .then(function(r){
+    if(r.success){
+      TASAS=r.data||[];
+      var sel=document.getElementById("fMoneda");
+      sel.innerHTML='<option value="">Seleccione...</option>';
+      for(var i=0;i<TASAS.length;i++){
+        var t=TASAS[i];
+        if(t.Estado==="Activo"){
+          var opt=document.createElement("option");
+          opt.value=t.CodTasa||"";
+          opt.textContent=(t.CodTasa||"")+" - "+(t.DesTasa||"");
+          sel.appendChild(opt);
+        }
+      }
+    }
+  });
 }
+
+// ============================================
+// CAMBIO DE MONEDA — Actualizar descripcion oculta
+// ============================================
 function onMonedaChange(){
-var cod=document.getElementById("fMoneda").value;
-var des="";
-for(var i=0;i<TASAS.length;i++){
- if(TASAS[i].CodTasa===cod){des=TASAS[i].DesTasa||"";break;}
-}
-document.getElementById("fMonedaDes").value=des;
+  var cod=document.getElementById("fMoneda").value;
+  var des="";
+  for(var i=0;i<TASAS.length;i++){
+    if(TASAS[i].CodTasa===cod){des=TASAS[i].DesTasa||"";break;}
+  }
+  document.getElementById("fMonedaDes").value=des;
 }
 
-function apiPost(d){return fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.text();}).then(function(t){try{return JSON.parse(t);}catch(e){throw new Error("Respuesta no es JSON: "+t.substring(0,200));}})}
-
+// ============================================
+// NORMALIZACION DE TEXTO (busqueda)
+// ============================================
 function normalize(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
 
+// ============================================
+// MENU
+// ============================================
 function openMenu(){document.getElementById("menuPanel").className="open";document.getElementById("menuOverlay").className="show"}
 function closeMenu(){document.getElementById("menuPanel").className="";document.getElementById("menuOverlay").className=""}
 function logout(){location.href="admin.html"}
 
+// ============================================
+// INICIALIZACION
+// ============================================
 function init(){
-showLoad();
-loadTasas().then(function(){loadData();});
+  showLoad();
+  loadTasas().then(function(){loadData();});
 }
 
+// ============================================
+// CARGAR DATOS DE MESAS
+// ============================================
 function loadData(){
-showLoad();
-apiGet("adminData",{method:"GET",sheetName:"EnSitio"})
-.then(function(r){
- hideLoad();
- if(r.success){ROWS=r.data||[];render()}
- else{showError(r.error||"Error al cargar datos")}
-})
-.catch(function(e){hideLoad();showError("Error de red al cargar mesas")});
+  showLoad();
+  apiGet("adminData",{method:"GET",sheetName:"EnSitio"})
+  .then(function(r){
+    hideLoad();
+    if(r.success){ROWS=r.data||[];render()}
+    else{showError(r.error||"Error al cargar datos")}
+  })
+  .catch(function(e){hideLoad();showError("Error de red al cargar mesas");});
 }
 
 function showError(msg){
-var m=document.getElementById("main");
-m.innerHTML='<div class="errorState"><div class="errorStateIcon">&#9888;</div><div>'+msg+'</div><button class="retryBtn" onclick="loadData()">Reintentar</button></div>';
+  var m=document.getElementById("main");
+  m.innerHTML='<div class="errorState"><div class="errorStateIcon">&#9888;</div><div>'+msg+'</div><button class="retryBtn" onclick="loadData()">Reintentar</button></div>';
 }
 
+// ============================================
+// RENDER DE TABLA
+// ============================================
 function render(){
-var m=document.getElementById("main");
-m.innerHTML="";
-var filtered=getVisibleRows();
-if(filtered.length===0){
- m.innerHTML='<div class="emptyState"><div class="emptyStateIcon">&#128202;</div>No se encontraron mesas</div>';
- return;
-}
-var wrap=document.createElement("div");wrap.className="tableWrap";
-var header=document.createElement("div");header.className="tableHeader";
-header.innerHTML='<div class="th thCheck">&#128203;</div><div class="th">Codigo</div><div class="th">Descripcion</div><div class="th">Tipo</div><div class="th">Propina</div><div class="th">Estado</div>';
-wrap.appendChild(header);
-for(var i=0;i<filtered.length;i++){
-var r=filtered[i];
-var st=r.Estado==="Activo";
-var isSel=SEL&&SEL.CodEnSitio===r.CodEnSitio;
-var row=document.createElement("div");
-row.className="tableRow"+(isSel?" sel":"")+(st?"":" inact");
-row.onclick=function(idx){return function(){selectCard(idx)}}(i);
-row.innerHTML='<div class="rowCheck"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div><div class="td">'+(r.CodEnSitio||"")+'</div><div class="td">'+(r.DesEnSitio||"")+'</div><div class="td">'+(r.TipoEnSitio||"")+'</div><div class="td">'+(r.PropinaEnSitio||"0")+'</div><div class="rowToggle '+(st?"on":"")+' noclick"></div>';
-wrap.appendChild(row);
-}
-m.appendChild(wrap);
-updateActionButtons();
+  var m=document.getElementById("main");
+  m.innerHTML="";
+  var filtered=getVisibleRows();
+  if(filtered.length===0){
+    m.innerHTML='<div class="emptyState"><div class="emptyStateIcon">&#128202;</div>No se encontraron mesas</div>';
+    return;
+  }
+  var wrap=document.createElement("div");wrap.className="tableWrap";
+  var header=document.createElement("div");header.className="tableHeader";
+  header.innerHTML='<div class="th thCheck">&#128203;</div><div class="th">Codigo</div><div class="th">Descripcion</div><div class="th">Tipo</div><div class="th">Propina</div><div class="th">Estado</div>';
+  wrap.appendChild(header);
+  for(var i=0;i<filtered.length;i++){
+    var r=filtered[i];
+    var st=r.Estado==="Activo";
+    var isSel=SEL&&SEL.CodEnSitio===r.CodEnSitio;
+    var row=document.createElement("div");
+    row.className="tableRow"+(isSel?" sel":"")+(st?"":" inact");
+    row.onclick=function(idx){return function(){selectCard(idx)}}(i);
+    // FIX v9.14: formatNum aplicado a PropinaEnSitio para visualizacion
+    var propinaDisplay = formatNum(r.PropinaEnSitio || 0);
+    row.innerHTML='<div class="rowCheck"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div><div class="td">'+(r.CodEnSitio||"")+'</div><div class="td">'+(r.DesEnSitio||"")+'</div><div class="td">'+(r.TipoEnSitio||"")+'</div><div class="td">'+propinaDisplay+'</div><div class="rowToggle '+(st?"on":"")+' noclick"></div>';
+    wrap.appendChild(row);
+  }
+  m.appendChild(wrap);
+  updateActionButtons();
 }
 
+// ============================================
+// FILTRADO DE FILAS
+// ============================================
 function getVisibleRows(){
-var q=normalize(document.getElementById("searchInput").value);
-var field=document.getElementById("filterField").value;
-var out=ROWS;
-if(!SHOW_INACTIVOS){
- out=out.filter(function(r){return r.Estado==="Activo";});
-}else{
- out=out.filter(function(r){return r.Estado==="Inactivo";});
-}
-if(!q)return out;
-return out.filter(function(r){
-if(field==="all"){return normalize(r.CodEnSitio).indexOf(q)!==-1||normalize(r.DesEnSitio).indexOf(q)!==-1||normalize(r.TipoEnSitio).indexOf(q)!==-1}
-if(field==="CodEnSitio")return normalize(r.CodEnSitio).indexOf(q)!==-1;
-if(field==="DesEnSitio")return normalize(r.DesEnSitio).indexOf(q)!==-1;
-return false;
-});
+  var q=normalize(document.getElementById("searchInput").value);
+  var field=document.getElementById("filterField").value;
+  var out=ROWS;
+  if(!SHOW_INACTIVOS){
+    out=out.filter(function(r){return r.Estado==="Activo";});
+  }else{
+    out=out.filter(function(r){return r.Estado==="Inactivo";});
+  }
+  if(!q)return out;
+  return out.filter(function(r){
+    if(field==="all"){return normalize(r.CodEnSitio).indexOf(q)!==-1||normalize(r.DesEnSitio).indexOf(q)!==-1||normalize(r.TipoEnSitio).indexOf(q)!==-1}
+    if(field==="CodEnSitio")return normalize(r.CodEnSitio).indexOf(q)!==-1;
+    if(field==="DesEnSitio")return normalize(r.DesEnSitio).indexOf(q)!==-1;
+    return false;
+  });
 }
 
+// ============================================
+// SELECCION DE FILA
+// ============================================
 function selectCard(i){
-var filtered=getVisibleRows();
-var clicked=filtered[i];
-if(SEL&&SEL.CodEnSitio===clicked.CodEnSitio){SEL=null}else{SEL=clicked}
-render();
+  var filtered=getVisibleRows();
+  var clicked=filtered[i];
+  if(SEL&&SEL.CodEnSitio===clicked.CodEnSitio){SEL=null}else{SEL=clicked}
+  render();
 }
 
+// ============================================
+// ACTUALIZAR BOTONES DE ACCION
+// ============================================
 function updateActionButtons(){
-var btnAdd=document.getElementById("btnAdd");
-var btnEdit=document.getElementById("btnEdit");
-var btnDel=document.getElementById("btnDel");
-if(SHOW_INACTIVOS){btnAdd.disabled=true;}else{btnAdd.disabled=false;}
-if(SEL){btnEdit.disabled=false;btnDel.disabled=SEL.Estado==="Inactivo";}else{btnEdit.disabled=true;btnDel.disabled=true;}
+  var btnAdd=document.getElementById("btnAdd");
+  var btnEdit=document.getElementById("btnEdit");
+  var btnDel=document.getElementById("btnDel");
+  if(SHOW_INACTIVOS){btnAdd.disabled=true;}else{btnAdd.disabled=false;}
+  if(SEL){btnEdit.disabled=false;btnDel.disabled=SEL.Estado==="Inactivo";}else{btnEdit.disabled=true;btnDel.disabled=true;}
 }
 
+// ============================================
+// GENERAR SIGUIENTE CODIGO
+// ============================================
 function generateNextCode(currentCode){
   var prefix=currentCode.replace(/[0-9]/g,"");
   var numStr=currentCode.replace(/\D/g,"");
@@ -399,6 +494,7 @@ function generateNextCode(currentCode){
   var newNumStr=String(num).padStart(numStr.length,"0");
   return prefix+newNumStr;
 }
+
 function fetchNextCode(codeField){
   return apiGet("get",{sheetName:"Correlativos"})
   .then(function(r){
@@ -409,169 +505,276 @@ function fetchNextCode(codeField){
     return"Auto";
   }).catch(function(){return"Auto";});
 }
+
+// ============================================
+// MODAL — AGREGAR (Nueva Mesa)
+// ============================================
 function openAddModal(){
-MODAL_MODE="add";FORM_STATE=true;
-document.getElementById("modalTitle").textContent="Nueva Mesa";
-document.getElementById("codeLabel").textContent="CÓDIGO ...";
-fetchNextCode("CodEnSitio").then(function(nextCode){
-  document.getElementById("codeLabel").textContent="CÓDIGO "+nextCode;
-});
-document.getElementById("fDesc").value="";
-document.getElementById("fDet").value="";
-document.getElementById("fTipo").value="";
-document.getElementById("fMoneda").value="T002";
-document.getElementById("fMonedaDes").value="Dolar";
-document.getElementById("fPropina").value="";
-document.getElementById("fToggle").className="modalToggle on";
-document.getElementById("fToggleTxt").textContent="Activo";
-document.getElementById("modalOverlay").className="show";
-closeMenu();
+  MODAL_MODE="add";
+  FORM_STATE=true; // FIX v9.14: Resetear siempre a true al agregar
+
+  document.getElementById("modalTitle").textContent="Nueva Mesa";
+  document.getElementById("codeLabel").textContent="CÓDIGO ...";
+
+  fetchNextCode("CodEnSitio").then(function(nextCode){
+    document.getElementById("codeLabel").textContent="CÓDIGO "+nextCode;
+  });
+
+  document.getElementById("fDesc").value="";
+  document.getElementById("fDet").value="";
+  document.getElementById("fTipo").value="";
+
+  // FIX v9.14: Seleccionar primera moneda activa disponible en vez de forzar T002
+  var selMoneda=document.getElementById("fMoneda");
+  if(selMoneda.options.length>1){
+    selMoneda.selectedIndex=1; // Primera opcion real (index 0 es "Seleccione...")
+  }else{
+    selMoneda.value="";
+  }
+  onMonedaChange(); // Actualizar descripcion oculta
+
+  document.getElementById("fPropina").value="";
+
+  var ft=document.getElementById("fToggle");
+  ft.className="modalToggle on";
+  ft.onclick=toggleFormState; // FIX v9.14: Asegurar que el toggle funciona en modo add
+  document.getElementById("fToggleTxt").textContent="Activo";
+
+  document.getElementById("modalOverlay").className="show";
+  closeMenu();
 }
 
+// ============================================
+// MODAL — EDITAR
+// ============================================
 function openEditModal(){
-if(!SEL){toast("Seleccione una mesa",false);return}
-MODAL_MODE="edit";FORM_STATE=SEL.Estado==="Activo";
-document.getElementById("modalTitle").textContent="Editar Mesa";
-document.getElementById("codeLabel").textContent="CÓDIGO "+(SEL.CodEnSitio||"");
-document.getElementById("fDesc").value=SEL.DesEnSitio||"";
-document.getElementById("fDet").value=SEL.DetalleEnSitio||"";
-document.getElementById("fTipo").value=SEL.TipoEnSitio||"";
-document.getElementById("fMoneda").value=SEL.CodTasa||"";
-document.getElementById("fMonedaDes").value=SEL.DesTasa||"";
-document.getElementById("fPropina").value=SEL.PropinaEnSitio||"";
-var ft=document.getElementById("fToggle");
-if(FORM_STATE){
-ft.className="modalToggle on disabled";
-ft.onclick=null;
-document.getElementById("fToggleTxt").textContent="Activo (bloqueado)";
-}else{
-ft.className="modalToggle";
-ft.onclick=toggleFormState;
-document.getElementById("fToggleTxt").textContent="Inactivo (puede activar)";
-}
-document.getElementById("modalOverlay").className="show";
-closeMenu();
+  if(!SEL){toast("Seleccione una mesa",false);return;}
+
+  MODAL_MODE="edit";
+  // FIX v9.14: Resetear FORM_STATE al estado ACTUAL del registro seleccionado
+  FORM_STATE=SEL.Estado==="Activo";
+
+  document.getElementById("modalTitle").textContent="Editar Mesa";
+  document.getElementById("codeLabel").textContent="CÓDIGO "+(SEL.CodEnSitio||"");
+
+  document.getElementById("fDesc").value=SEL.DesEnSitio||"";
+  document.getElementById("fDet").value=SEL.DetalleEnSitio||"";
+  document.getElementById("fTipo").value=SEL.TipoEnSitio||"";
+
+  // FIX v9.14: Setear moneda correctamente y disparar onMonedaChange
+  var selMoneda=document.getElementById("fMoneda");
+  selMoneda.value=SEL.CodTasa||"";
+  // Si no existe la opcion, dejar vacio pero no fallar
+  if(selMoneda.value!==(SEL.CodTasa||"")){
+    selMoneda.value="";
+  }
+  onMonedaChange();
+
+  // FIX v9.14: Propina — parseFloat correcto, mostrar numero crudo en input (no formatNum)
+  var propinaVal=parseFloat(SEL.PropinaEnSitio);
+  document.getElementById("fPropina").value=isNaN(propinaVal)?"":propinaVal.toFixed(2);
+
+  var ft=document.getElementById("fToggle");
+  var txt=document.getElementById("fToggleTxt");
+  if(FORM_STATE){
+    // Mesa activa: toggle bloqueado (no puede desactivar desde aqui, usa el toggle de la tabla)
+    ft.className="modalToggle on disabled";
+    ft.onclick=null;
+    txt.textContent="Activo (bloqueado)";
+  }else{
+    // Mesa inactiva: puede reactivar
+    ft.className="modalToggle";
+    ft.onclick=toggleFormState;
+    txt.textContent="Inactivo (puede activar)";
+  }
+
+  document.getElementById("modalOverlay").className="show";
+  closeMenu();
 }
 
+// ============================================
+// CERRAR MODAL
+// ============================================
 function closeModal(e){
-if(e&&e.target!==document.getElementById("modalOverlay"))return;
-document.getElementById("modalOverlay").className="";
+  if(e&&e.target!==document.getElementById("modalOverlay"))return;
+  document.getElementById("modalOverlay").className="";
 }
 
+// ============================================
+// TOGGLE ESTADO EN FORMULARIO
+// ============================================
 function toggleFormState(){
-if(MODAL_MODE==="edit"&&SEL&&SEL.Estado==="Activo")return;
-FORM_STATE=!FORM_STATE;
-var t=document.getElementById("fToggle");
-var txt=document.getElementById("fToggleTxt");
-if(FORM_STATE){t.className="modalToggle on";txt.textContent="Activo";}else{t.className="modalToggle";txt.textContent="Inactivo";}
+  // FIX v9.14: En modo edit, si la mesa original es Activa, no permitir cambiar
+  if(MODAL_MODE==="edit"&&SEL&&SEL.Estado==="Activo")return;
+
+  FORM_STATE=!FORM_STATE;
+  var t=document.getElementById("fToggle");
+  var txt=document.getElementById("fToggleTxt");
+  if(FORM_STATE){
+    t.className="modalToggle on";
+    txt.textContent="Activo";
+  }else{
+    t.className="modalToggle";
+    txt.textContent="Inactivo";
+  }
 }
 
+// ============================================
+// ACCIONES DEL MENU
+// ============================================
 function doAdd(){openAddModal()}
 function doEdit(){openEditModal()}
 
+// ============================================
+// ELIMINAR (Soft Delete)
+// ============================================
 var PENDING_DEL=null;
 
 function doDel(){
-if(!SEL){toast("Seleccione una mesa",false);closeMenu();return}
-PENDING_DEL=SEL;
-document.getElementById("confirmMsg").textContent='Desea eliminar "'+(SEL.CodEnSitio||"")+" - "+(SEL.DesEnSitio||"")+'"? ';
-document.getElementById("confirmOverlay").className="show";
-closeMenu();
+  if(!SEL){toast("Seleccione una mesa",false);closeMenu();return;}
+  PENDING_DEL=SEL;
+  document.getElementById("confirmMsg").textContent='Desea eliminar "'+(SEL.CodEnSitio||"")+" - "+(SEL.DesEnSitio||"")+'"? ';
+  document.getElementById("confirmOverlay").className="show";
+  closeMenu();
 }
 
 function closeConfirm(e){
-if(e&&e.target!==document.getElementById("confirmOverlay"))return;
-document.getElementById("confirmOverlay").className="";
-PENDING_DEL=null;
+  if(e&&e.target!==document.getElementById("confirmOverlay"))return;
+  document.getElementById("confirmOverlay").className="";
+  PENDING_DEL=null;
 }
 
 function confirmDel(){
-if(!PENDING_DEL){closeConfirm();return}
-var delItem=PENDING_DEL;
-closeConfirm();
-showLoad();
-apiPost({action:"adminData",method:"DELETE",sheetName:"EnSitio",data:{CodEnSitio:delItem.CodEnSitio}})
-.then(function(r){
- hideLoad();
- if(r.success){toast("Eliminado",true);SEL=null;loadData();}
- else{toast(r.error||"Error",false);}
-})
-.catch(function(e){hideLoad();toast("Error de red",false);});
+  if(!PENDING_DEL){closeConfirm();return;}
+  var delItem=PENDING_DEL;
+  closeConfirm();
+  showLoad();
+  apiPost({action:"adminData",method:"DELETE",sheetName:"EnSitio",data:{CodEnSitio:delItem.CodEnSitio}})
+  .then(function(r){
+    hideLoad();
+    if(r.success){toast("Eliminado",true);SEL=null;loadData();}
+    else{toast(r.error||"Error",false);}
+  })
+  .catch(function(e){hideLoad();toast("Error de red",false);});
 }
 
+// ============================================
+// TOGGLE ESTADO DESDE LA TABLA (rapido)
+// ============================================
 function doToggle(e,i){
-e.stopPropagation();
-var filtered=getVisibleRows();
-var r=filtered[i];
-var nst=r.Estado==="Activo"?"Inactivo":"Activo";
-showLoad();
-apiPost({action:"adminData",method:"PUT",sheetName:"EnSitio",data:{CodEnSitio:r.CodEnSitio,Estado:nst}})
-.then(function(res){
- hideLoad();
- if(res.success){toast("Estado actualizado",true);loadData();}
- else{toast(res.error||"Error",false);}
-})
-.catch(function(e){hideLoad();toast("Error de red",false);});
+  e.stopPropagation();
+  var filtered=getVisibleRows();
+  var r=filtered[i];
+  var nst=r.Estado==="Activo"?"Inactivo":"Activo";
+  showLoad();
+  apiPost({action:"adminData",method:"PUT",sheetName:"EnSitio",data:{CodEnSitio:r.CodEnSitio,Estado:nst}})
+  .then(function(res){
+    hideLoad();
+    if(res.success){toast("Estado actualizado",true);loadData();}
+    else{toast(res.error||"Error",false);}
+  })
+  .catch(function(e){hideLoad();toast("Error de red",false);});
 }
 
+// ============================================
+// GUARDAR (POST nuevo / PUT editar)
+// ============================================
 function save(){
-var d={
-DesEnSitio:document.getElementById("fDesc").value.trim(),
-DetalleEnSitio:document.getElementById("fDet").value.trim(),
-TipoEnSitio:document.getElementById("fTipo").value.trim(),
-CodTasa:document.getElementById("fMoneda").value.trim(),
-DesTasa:document.getElementById("fMonedaDes").value.trim(),
-PropinaEnSitio:parseFloat(document.getElementById("fPropina").value)||0,
-Estado:FORM_STATE?"Activo":"Inactivo"
-};
-if(!d.DesEnSitio){toast("Descripcion del Area requerida",false);return;}
-if(!d.CodTasa){toast("Seleccione una moneda",false);return;}
-showLoad();
-if(MODAL_MODE==="edit"&&SEL){
-d.CodEnSitio=SEL.CodEnSitio;
-apiPost({action:"adminData",method:"PUT",sheetName:"EnSitio",data:d})
-.then(function(r){
- hideLoad();
- if(r.success){toast("Guardado",true);SEL=null;closeModal();loadData();}
- else{toast(r.error||"Error",false);}
-})
-.catch(function(e){hideLoad();toast("Error de red",false);});
-}else{
-apiPost({action:"adminData",method:"POST",sheetName:"EnSitio",data:d})
-.then(function(r){
- hideLoad();
- if(r.success){toast("Creado: "+r.code,true);SEL=null;closeModal();loadData();}
- else{toast(r.error||"Error",false);}
-})
-.catch(function(e){hideLoad();toast("Error de red",false);});
-}
+  // FIX v9.14: Leer propina como string primero, luego parsear
+  var propinaRaw=document.getElementById("fPropina").value.trim();
+  var propinaNum=parseFloat(propinaRaw);
+  if(propinaRaw!=="" && isNaN(propinaNum)){
+    toast("Propina debe ser un numero valido",false);
+    return;
+  }
+
+  var d={
+    DesEnSitio:document.getElementById("fDesc").value.trim(),
+    DetalleEnSitio:document.getElementById("fDet").value.trim(),
+    TipoEnSitio:document.getElementById("fTipo").value.trim(),
+    CodTasa:document.getElementById("fMoneda").value.trim(),
+    DesTasa:document.getElementById("fMonedaDes").value.trim(),
+    // FIX v9.14: Enviar propina como numero valido (0 si vacio, el valor si existe)
+    PropinaEnSitio: propinaRaw==="" ? 0 : propinaNum,
+    Estado:FORM_STATE?"Activo":"Inactivo"
+  };
+
+  // Validaciones frontend
+  if(!d.DesEnSitio){toast("Descripcion del Area requerida",false);return;}
+  if(!d.CodTasa){toast("Seleccione una moneda",false);return;}
+
+  showLoad();
+
+  if(MODAL_MODE==="edit"&&SEL){
+    d.CodEnSitio=SEL.CodEnSitio;
+    apiPost({action:"adminData",method:"PUT",sheetName:"EnSitio",data:d})
+    .then(function(r){
+      hideLoad();
+      if(r.success){toast("Guardado",true);SEL=null;closeModal();loadData();}
+      else{toast(r.error||"Error al guardar: "+JSON.stringify(r),false);}
+    })
+    .catch(function(e){hideLoad();toast("Error de red: "+e.message,false);});
+  }else{
+    apiPost({action:"adminData",method:"POST",sheetName:"EnSitio",data:d})
+    .then(function(r){
+      hideLoad();
+      if(r.success){toast("Creado: "+r.code,true);SEL=null;closeModal();loadData();}
+      else{toast(r.error||"Error al crear: "+JSON.stringify(r),false);}
+    })
+    .catch(function(e){hideLoad();toast("Error de red: "+e.message,false);});
+  }
 }
 
+// ============================================
+// VER INACTIVOS
+// ============================================
 function toggleViewInactivos(){
-SHOW_INACTIVOS=!SHOW_INACTIVOS;
-var t=document.getElementById("menuToggle");
-if(SHOW_INACTIVOS){t.className="modalToggle on";}else{t.className="modalToggle";}
-closeMenu();
-SEL=null;
-render();
+  SHOW_INACTIVOS=!SHOW_INACTIVOS;
+  var t=document.getElementById("menuToggle");
+  if(SHOW_INACTIVOS){t.className="modalToggle on";}else{t.className="modalToggle";}
+  closeMenu();
+  SEL=null;
+  render();
 }
 
+// ============================================
+// BUSQUEDA
+// ============================================
 function clearSearch(){document.getElementById("searchInput").value="";render();}
 
 document.getElementById("searchInput").addEventListener("input",render);
 
+// ============================================
+// EVENTO CHANGE DE MONEDA (FIX v9.14)
+// ============================================
+document.getElementById("fMoneda").addEventListener("change",onMonedaChange);
+
+// ============================================
+// TECLA ESCAPE
+// ============================================
 document.addEventListener("keydown",function(e){
-if(e.key==="Escape"){closeMenu();closeModal();}
+  if(e.key==="Escape"){closeMenu();closeModal();}
 });
 
+// ============================================
+// INICIAR
+// ============================================
 init();
 </script>
 
 <!--
-FastBurguer Admin v9.13
+FastBurguer Admin v9.14
 Modulo: mesas.html
-Version: 9.13
-Fecha: 2026-06-08
+Version: 9.14
+Fecha: 2026-06-21
+Cambios v9.14:
+  1. FIX: PropinaEnSitio ahora se parsea correctamente (no NaN)
+  2. FIX: onMonedaChange conectado al evento change del select
+  3. FIX: FORM_STATE reseteado correctamente en openAddModal y openEditModal
+  4. FIX: Seleccion de moneda por defecto usa primera opcion disponible, no T002 forzado
+  5. FIX: Mensajes de error mejorados con detalle del backend
+  6. ADD: formatNum() para separador de miles en visualizacion de propina
+  7. FIX: Toggle de estado en edicion respeta el estado real del registro
 Asistencia: Generado con IA
 Proyecto: Ing. Jesus Linares
 Contacto: 0412-0639340
